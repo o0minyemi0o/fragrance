@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import recommendations, regulations
+from app.routes import database_test
 from app.config import settings
 
 app = FastAPI(
@@ -21,6 +22,8 @@ app.add_middleware(
 # 라우터 등록
 app.include_router(recommendations.router)
 app.include_router(regulations.router)
+app.include_router(database_test.router)
+
 
 @app.get("/health")
 async def health_check():

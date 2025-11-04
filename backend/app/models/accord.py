@@ -18,3 +18,6 @@ class Accord(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
+    def __repr__(self):
+        return f"<Accord(id={self.id}, name={self.name})>"
+

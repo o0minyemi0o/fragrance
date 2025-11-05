@@ -1,0 +1,126 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.App {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.App-header {
+  text-align: center;
+  color: white;
+  margin-bottom: 40px;
+}
+
+.App-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.App-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.App-main {
+  background: white;
+  border-radius: 10px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.submit-button {
+  padding: 12px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.recommendation-result {
+  margin-top: 40px;
+  padding-top: 40px;
+  border-top: 2px solid #eee;
+}
+
+.recommendation-result h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.result-card {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.result-card p {
+  padding: 10px 0;
+  border-bottom: 1px solid #e0e0e0;
+  color: #555;
+}
+
+.result-card p:last-child {
+  border-bottom: none;
+}
+
+.result-card strong {
+  color: #667eea;
+}

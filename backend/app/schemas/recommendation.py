@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import datetime
 
 class RecommendationRequest(BaseModel):
     user_id: Optional[str] = None
@@ -14,7 +15,7 @@ class RecommendationResponse(BaseModel):
     preference_input: str
     recommended_accord_id: Optional[int]
     confidence_score: Optional[float]
-    created_at: str
+    created_at: datetime
     
     class Config:
         from_attributes = True

@@ -1,30 +1,53 @@
-# 환경
-.env
-.env.local
-*.env
+# Python 가상 환경
+venv/
+env/
+ENV/
+.venv
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-venv/
-env/
-*.egg-info/
-dist/
+.Python
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-project
+*.sublime-workspace
 
 # OS
 .DS_Store
 Thumbs.db
+.env
+.env.local
 
-# 데이터
+# 프로젝트
 *.db
 *.sqlite3
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE configs
+.vscode/launch.json
+.vscode/settings.json
 

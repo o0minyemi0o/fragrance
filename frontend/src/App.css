@@ -424,3 +424,94 @@
     flex: none;
   }
 }
+
+
+.index-cell {
+  text-align: center;
+  font-weight: 600;
+  color: #666;
+  background: #f8f9fa;
+}
+
+.order-buttons {
+  display: flex;
+  gap: 3px;
+}
+
+.move-btn {
+  flex: 1;
+  padding: 6px 4px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  color: #667eea;
+}
+
+.move-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  border-color: #667eea;
+}
+
+.move-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  color: #ccc;
+  border-color: #ddd;
+}
+
+.move-up {
+  /* up arrow styling */
+}
+
+.move-down {
+  /* down arrow styling */
+}
+
+/* 테이블 반응형 개선 */
+@media (max-width: 1024px) {
+  .edit-ingredients-table th,
+  .edit-ingredients-table td {
+    padding: 6px;
+    font-size: 0.85rem;
+  }
+
+  .edit-input-small {
+    padding: 4px;
+    font-size: 0.8rem;
+  }
+
+  .order-buttons {
+    gap: 2px;
+  }
+
+  .move-btn {
+    padding: 4px 2px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .edit-ingredients-table {
+    font-size: 0.75rem;
+  }
+
+  .edit-ingredients-table th,
+  .edit-ingredients-table td {
+    padding: 4px;
+  }
+
+  .edit-input-small {
+    padding: 3px;
+    font-size: 0.7rem;
+  }
+
+  .remove-ingredient-btn {
+    padding: 3px;
+    font-size: 0.8rem;
+  }
+}

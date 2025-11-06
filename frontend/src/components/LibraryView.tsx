@@ -139,6 +139,20 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
     setEditData({ ...editData, ingredients_composition: newIngredients });
   };
 
+  const handleMoveIngredientUp = (index: number) => {
+    if (index === 0) return;
+    const newIngredients = [...editData.ingredients_composition];
+    [newIngredients[index], newIngredients[index - 1]] = [newIngredients[index - 1], newIngredients[index]];
+    setEditData({ ...editData, ingredients_composition: newIngredients });
+  };
+
+  const handleMoveIngredientDown = (index: number) => {
+    if (index === editData.ingredients_composition.length - 1) return;
+    const newIngredients = [...editData.ingredients_composition];
+    [newIngredients[index], newIngredients[index + 1]] = [newIngredients[index + 1], newIngredients[index]];
+    setEditData({ ...editData, ingredients_composition: newIngredients });
+  };
+
   if (loading && items.length === 0) return <div className="library-view">로딩 중...</div>;
 
   return (
@@ -226,15 +240,18 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                     <table className="edit-ingredients-table">
                       <thead>
                         <tr>
+                          <th style={{ width: '30px' }}>#</th>
                           <th>Name</th>
-                          <th>%</th>
+                          <th style={{ width: '60px' }}>%</th>
                           <th>Note/Role</th>
-                          <th style={{ width: '50px' }}>Action</th>
+                          <th style={{ width: '100px' }}>Order</th>
+                          <th style={{ width: '50px' }}>Delete</th>
                         </tr>
                       </thead>
                       <tbody>
                         {editData.ingredients_composition?.map((ing: any, idx: number) => (
                           <tr key={idx}>
+                            <td className="index-cell">{idx + 1}</td>
                             <td>
                               <input
                                 type="text"
@@ -263,6 +280,26 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                                 className="edit-input-small"
                                 placeholder="top/middle/base"
                               />
+                            </td>
+                            <td>
+                              <div className="order-buttons">
+                                <button
+                                  onClick={() => handleMoveIngredientUp(idx)}
+                                  className="move-btn move-up"
+                                  disabled={idx === 0}
+                                  title="Move up"
+                                >
+                                  ↑
+                                </button>
+                                <button
+                                  onClick={() => handleMoveIngredientDown(idx)}
+                                  className="move-btn move-down"
+                                  disabled={idx === editData.ingredients_composition.length - 1}
+                                  title="Move down"
+                                >
+                                  ↓
+                                </button>
+                              </div>
                             </td>
                             <td>
                               <button
@@ -302,6 +339,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                   <table className="ingredients-table">
                     <thead>
                       <tr>
+                        <th>#</th>
                         <th>Name</th>
                         <th>%</th>
                         <th>Note/Role</th>
@@ -310,6 +348,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                     <tbody>
                       {details.ingredients_composition?.map((ing: any, idx: number) => (
                         <tr key={idx}>
+                          <td>{idx + 1}</td>
                           <td>{ing.name}</td>
                           <td>{ing.percentage}%</td>
                           <td>{ing.note_type || ing.role || '-'}</td>

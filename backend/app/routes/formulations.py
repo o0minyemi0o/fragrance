@@ -257,3 +257,91 @@ async def delete_formula(id: int, db: Session = Depends(get_db)):
     logger.info(f"Formula 삭제 완료: ID={id}")
     
     return {"status": "success", "message": f"Formula deleted"}
+
+
+@router.put("/accords/{id}")
+async def update_accord(
+    id: int,
+    request: dict,
+    db: Session = Depends(get_db)
+):
+    """Accord 수정"""
+    try:
+        accord = db.query(Accord).filter(Accord.id == id).first()
+        if not accord:
+            raise HTTPException(status_code=404, detail="Accord not found")
+        
+        # 수정 가능한 필드들
+        if "name" in request:
+            accord.name = request["name"].strip()
+        if "description" in request:
+            accord.description = request["description"]
+        if "ingredients_composition" in request:
+            accord.ingredients_composition = request["ingredients_composition"]
+        if "longevity" in request:
+            accord.longevity = request["longevity"]
+        if "sillage" in request:
+            accord.sillage = request["sillage"]
+        if "llm_recommendation" in request:
+            accord.llm_recommendation = request["llm_recommendation"]
+        
+        db.commit()
+        db.refresh(accord)
+        
+        logger.info(f"Accord 수정 완료: ID={id}")
+        
+        return {
+            "status": "success",
+            "message": f"Accord updated",
+            "accord_id": accord.id
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Accord 수정 실패: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/formulas/{id}")
+async def update_formula(
+    id: int,
+    request: dict,
+    db: Session = Depends(get_db)
+):
+    """Formula 수정"""
+    try:
+        formula = db.query(Formula).filter(Formula.id == id).first()
+        if not formula:
+            raise HTTPException(status_code=404, detail="Formula not found")
+        
+        if "name" in request:
+            formula.name = request["name"].strip()
+        if "description" in request:
+            formula.description = request["description"]
+        if "ingredients_composition" in request:
+            formula.ingredients_composition = request["ingredients_composition"]
+        if "longevity" in request:
+            formula.longevity = request["longevity"]
+        if "sillage" in request:
+            formula.sillage = request["sillage"]
+        if "stability_notes" in request:
+            formula.stability_notes = request["stability_notes"]
+        if "llm_recommendation" in request:
+            formula.llm_recommendation = request["llm_recommendation"]
+        
+        db.commit()
+        db.refresh(formula)
+        
+        logger.info(f"Formula 수정 완료: ID={id}")
+        
+        return {
+            "status": "success",
+            "message": f"Formula updated",
+            "formula_id": formula.id
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Formula 수정 실패: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

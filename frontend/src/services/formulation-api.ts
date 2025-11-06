@@ -42,4 +42,27 @@ export const formulationApi = {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   },
+
+  async updateAccord(id: number, data: any) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/accords/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  },
+
+  async updateFormula(id: number, data: any) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/formulas/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  },
+
 };
+
+

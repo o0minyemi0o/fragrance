@@ -1,7 +1,45 @@
 const API_BASE_URL = 'http://localhost:8000';
 
 export const formulationApi = {
-  // ... 기존 메서드들 ...
+  async generateAccord(request: any) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/accord/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  },
+
+  async saveAccord(request: any) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/accord/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  },
+
+  async generateFormula(request: any) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/formula/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  },
+
+  async saveFormula(request: any) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/formula/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  },
 
   async listAccords() {
     const response = await fetch(`${API_BASE_URL}/api/formulations/accords`);
@@ -27,22 +65,6 @@ export const formulationApi = {
     return response.json();
   },
 
-  async deleteAccord(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/accords/${id}`, {
-      method: 'DELETE'
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-  },
-
-  async deleteFormula(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/formulas/${id}`, {
-      method: 'DELETE'
-    });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-  },
-
   async updateAccord(id: number, data: any) {
     const response = await fetch(`${API_BASE_URL}/api/formulations/accords/${id}`, {
       method: 'PUT',
@@ -63,6 +85,19 @@ export const formulationApi = {
     return response.json();
   },
 
+  async deleteAccord(id: number) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/accords/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  },
+
+  async deleteFormula(id: number) {
+    const response = await fetch(`${API_BASE_URL}/api/formulations/formulas/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  }
 };
-
-

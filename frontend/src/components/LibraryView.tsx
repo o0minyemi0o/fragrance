@@ -157,7 +157,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
 
   return (
     <div className="library-view">
-      <h2>💾 {mode === 'accords' ? 'My Accords' : 'My Formulas'}</h2>
+      <h2>{mode === 'accords' ? 'My Accords' : 'My Formulas'}</h2>
 
       {error && <div className="error-message">❌ {error}</div>}
 

@@ -1,3 +1,15 @@
+/* ✓ Fraunces 폰트 */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap');
+
+/* ✓ 색상 변수 정의 */
+:root {
+  --primary-color: #85933e;
+  --secondary-color: #9b9d5a;
+  --accent-color: #A0826D;
+  --light-accent: #D4AF85;
+  --dark-gray-olive: #5D6B47;    /* ✓ 진한 회색+올리브 혼합 */
+}
+
 /* ===== 기본 설정 ===== */
 * {
   margin: 0;
@@ -6,12 +18,10 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Fraunces', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #e4e4e1;
   min-height: 100vh;
 }
 
@@ -30,10 +40,10 @@ body {
   text-align: center;
   color: white;
   margin-bottom: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-color);
   padding: 40px;
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 30px rgba(139, 115, 85, 0.3);
 }
 
 .App-header h1 {
@@ -49,7 +59,7 @@ body {
   font-weight: 500;
 }
 
-/* ===== 메인 래퍼 (세로 탭 레이아웃) ===== */
+/* ===== 메인 래퍼 ===== */
 .main-wrapper {
   display: flex;
   gap: 30px;
@@ -83,16 +93,16 @@ body {
 }
 
 .nav-button:hover {
-  background: rgba(102, 126, 234, 0.08);
-  color: #667eea;
+  background: rgba(139, 115, 85, 0.08);
+  color: var(--secondary-color);
   transform: translateX(2px);
 }
 
 .nav-button.active {
   color: white;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-left-color: #764ba2;
-  box-shadow: inset -3px 0 0 #764ba2;
+  background: var(--secondary-color);
+  border-left-color: var(--secondary-color);
+  box-shadow: inset -3px 0 0 var(--secondary-color);
 }
 
 /* ===== 메인 컨텐츠 ===== */
@@ -157,8 +167,8 @@ body {
 .form-group textarea:focus,
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
 }
 
 .form-group textarea {
@@ -168,10 +178,9 @@ body {
 
 /* ===== 버튼 ===== */
 .submit-button,
-.save-button,
-.add-ingredient-btn {
+.save-button {
   padding: 12px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-color);
   color: white;
   border: none;
   border-radius: 5px;
@@ -182,10 +191,9 @@ body {
 }
 
 .submit-button:hover:not(:disabled),
-.save-button:hover:not(:disabled),
-.add-ingredient-btn:hover {
+.save-button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 20px rgba(139, 115, 85, 0.3);
 }
 
 .submit-button:disabled,
@@ -194,8 +202,9 @@ body {
   cursor: not-allowed;
 }
 
-.edit-btn {
-  background: #007bff;
+.edit-btn,
+.save-btn {
+  background: var(--secondary-color);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -206,12 +215,13 @@ body {
   flex: 1;
 }
 
-.edit-btn:hover {
-  background: #0056b3;
+.edit-btn:hover,
+.save-btn:hover {
+  background: #6B6347;
 }
 
 .delete-btn {
-  background: #dc3545;
+  background: #6c757d;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -224,22 +234,6 @@ body {
 
 .delete-btn:hover {
   background: #c82333;
-}
-
-.save-btn {
-  background: #28a745;
-  color: white;
-  flex: 1;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.2s;
-}
-
-.save-btn:hover {
-  background: #218838;
 }
 
 .cancel-btn {
@@ -259,8 +253,20 @@ body {
 }
 
 .add-ingredient-btn {
+  background: var(--secondary-color);
+  color: white;
   width: 100%;
-  margin-top: 10px;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.add-ingredient-btn:hover {
+  background: #6B6347;
 }
 
 /* ===== 결과 카드 ===== */
@@ -270,6 +276,7 @@ body {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   border-radius: 10px;
   border: 1px solid #e0e0e0;
+  animation: slideIn 0.3s ease-out;
 }
 
 .result-card h2 {
@@ -279,13 +286,13 @@ body {
 }
 
 .result-card h3 {
-  color: #667eea;
+  color: var(--primary-color);
   margin-bottom: 15px;
 }
 
 .result-card p {
   padding: 10px 0;
-  color: #555;
+  color: #333;
   line-height: 1.6;
 }
 
@@ -296,7 +303,7 @@ body {
 
 .result-card li {
   padding: 8px 0;
-  color: #555;
+  color: #333;
 }
 
 /* ===== 라이브러리 뷰 ===== */
@@ -350,7 +357,7 @@ body {
 }
 
 .library-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--secondary-color);
   color: white;
 }
 
@@ -388,11 +395,12 @@ body {
   overflow-y: auto;
   max-height: 600px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  animation: slideIn 0.3s ease-out;
 }
 
 .library-details h3 {
   margin-top: 0;
-  color: #667eea;
+  color: var(--primary-color);
 }
 
 .view-form,
@@ -421,8 +429,8 @@ body {
 .edit-input:focus,
 .edit-textarea:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
 }
 
 .edit-input-small {
@@ -436,8 +444,8 @@ body {
 
 .edit-input-small:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(139, 115, 85, 0.1);
 }
 
 /* ===== 테이블 ===== */
@@ -455,6 +463,8 @@ body {
   padding: 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  background: #f8f9fa;
+  color:#333;
 }
 
 .ingredients-table th,
@@ -471,7 +481,7 @@ body {
 .index-cell {
   text-align: center;
   font-weight: 600;
-  color: #666;
+  color: #333;
   background: #f8f9fa;
   width: 30px;
 }
@@ -496,13 +506,13 @@ body {
   font-weight: bold;
   font-size: 0.9rem;
   transition: all 0.2s;
-  color: #667eea;
+  color: var(--primary-color);
 }
 
 .move-btn:hover:not(:disabled) {
-  background: #667eea;
+  background: var(--primary-color);
   color: white;
-  border-color: #667eea;
+  border-color: var(--primary-color);
 }
 
 .move-btn:disabled {
@@ -513,7 +523,7 @@ body {
 }
 
 .remove-ingredient-btn {
-  background: #dc3545;
+  background: white;
   color: white;
   border: none;
   padding: 5px 10px;
@@ -564,7 +574,50 @@ body {
 }
 
 .details-info strong {
-  color: #667eea;
+  color: var(--primary-color);
+}
+
+/* ===== 애니메이션 ===== */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== 포커스 스타일 ===== */
+button:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ===== 스크롤바 ===== */
+.library-list::-webkit-scrollbar,
+.library-details::-webkit-scrollbar {
+  width: 8px;
+}
+
+.library-list::-webkit-scrollbar-track,
+.library-details::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.library-list::-webkit-scrollbar-thumb,
+.library-details::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 10px;
+}
+
+.library-list::-webkit-scrollbar-thumb:hover,
+.library-details::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
 }
 
 /* ===== 반응형 디자인 ===== */
@@ -634,15 +687,15 @@ body {
   }
 
   .nav-button:hover {
-    border-bottom-color: #667eea;
+    border-bottom-color: var(--primary-color);
     transform: none;
   }
 
   .nav-button.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
     border-left-color: transparent;
-    border-bottom-color: #764ba2;
-    box-shadow: inset 0 -3px 0 #764ba2;
+    border-bottom-color: var(--secondary-color);
+    box-shadow: inset 0 -3px 0 var(--secondary-color);
   }
 
   .App-main {
@@ -666,6 +719,7 @@ body {
   .edit-ingredients-table th,
   .edit-ingredients-table td {
     padding: 6px;
+    color: #333;
   }
 
   .edit-input-small {
@@ -711,7 +765,7 @@ body {
 
   .form-group textarea,
   .form-group input {
-    font-size: 16px; /* iOS 줌 방지 */
+    font-size: 16px;
   }
 
   .app-nav {
@@ -726,61 +780,12 @@ body {
   }
 
   .nav-button.active {
-    border-left-color: #764ba2;
+    border-left-color: var(--secondary-color);
     border-bottom-color: transparent;
-    box-shadow: inset -3px 0 0 #764ba2;
+    box-shadow: inset -3px 0 0 var(--secondary-color);
   }
 }
 
-/* ===== 스크롤바 커스터마이징 ===== */
-.library-list::-webkit-scrollbar,
-.library-details::-webkit-scrollbar {
-  width: 8px;
-}
-
-.library-list::-webkit-scrollbar-track,
-.library-details::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.library-list::-webkit-scrollbar-thumb,
-.library-details::-webkit-scrollbar-thumb {
-  background: #667eea;
-  border-radius: 10px;
-}
-
-.library-list::-webkit-scrollbar-thumb:hover,
-.library-details::-webkit-scrollbar-thumb:hover {
-  background: #764ba2;
-}
-
-/* ===== 애니메이션 ===== */
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.result-card,
-.library-details {
-  animation: slideIn 0.3s ease-out;
-}
-
-/* ===== 포커스 스타일 ===== */
-button:focus,
-input:focus,
-textarea:focus {
-  outline: 2px solid #667eea;
-  outline-offset: 2px;
-}
-
-/* ===== 프린트 스타일 ===== */
 @media print {
   .app-nav,
   .action-buttons,
@@ -790,143 +795,5 @@ textarea:focus {
 
   .library-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-
-.main-wrapper {
-  display: flex;
-  gap: 30px;
-  align-items: flex-start;
-}
-
-.app-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  min-width: 150px;
-  background: #f8f9fa;
-  border-radius: 5px;
-  overflow: hidden;
-  height: fit-content;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.nav-button {
-  padding: 15px 20px;
-  background: transparent;
-  border: none;
-  border-left: 4px solid transparent;
-  cursor: pointer;
-  font-weight: 600;
-  color: #666;
-  transition: all 0.3s;
-  text-align: left;
-  font-size: 0.95rem;
-}
-
-.nav-button:hover {
-  background: rgba(102, 126, 234, 0.08);
-  color: #667eea;
-}
-
-.nav-button.active {
-  color: white;
-  background: #667eea;
-  border-left-color: #764ba2;
-  box-shadow: inset -3px 0 0 #764ba2;
-}
-
-.App-main {
-  background: white;
-  border-radius: 10px;
-  padding: 40px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  flex: 1;
-}
-
-/* 헤더 */
-.App-header {
-  text-align: center;
-  color: white;
-  margin-bottom: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px;
-  border-radius: 10px;
-}
-
-.App-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-}
-
-.App-header p {
-  font-size: 1.1rem;
-  opacity: 0.9;
-}
-
-/* 모바일 반응형 */
-@media (max-width: 1024px) {
-  .main-wrapper {
-    gap: 20px;
-  }
-
-  .app-nav {
-    min-width: 120px;
-  }
-
-  .nav-button {
-    padding: 12px 15px;
-    font-size: 0.9rem;
-  }
-
-  .App-main {
-    padding: 30px;
-  }
-}
-
-@media (max-width: 768px) {
-  .main-wrapper {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .app-nav {
-    flex-direction: row;
-    min-width: 100%;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border-radius: 5px;
-    margin-bottom: 20px;
-  }
-
-  .nav-button {
-    border-left: none;
-    border-bottom: 4px solid transparent;
-    text-align: center;
-    padding: 12px 10px;
-  }
-
-  .nav-button:hover {
-    border-bottom-color: #667eea;
-  }
-
-  .nav-button.active {
-    background: #667eea;
-    border-left-color: transparent;
-    border-bottom-color: #764ba2;
-    box-shadow: inset 0 -3px 0 #764ba2;
-  }
-
-  .App-header {
-    padding: 30px 20px;
-  }
-
-  .App-header h1 {
-    font-size: 1.8rem;
-  }
-
-  .App-main {
-    padding: 20px;
   }
 }

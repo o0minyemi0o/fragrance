@@ -89,19 +89,19 @@ function App() {
             className={`nav-button ${currentTab === 'generate' ? 'active' : ''}`}
             onClick={() => setCurrentTab('generate')}
           >
-            ✨ Generate
+             Generate 
           </button>
           <button
             className={`nav-button ${currentTab === 'accords' ? 'active' : ''}`}
             onClick={() => setCurrentTab('accords')}
           >
-            📋 Accords
+             Accords 
           </button>
           <button
             className={`nav-button ${currentTab === 'formulas' ? 'active' : ''}`}
             onClick={() => setCurrentTab('formulas')}
           >
-            📋 Formulas
+             Formulas 
           </button>
         </nav>
 
@@ -115,31 +115,32 @@ function App() {
                   ❌ {error}
                 </div>
               )}
-
               {result && (
                 <div className="result-card">
                   <h2>✨ Generated {mode === 'accord' ? 'Accord' : 'Formula'}</h2>
                   
-                  <h3>{result.name}</h3>
+                  <h3 style={{ color: '#333' }}>{result.name}</h3>
                   <p><strong>Type:</strong> {result.type}</p>
                   <p><strong>Description:</strong> {result.description}</p>
                   
-                  <h4>Ingredients:</h4>
-                  <table className="result-ingredients-table">
+                  <h4 style={{ color: '#333' }}>Ingredients ({result.ingredients?.length || 0})</h4>
+                  <table className="edit-ingredients-table">
                     <thead>
                       <tr>
-                        <th>#</th>
+                        <th style={{ width: '30px' }}>#</th>
                         <th>Name</th>
-                        <th>%</th>
+                        <th style={{ width: '60px' }}>%</th>
                         <th>Note/Role</th>
                       </tr>
                     </thead>
                     <tbody>
                       {result.ingredients?.map((ing: any, idx: number) => (
                         <tr key={idx}>
-                          <td>{idx + 1}</td>
+                          <td className="index-cell">{idx + 1}</td>
                           <td><strong>{ing.name}</strong></td>
-                          <td>{ing.percentage}%</td>
+                          <td style={{ textAlign: 'center', fontWeight: '600', color: '#333' }}>
+                            {ing.percentage}%
+                          </td>
                           <td>{ing.note_type || ing.role || '-'}</td>
                         </tr>
                       ))}
@@ -164,6 +165,7 @@ function App() {
                   </button>
                 </div>
               )}
+
             </>
           )}
 

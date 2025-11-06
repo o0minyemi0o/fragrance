@@ -18,6 +18,8 @@ function App() {
     setError(null);
     
     try {
+      console.log(`Generating ${selectedMode}:`, type);
+      
       let response;
       if (selectedMode === 'accord') {
         response = await formulationApi.generateAccord({ accord_type: type });
@@ -25,9 +27,12 @@ function App() {
         response = await formulationApi.generateFormula({ formula_type: type });
       }
       
+      console.log('Generated data:', response);
       setResult(response.data);
     } catch (err) {
-      setError((err as Error).message);
+      const errorMessage = (err as Error).message;
+      console.error('Generation error:', errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -49,6 +54,8 @@ function App() {
         ...(mode === 'formula' && { stability_notes: result.stability_notes })
       };
 
+      console.log('Saving to:', mode, saveData);
+
       let response;
       if (mode === 'accord') {
         response = await formulationApi.saveAccord(saveData);
@@ -56,11 +63,14 @@ function App() {
         response = await formulationApi.saveFormula(saveData);
       }
 
+      console.log('Save response:', response);
       alert(`✓ ${response.message}`);
       setResult(null);
       setRefreshLibrary(prev => prev + 1);
     } catch (err) {
-      setError((err as Error).message);
+      const errorMessage = (err as Error).message;
+      console.error('Save error:', errorMessage);
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -73,63 +83,107 @@ function App() {
         <p>Generate & Manage Accords & Formulas</p>
       </header>
 
-      <nav className="app-nav">
-        <button
-          className={`nav-button ${currentTab === 'generate' ? 'active' : ''}`}
-          onClick={() => setCurrentTab('generate')}
-        >
-          ✨ Generate
-        </button>
-        <button
-          className={`nav-button ${currentTab === 'accords' ? 'active' : ''}`}
-          onClick={() => setCurrentTab('accords')}
-        >
-          📋 Accords
-        </button>
-        <button
-          className={`nav-button ${currentTab === 'formulas' ? 'active' : ''}`}
-          onClick={() => setCurrentTab('formulas')}
-        >
-          📋 Formulas
-        </button>
-      </nav>
+      <div className="main-wrapper">
+        <nav className="app-nav">
+          <button
+            className={`nav-button ${currentTab === 'generate' ? 'active' : ''}`}
+            onClick={() => setCurrentTab('generate')}
+          >
+            ✨ Generate
+          </button>
+          <button
+            className={`nav-button ${currentTab === 'accords' ? 'active' : ''}`}
+            onClick={() => setCurrentTab('accords')}
+          >
+            📋 Accords
+          </button>
+          <button
+            className={`nav-button ${currentTab === 'formulas' ? 'active' : ''}`}
+            onClick={() => setCurrentTab('formulas')}
+          >
+            📋 Formulas
+          </button>
+        </nav>
 
-      <main className="App-main">
-        {currentTab === 'generate' && (
-          <>
-            <FormulationMode onGenerate={handleGenerate} loading={loading} />
-            {error && <div className="error-message">❌ {error}</div>}
-            {result && (
-              <div className="result-card">
-                <h2>✨ Generated {mode === 'accord' ? 'Accord' : 'Formula'}</h2>
-                <h3>{result.name}</h3>
-                <p><strong>Type:</strong> {result.type}</p>
-                <p><strong>Description:</strong> {result.description}</p>
-                
-                <h4>Ingredients:</h4>
-                <ul>
-                  {result.ingredients?.map((ing: any, idx: number) => (
-                    <li key={idx}>
-                      <strong>{ing.name}</strong> - {ing.percentage}%
-                    </li>
-                  ))}
-                </ul>
-                
-                <p><strong>Longevity:</strong> {result.longevity}</p>
-                <p><strong>Sillage:</strong> {result.sillage}</p>
-                <p><strong>Recommendation:</strong> {result.recommendation}</p>
+        <main className="App-main">
+          {currentTab === 'generate' && (
+            <>
+              <FormulationMode onGenerate={handleGenerate} loading={loading} />
 
-                <button onClick={handleSave} disabled={loading} className="save-button">
-                  {loading ? 'Saving...' : '💾 Save'}
-                </button>
-              </div>
-            )}
-          </>
-        )}
+              {error && (
+                <div className="error-message">
+                  ❌ {error}
+                </div>
+              )}
 
-        {currentTab === 'accords' && <LibraryView key={refreshLibrary} mode="accords" />}
-        {currentTab === 'formulas' && <LibraryView key={refreshLibrary} mode="formulas" />}
-      </main>
+              {result && (
+                <div className="result-card">
+                  <h2>✨ Generated {mode === 'accord' ? 'Accord' : 'Formula'}</h2>
+                  
+                  <h3>{result.name}</h3>
+                  <p><strong>Type:</strong> {result.type}</p>
+                  <p><strong>Description:</strong> {result.description}</p>
+                  
+                  <h4>Ingredients:</h4>
+                  <table className="result-ingredients-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>%</th>
+                        <th>Note/Role</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {result.ingredients?.map((ing: any, idx: number) => (
+                        <tr key={idx}>
+                          <td>{idx + 1}</td>
+                          <td><strong>{ing.name}</strong></td>
+                          <td>{ing.percentage}%</td>
+                          <td>{ing.note_type || ing.role || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  
+                  <div className="result-details">
+                    <p><strong>Longevity:</strong> {result.longevity}</p>
+                    <p><strong>Sillage:</strong> {result.sillage}</p>
+                    {result.stability_notes && (
+                      <p><strong>Stability:</strong> {result.stability_notes}</p>
+                    )}
+                    <p><strong>Recommendation:</strong> {result.recommendation}</p>
+                  </div>
+
+                  <button 
+                    onClick={handleSave} 
+                    disabled={loading} 
+                    className="save-button"
+                  >
+                    {loading ? 'Saving...' : '💾 Save'}
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+
+          {currentTab === 'accords' && (
+            <LibraryView 
+              key={refreshLibrary} 
+              mode="accords"
+              onRefresh={() => setRefreshLibrary(prev => prev + 1)}
+            />
+          )}
+
+          {currentTab === 'formulas' && (
+            <LibraryView 
+              key={refreshLibrary} 
+              mode="formulas"
+              onRefresh={() => setRefreshLibrary(prev => prev + 1)}
+            />
+          )}
+        </main>
+      </div>
     </div>
   );
 }

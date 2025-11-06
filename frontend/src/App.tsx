@@ -79,8 +79,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>🌸 Fragrance Formulation AI</h1>
-        <p>Generate & Manage Accords & Formulas</p>
+        <h1>Scent Designer</h1>
+        <p>Craft Your Imagination into Scent</p>
       </header>
 
       <div className="main-wrapper">

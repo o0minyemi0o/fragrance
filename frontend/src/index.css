@@ -1,3 +1,23 @@
+/* ✓ Fraunces 폰트 */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap');
+
+* {
+  font-family: 'Fraunces', serif;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}
+
+
 body {
   margin: 0;
   padding: 0;

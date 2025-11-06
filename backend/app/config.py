@@ -4,7 +4,10 @@ from functools import lru_cache
 class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql://localhost:5432/fragrance-db"
-    
+   
+    # Google Gemini
+    GOOGLE_API_KEY: str
+ 
     # OpenAI
     OPENAI_API_KEY: str
     OPENAI_MODEL: str = "gpt-4"

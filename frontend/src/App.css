@@ -177,23 +177,21 @@ body {
 }
 
 /* ===== 버튼 ===== */
-.submit-button,
-.save-button {
-  padding: 12px 30px;
-  background: var(--primary-color);
+.submit-button {
+  background: var(--secondary-color);  /* ✅ 올리브색 */
   color: white;
   border: none;
+  padding: 12px 30px;
   border-radius: 5px;
-  font-size: 1rem;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  font-weight: 600;
+  transition: all 0.2s;
+  width: 100%;
+  font-size: 1rem;
 }
 
-.submit-button:hover:not(:disabled),
-.save-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(139, 115, 85, 0.3);
+.submit-button:hover:not(:disabled) {
+  background: #5a7a1f;  /* ✅ 호버 시 더 어두운 올리브색 */
 }
 
 .submit-button:disabled,
@@ -1510,4 +1508,28 @@ textarea:focus {
 .delete-action-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.ingredient-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ingredient-controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+}
+
+.filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: 500;
 }

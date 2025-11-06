@@ -52,13 +52,13 @@ const FormulationMode: React.FC<Props> = ({ onGenerate, loading }) => {
           placeholder={
             mode === 'accord'
               ? 'e.g., Pineapple Accord'
-              : 'e.g., White Floral Soap Type'
+              : 'e.g., White Floral Soap Type Formula'
           }
           disabled={loading}
         />
       </div>
 
-      <button type="submit" disabled={loading}>
+      <button type="submit" disabled={loading} className="submit-button">
         {loading ? 'Generating...' : 'Generate'}
       </button>
     </form>

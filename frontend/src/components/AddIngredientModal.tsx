@@ -180,9 +180,14 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 type="text"
                 name="ingredient_name"
                 value={formData.ingredient_name}
-                onChange={handleChange}
+                onChange={(e) => setFormData(prev => ({ ...prev, ingredient_name: e.target.value }))}
                 placeholder="e.g., Rose Absolute"
-                required
+                onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAutoFill();
+                }
+            }}
               />
             </div>
 

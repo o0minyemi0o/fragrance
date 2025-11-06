@@ -27,6 +27,7 @@ const IngredientManager: React.FC = () => {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadIngredients();
@@ -75,32 +76,38 @@ const IngredientManager: React.FC = () => {
     }
   };
 
-  const handleToggleOwned = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-
-    const updated = ingredients.map(ing =>
-      ing.id === id ? { ...ing, owned: !ing.owned } : ing
-    );
-    setIngredients(updated);
-
-    const ownedIds = updated.filter(i => i.owned).map(i => i.id);
-    localStorage.setItem('owned_ingredients', JSON.stringify(ownedIds));
+  const handleSelectForDelete = (id: number) => {
+    const newSelected = new Set(selectedForDelete);
+    if (newSelected.has(id)) {
+      newSelected.delete(id);
+    } else {
+      newSelected.add(id);
+    }
+    setSelectedForDelete(newSelected);
   };
 
-  const handleDeleteIngredient = async (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDeleteSelected = async () => {
+    if (selectedForDelete.size === 0) {
+      alert('Please select ingredients to delete');
+      return;
+    }
 
-    if (!window.confirm('Are you sure you want to delete this ingredient?')) return;
+    if (!window.confirm(`Delete ${selectedForDelete.size} ingredient(s)?`)) return;
 
     setLoading(true);
     try {
-      await formulationApi.deleteIngredient(id);
-      alert('✓ Ingredient deleted successfully!');
-      setIngredients(ingredients.filter(ing => ing.id !== id));
-      if (selectedId === id) setSelectedId(null);
+      for (const id of selectedForDelete) {
+        await formulationApi.deleteIngredient(id);
+      }
+      alert('✓ Deleted successfully!');
+      setIngredients(ingredients.filter(ing => !selectedForDelete.has(ing.id)));
+      setSelectedForDelete(new Set());
+      if (selectedId && selectedForDelete.has(selectedId)) {
+        setSelectedId(null);
+      }
     } catch (err) {
-      console.error('Failed to delete ingredient:', err);
-      alert('Failed to delete ingredient');
+      console.error('Failed to delete ingredients:', err);
+      alert('Failed to delete ingredients');
     } finally {
       setLoading(false);
     }
@@ -118,7 +125,7 @@ const IngredientManager: React.FC = () => {
   return (
     <div className="ingredient-manager">
       {selectedId && selectedIngredient ? (
-        /* ✓ Detail View */
+        /* Detail View */
         <div className="ingredient-detail-fullscreen">
           <div className="detail-header">
             <button
@@ -132,87 +139,96 @@ const IngredientManager: React.FC = () => {
           </div>
 
           <div className="detail-fullscreen-content">
-            {selectedIngredient.inci_name && (
+            {selectedIngredient.inci_name && selectedIngredient.inci_name.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>INCI Name:</strong>
                 <p>{selectedIngredient.inci_name}</p>
               </div>
             )}
 
-            {selectedIngredient.cas_number && (
+            {selectedIngredient.cas_number && selectedIngredient.cas_number.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>CAS Number:</strong>
                 <p>{selectedIngredient.cas_number}</p>
               </div>
             )}
 
-            {selectedIngredient.synonyms && selectedIngredient.synonyms.length > 0 && (
+            {selectedIngredient.synonyms && Array.isArray(selectedIngredient.synonyms) && selectedIngredient.synonyms.length > 0 && (
               <div className="detail-info-row">
                 <strong>Synonyms:</strong>
                 <p>{selectedIngredient.synonyms.join(', ')}</p>
               </div>
             )}
 
-            {selectedIngredient.odor_description && (
+            {selectedIngredient.odor_description && selectedIngredient.odor_description.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>Odor Description:</strong>
                 <p>{selectedIngredient.odor_description}</p>
               </div>
             )}
 
-            {selectedIngredient.odor_threshold && (
+            {selectedIngredient.odor_threshold !== null && selectedIngredient.odor_threshold !== undefined && (
               <div className="detail-info-row">
                 <strong>Odor Threshold:</strong>
                 <p>{selectedIngredient.odor_threshold}</p>
               </div>
             )}
 
-            {selectedIngredient.note_family && (
+            {selectedIngredient.note_family && selectedIngredient.note_family.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>Note Family:</strong>
                 <p>{selectedIngredient.note_family}</p>
               </div>
             )}
 
-            {selectedIngredient.suggested_usage_level && (
+            {selectedIngredient.suggested_usage_level && selectedIngredient.suggested_usage_level.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>Suggested Usage Level:</strong>
                 <p>{selectedIngredient.suggested_usage_level}</p>
               </div>
             )}
 
-            {selectedIngredient.max_usage_percentage && (
+            {selectedIngredient.max_usage_percentage !== null && selectedIngredient.max_usage_percentage !== undefined && (
               <div className="detail-info-row">
                 <strong>Max Usage Percentage:</strong>
                 <p>{selectedIngredient.max_usage_percentage}%</p>
               </div>
             )}
 
-            {selectedIngredient.perfume_applications && selectedIngredient.perfume_applications.length > 0 && (
+            {selectedIngredient.perfume_applications && Array.isArray(selectedIngredient.perfume_applications) && selectedIngredient.perfume_applications.length > 0 && (
               <div className="detail-info-row">
                 <strong>Perfume Applications:</strong>
                 <p>{selectedIngredient.perfume_applications.join(', ')}</p>
               </div>
             )}
 
-            {selectedIngredient.stability && (
+            {selectedIngredient.stability && selectedIngredient.stability.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>Stability:</strong>
                 <p>{selectedIngredient.stability}</p>
               </div>
             )}
 
-            {selectedIngredient.tenacity && (
+            {selectedIngredient.tenacity && selectedIngredient.tenacity.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>Tenacity:</strong>
                 <p>{selectedIngredient.tenacity}</p>
               </div>
             )}
 
-            {selectedIngredient.volatility && (
+            {selectedIngredient.volatility && selectedIngredient.volatility.trim() !== '' && (
               <div className="detail-info-row">
                 <strong>Volatility:</strong>
                 <p>{selectedIngredient.volatility}</p>
+              </div>
+            )}
+
+            {!selectedIngredient.inci_name && 
+             !selectedIngredient.cas_number && 
+             !selectedIngredient.odor_description &&
+             (!selectedIngredient.note_family || selectedIngredient.note_family === 'Top') && (
+              <div className="detail-info-row">
+                <p style={{ textAlign: 'center', color: '#999' }}>No additional details available</p>
               </div>
             )}
 
@@ -232,19 +248,11 @@ const IngredientManager: React.FC = () => {
                 />
                 I have this ingredient
               </label>
-
-              <button
-                onClick={(e) => handleDeleteIngredient(selectedIngredient.id, e)}
-                className="detail-delete-btn"
-                disabled={loading}
-              >
-                🗑 Delete
-              </button>
             </div>
           </div>
         </div>
       ) : (
-        /* ✓ List View */
+        /* List View */
         <>
           <h2>My Ingredients</h2>
 
@@ -275,6 +283,20 @@ const IngredientManager: React.FC = () => {
             </div>
           </div>
 
+          {/* ✅ 선택된 항목이 있을 때만 표시 - 하단 고정 바 */}
+          {selectedForDelete.size > 0 && (
+            <div className="ingredient-delete-bar">
+              <span className="selected-info">{selectedForDelete.size} selected</span>
+              <button
+                onClick={handleDeleteSelected}
+                className="delete-action-btn"
+                disabled={loading}
+              >
+                🗑 Delete
+              </button>
+            </div>
+          )}
+
           <div className="ingredient-grid">
             {filteredIngredients.length === 0 ? (
               <p className="empty-message">No ingredients found</p>
@@ -286,28 +308,23 @@ const IngredientManager: React.FC = () => {
                   onClick={() => setSelectedId(ing.id)}
                 >
                   <div className="ingredient-content">
-                    <label 
-                      className="ingredient-checkbox"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={ing.owned}
-                        onChange={(e) => handleToggleOwned(ing.id, e)}
-                      />
-                      <span className="ingredient-name">{ing.ingredient_name}</span>
-                    </label>
+                    <span className="ingredient-name">{ing.ingredient_name}</span>
                     {ing.note_family && (
                       <div className="ingredient-category">{ing.note_family}</div>
                     )}
                   </div>
-                  <button
-                    onClick={(e) => handleDeleteIngredient(ing.id, e)}
-                    className="delete-ingredient-btn"
-                    title="Delete"
-                  >
-                    🗑
-                  </button>
+                  
+                  {/* ✅ 체크박스만 */}
+                  <input
+                    type="checkbox"
+                    checked={selectedForDelete.has(ing.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleSelectForDelete(ing.id);
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="ingredient-checkbox"
+                  />
                 </div>
               ))
             )}

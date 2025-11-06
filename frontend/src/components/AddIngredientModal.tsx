@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { formulationApi } from '../services/formulation-api';
 
 interface AddIngredientModalProps {
   isOpen: boolean;
@@ -28,18 +29,88 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
   });
 
   const [synonyms, setSynonyms] = useState('');
+  const [isAutoFilling, setIsAutoFilling] = useState(false);
+
+  useEffect(() => {
+        if (isOpen) {
+        setFormData({
+            ingredient_name: '',
+            inci_name: '',
+            cas_number: '',
+            odor_description: '',
+            suggested_usage_level: '',
+            note_family: 'Top',
+            max_usage_percentage: 2,
+            stability: 'Good',
+            tenacity: 'Medium',
+            volatility: 'Medium',
+            perfume_applications: ['Fragrance'],
+        });
+        setSynonyms('');
+        setIsAutoFilling(false);
+        }
+  }, [isOpen]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'max_usage_percentage' ? parseFloat(value) : value,
+      [name]: name === 'max_usage_percentage' ? parseFloat(value) || 2 : value,
     }));
+  };
+
+  // Auto Fill 함수
+  const handleAutoFill = async () => {
+    if (!formData.ingredient_name.trim()) {
+      alert('Please enter ingredient name first');
+      return;
+    }
+
+    setIsAutoFilling(true);
+    try {
+      const response = await fetch('http://localhost:8000/api/ingredients/auto-fill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: formData.ingredient_name }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setFormData(prev => ({
+          ...prev,
+          inci_name: result.data.inci_name || '',
+          cas_number: result.data.cas_number || '',
+          odor_description: result.data.odor_description || '',
+          note_family: result.data.category || '',
+          volatility: result.data.volatility || '',
+          suggested_usage_level: result.data.suggested_usage_level || '',
+          stability: result.data.notes || '',
+        }));
+
+        if (result.data.synonyms) {
+          setSynonyms(result.data.synonyms);
+        }
+
+        alert('Success! Information auto-filled.');
+      } else {
+        alert('Could not find ingredient information');
+      }
+    } catch (err) {
+      console.error('Auto-fill failed:', err);
+      alert('Failed to auto-fill. Please enter details manually.');
+    } finally {
+      setIsAutoFilling(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.ingredient_name.trim()) {
       alert('Ingredient name is required');
       return;
@@ -50,7 +121,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
         ...formData,
         synonyms: synonyms.split(',').map(s => s.trim()).filter(s => s),
       });
-      
+
       setFormData({
         ingredient_name: '',
         inci_name: '',
@@ -65,7 +136,6 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
         perfume_applications: ['Fragrance'],
       });
       setSynonyms('');
-      onClose();
     } catch (err) {
       console.error('Failed to add ingredient:', err);
     }
@@ -81,7 +151,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           <button
             onClick={onClose}
             className="close-modal-btn"
-            disabled={loading}
+            disabled={loading || isAutoFilling}
           >
             ✕
           </button>
@@ -91,9 +161,21 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           {/* Basic Info */}
           <div className="form-section">
             <h3>Basic Information</h3>
-            
+
             <div className="form-group">
-              <label>Ingredient Name *</label>
+              <div className="form-group-header">
+                <label>Ingredient Name *</label>
+                {formData.ingredient_name.trim() && (
+                  <button
+                    type="button"
+                    onClick={handleAutoFill}
+                    disabled={isAutoFilling || loading}
+                    className="auto-fill-btn"
+                  >
+                    {isAutoFilling ? 'Auto-filling...' : 'Auto Fill Below Info'}
+                  </button>
+                )}
+              </div>
               <input
                 type="text"
                 name="ingredient_name"
@@ -140,7 +222,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           {/* Odor Info */}
           <div className="form-section">
             <h3>Odor Information</h3>
-            
+
             <div className="form-group">
               <label>Odor Description</label>
               <textarea
@@ -170,7 +252,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           {/* Usage Info */}
           <div className="form-section">
             <h3>Usage Information</h3>
-            
+
             <div className="form-group">
               <label>Suggested Usage Level</label>
               <input
@@ -197,7 +279,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           {/* Characteristics */}
           <div className="form-section">
             <h3>Characteristics</h3>
-            
+
             <div className="form-row">
               <div className="form-group">
                 <label>Stability</label>
@@ -247,14 +329,14 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
               type="button"
               onClick={onClose}
               className="btn-cancel"
-              disabled={loading}
+              disabled={loading || isAutoFilling}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="btn-submit"
-              disabled={loading}
+              disabled={loading || isAutoFilling}
             >
               {loading ? 'Adding...' : 'Add Ingredient'}
             </button>

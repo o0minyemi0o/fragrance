@@ -160,43 +160,100 @@ async def save_formula(
 @router.get("/accords")
 async def list_accords(db: Session = Depends(get_db)):
     """저장된 Accord 목록"""
-    try:
-        accords = db.query(Accord).all()
-        return {
-            "status": "success",
-            "count": len(accords),
-            "accords": [
-                {
-                    "id": a.id,
-                    "name": a.name,
-                    "type": a.accordion_type,
-                    "created_at": a.created_at.isoformat() if a.created_at else None
-                }
-                for a in accords
-            ]
-        }
-    except Exception as e:
-        logger.error(f"Accords 조회 실패: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+    accords = db.query(Accord).all()
+    return {
+        "count": len(accords),
+        "accords": [
+            {
+                "id": a.id,
+                "name": a.name,
+                "type": a.accordion_type,
+                "ingredients_count": len(a.ingredients_composition) if a.ingredients_composition else 0,
+                "created_at": a.created_at.isoformat() if a.created_at else None
+            }
+            for a in accords
+        ]
+    }
+
+@router.get("/accords/{id}")
+async def get_accord(id: int, db: Session = Depends(get_db)):
+    """특정 Accord 상세 조회"""
+    accord = db.query(Accord).filter(Accord.id == id).first()
+    if not accord:
+        raise HTTPException(status_code=404, detail="Accord not found")
+    
+    return {
+        "id": accord.id,
+        "name": accord.name,
+        "type": accord.accordion_type,
+        "description": accord.description,
+        "ingredients_composition": accord.ingredients_composition,
+        "longevity": accord.longevity,
+        "sillage": accord.sillage,
+        "llm_recommendation": accord.llm_recommendation,
+        "created_at": accord.created_at.isoformat() if accord.created_at else None
+    }
+
+@router.delete("/accords/{id}")
+async def delete_accord(id: int, db: Session = Depends(get_db)):
+    """Accord 삭제"""
+    accord = db.query(Accord).filter(Accord.id == id).first()
+    if not accord:
+        raise HTTPException(status_code=404, detail="Accord not found")
+    
+    db.delete(accord)
+    db.commit()
+    logger.info(f"Accord 삭제 완료: ID={id}")
+    
+    return {"status": "success", "message": f"Accord deleted"}
 
 @router.get("/formulas")
 async def list_formulas(db: Session = Depends(get_db)):
     """저장된 Formula 목록"""
-    try:
-        formulas = db.query(Formula).all()
-        return {
-            "status": "success",
-            "count": len(formulas),
-            "formulas": [
-                {
-                    "id": f.id,
-                    "name": f.name,
-                    "type": f.formula_type,
-                    "created_at": f.created_at.isoformat() if f.created_at else None
-                }
-                for f in formulas
-            ]
-        }
-    except Exception as e:
-        logger.error(f"Formulas 조회 실패: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+    formulas = db.query(Formula).all()
+    return {
+        "count": len(formulas),
+        "formulas": [
+            {
+                "id": f.id,
+                "name": f.name,
+                "type": f.formula_type,
+                "ingredients_count": len(f.ingredients_composition) if f.ingredients_composition else 0,
+                "created_at": f.created_at.isoformat() if f.created_at else None
+            }
+            for f in formulas
+        ]
+    }
+
+@router.get("/formulas/{id}")
+async def get_formula(id: int, db: Session = Depends(get_db)):
+    """특정 Formula 상세 조회"""
+    formula = db.query(Formula).filter(Formula.id == id).first()
+    if not formula:
+        raise HTTPException(status_code=404, detail="Formula not found")
+    
+    return {
+        "id": formula.id,
+        "name": formula.name,
+        "type": formula.formula_type,
+        "description": formula.description,
+        "ingredients_composition": formula.ingredients_composition,
+        "longevity": formula.longevity,
+        "sillage": formula.sillage,
+        "stability_notes": formula.stability_notes,
+        "llm_recommendation": formula.llm_recommendation,
+        "created_at": formula.created_at.isoformat() if formula.created_at else None
+    }
+
+@router.delete("/formulas/{id}")
+async def delete_formula(id: int, db: Session = Depends(get_db)):
+    """Formula 삭제"""
+    formula = db.query(Formula).filter(Formula.id == id).first()
+    if not formula:
+        raise HTTPException(status_code=404, detail="Formula not found")
+    
+    db.delete(formula)
+    db.commit()
+    logger.info(f"Formula 삭제 완료: ID={id}")
+    
+    return {"status": "success", "message": f"Formula deleted"}

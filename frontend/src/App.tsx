@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import './App.css';
 import FormulationMode from './components/FormulationMode';
 import LibraryView from './components/LibraryView';
+import IngredientManager from './components/IngredientManager';
 import { formulationApi } from './services/formulation-api';
 
 function App() {
-  const [currentTab, setCurrentTab] = useState<'generate' | 'accords' | 'formulas'>('generate');
+  const [currentTab, setCurrentTab] = useState<'generate' | 'ingredients' | 'accords' | 'formulas'>('generate');
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'accord' | 'formula'>('accord');
@@ -92,6 +93,12 @@ function App() {
              Generate 
           </button>
           <button
+            className={`nav-button ${currentTab === 'ingredients' ? 'active' : ''}`}
+            onClick={() => setCurrentTab('ingredients')}
+          >
+             Ingredients
+          </button>
+          <button
             className={`nav-button ${currentTab === 'accords' ? 'active' : ''}`}
             onClick={() => setCurrentTab('accords')}
           >
@@ -167,6 +174,10 @@ function App() {
               )}
 
             </>
+          )}
+
+          {currentTab === 'ingredients' && (
+            <IngredientManager /> 
           )}
 
           {currentTab === 'accords' && (

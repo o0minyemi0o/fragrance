@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import regulations, database_test, formulations  # ✗ recommendations 제거
+from app.routes import regulations, database_test, formulations, ingredients  
 from app.config import settings
 import logging
 
@@ -22,6 +22,7 @@ app.add_middleware(
 
 # 라우터 (recommendations 제거)
 app.include_router(formulations.router)
+app.include_router(ingredients.router) 
 app.include_router(regulations.router)
 app.include_router(database_test.router)
 

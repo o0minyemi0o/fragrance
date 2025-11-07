@@ -12,6 +12,7 @@ function App() {
   const [mode, setMode] = useState<'accord' | 'formula'>('accord');
   const [error, setError] = useState<string | null>(null);
   const [refreshLibrary, setRefreshLibrary] = useState(0);
+  const [libraryKey, setLibraryKey] = useState(0);
 
   const handleGenerate = async (selectedMode: 'accord' | 'formula', type: string) => {
     setMode(selectedMode);
@@ -38,6 +39,21 @@ function App() {
       setLoading(false);
     }
   };
+
+  const handleTabChange = (tab: 'generate' | 'ingredients' | 'accords' | 'formulas') => {
+  if (currentTab === 'generate' && tab !== 'generate') {
+    setResult(null);
+    setError(null);
+  }
+
+  // 같은 탭 다시 클릭하면 LibraryView 리셋
+  if ((tab === 'accords' && currentTab === 'accords') || 
+      (tab === 'formulas' && currentTab === 'formulas')) {
+    setLibraryKey(prev => prev + 1);
+  }
+
+  setCurrentTab(tab);
+};
 
   const handleSave = async () => {
     if (!result) return;
@@ -100,13 +116,13 @@ function App() {
           </button>
           <button
             className={`nav-button ${currentTab === 'accords' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('accords')}
+            onClick={() => handleTabChange('accords')}
           >
              Accords 
           </button>
           <button
             className={`nav-button ${currentTab === 'formulas' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('formulas')}
+            onClick={() => handleTabChange('formulas')}
           >
              Formulas 
           </button>
@@ -182,7 +198,7 @@ function App() {
 
           {currentTab === 'accords' && (
             <LibraryView 
-              key={refreshLibrary} 
+              key={libraryKey} 
               mode="accords"
               onRefresh={() => setRefreshLibrary(prev => prev + 1)}
             />
@@ -190,7 +206,7 @@ function App() {
 
           {currentTab === 'formulas' && (
             <LibraryView 
-              key={refreshLibrary} 
+              key={libraryKey} 
               mode="formulas"
               onRefresh={() => setRefreshLibrary(prev => prev + 1)}
             />

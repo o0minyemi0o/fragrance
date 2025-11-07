@@ -66,8 +66,8 @@ const IngredientManager: React.FC = () => {
     try {
       await formulationApi.addIngredient(data);
       alert('✓ Ingredient added successfully!');
-      await loadIngredients();
       setShowAddModal(false);
+      await loadIngredients();
     } catch (err) {
       console.error('Failed to add ingredient:', err);
       alert('Failed to add ingredient');
@@ -254,7 +254,7 @@ const IngredientManager: React.FC = () => {
       ) : (
         /* List View */
         <>
-          <h2>My Ingredients</h2>
+          <h2>My Ingredients ({ownedCount}/{ingredients.length})</h2>
 
           <div className="ingredient-header">
             <div className="ingredient-controls">

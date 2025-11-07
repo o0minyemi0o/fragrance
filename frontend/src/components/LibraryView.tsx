@@ -22,9 +22,11 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
   const [details, setDetails] = useState<any>(null);
   const [editMode, setEditMode] = useState(false);
   const [editData, setEditData] = useState<any>(null);
+  const [viewMode, setViewMode] = useState<'gallery' | 'detail'>('gallery');
 
   useEffect(() => {
     loadItems();
+    setViewMode('gallery');
   }, [mode]);
 
   const loadItems = async () => {
@@ -57,9 +59,17 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
       setEditData({ ...response });
       setSelectedId(id);
       setEditMode(false);
+      setViewMode('detail');
     } catch (err) {
       setError((err as Error).message);
     }
+  };
+
+  const backToGallery = () => {
+    setViewMode('gallery');
+    setDetails(null);
+    setSelectedId(null);
+    setEditMode(false);
   };
 
   const handleSaveEdit = async () => {
@@ -107,8 +117,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
       }
 
       alert('✓ 삭제되었습니다');
-      setDetails(null);
-      setSelectedId(null);
+      backToGallery();
       await loadItems();
       onRefresh?.();
     } catch (err) {
@@ -155,230 +164,250 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
 
   if (loading && items.length === 0) return <div className="library-view">로딩 중...</div>;
 
+  // 갤러리 뷰
+  if (viewMode === 'gallery') {
+    return (
+      <div className="library-view">
+        <h2>{mode === 'accords' ? 'My Accords' : 'My Formulas'}</h2>
+
+        {error && <div className="error-message">❌ {error}</div>}
+
+        {items.length === 0 ? (
+          <p className="empty-message">아직 저장한 항목이 없습니다.</p>
+        ) : (
+          <div className="library-gallery">
+            <div className="gallery-grid">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="gallery-card"
+                  onClick={() => loadDetails(item.id)}
+                >
+                  <div className="card-header">
+                    <h4>{item.name}</h4>
+                  </div>
+                  <div className="card-body">
+                    <p className="card-type">{item.type}</p>
+                    <p className="card-count">{item.ingredients_count} 성분</p>
+                  </div>
+                  <div className="card-footer">
+                    <span className="card-date">
+                      {new Date(item.created_at).toLocaleDateString('ko-KR')}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // 디테일 뷰
   return (
     <div className="library-view">
-      <h2>{mode === 'accords' ? 'My Accords' : 'My Formulas'}</h2>
+      <div className="detail-header">
+        <button
+          onClick={backToGallery}
+          className="back-btn"
+        >
+          ← Back
+        </button>
+        <h2>{details?.name}</h2>
+        <div style={{ width: '50px' }}></div>
+      </div>
 
       {error && <div className="error-message">❌ {error}</div>}
 
-      {items.length === 0 ? (
-        <p className="empty-message">아직 저장한 항목이 없습니다.</p>
-      ) : (
-        <div className="library-grid">
-          <div className="library-list">
-            <ul>
-              {items.map((item) => (
-                <li
-                  key={item.id}
-                  className={`library-item ${selectedId === item.id ? 'active' : ''}`}
-                  onClick={() => loadDetails(item.id)}
-                >
-                  <div className="item-name">{item.name}</div>
-                  <div className="item-type">{item.type}</div>
-                  <div className="item-count">{item.ingredients_count} 성분</div>
-                  <div className="item-date">
-                    {new Date(item.created_at).toLocaleDateString('ko-KR')}
-                  </div>
-                </li>
-              ))}
-            </ul>
+      {editMode ? (
+        <div className="detail-content edit-form">
+          <h3>
+            <input
+              type="text"
+              value={editData.name}
+              onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+              className="edit-input"
+            />
+          </h3>
+
+          <div className="form-group">
+            <label>Description</label>
+            <textarea
+              value={editData.description || ''}
+              onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+              className="edit-textarea"
+            />
           </div>
 
-          {details && selectedId && (
-            <div className="library-details">
-              {editMode ? (
-                <div className="edit-form">
-                  <h3>
-                    <input
-                      type="text"
-                      value={editData.name}
-                      onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                      className="edit-input"
-                    />
-                  </h3>
+          <div className="form-group">
+            <label>Longevity</label>
+            <input
+              type="text"
+              value={editData.longevity || ''}
+              onChange={(e) => setEditData({ ...editData, longevity: e.target.value })}
+              className="edit-input"
+            />
+          </div>
 
-                  <div className="form-group">
-                    <label>Description</label>
-                    <textarea
-                      value={editData.description || ''}
-                      onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                      className="edit-textarea"
-                    />
-                  </div>
+          <div className="form-group">
+            <label>Sillage</label>
+            <input
+              type="text"
+              value={editData.sillage || ''}
+              onChange={(e) => setEditData({ ...editData, sillage: e.target.value })}
+              className="edit-input"
+            />
+          </div>
 
-                  <div className="form-group">
-                    <label>Longevity</label>
-                    <input
-                      type="text"
-                      value={editData.longevity || ''}
-                      onChange={(e) => setEditData({ ...editData, longevity: e.target.value })}
-                      className="edit-input"
-                    />
-                  </div>
+          <div className="form-group">
+            <label>Recommendation</label>
+            <textarea
+              value={editData.llm_recommendation || ''}
+              onChange={(e) => setEditData({ ...editData, llm_recommendation: e.target.value })}
+              className="edit-textarea"
+            />
+          </div>
 
-                  <div className="form-group">
-                    <label>Sillage</label>
-                    <input
-                      type="text"
-                      value={editData.sillage || ''}
-                      onChange={(e) => setEditData({ ...editData, sillage: e.target.value })}
-                      className="edit-input"
-                    />
-                  </div>
+          <h4>Ingredients ({editData.ingredients_composition?.length || 0})</h4>
+          <div className="ingredients-editor">
+            <table className="edit-ingredients-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '30px' }}>#</th>
+                  <th>Name</th>
+                  <th style={{ width: '60px' }}>%</th>
+                  <th>Note/Role</th>
+                  <th style={{ width: '100px' }}>Order</th>
+                  <th style={{ width: '50px' }}>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {editData.ingredients_composition?.map((ing: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="index-cell">{idx + 1}</td>
+                    <td>
+                      <input
+                        type="text"
+                        value={ing.name}
+                        onChange={(e) => handleIngredientChange(idx, 'name', e.target.value)}
+                        className="edit-input-small"
+                        placeholder="Ingredient name"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        value={ing.percentage}
+                        onChange={(e) => handleIngredientChange(idx, 'percentage', parseFloat(e.target.value) || 0)}
+                        className="edit-input-small"
+                        placeholder="0"
+                        min="0"
+                        max="100"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={ing.note_type || ing.role || ''}
+                        onChange={(e) => handleIngredientChange(idx, 'note_type', e.target.value)}
+                        className="edit-input-small"
+                        placeholder="top/middle/base"
+                      />
+                    </td>
+                    <td>
+                      <div className="order-buttons">
+                        <button
+                          onClick={() => handleMoveIngredientUp(idx)}
+                          className="move-btn move-up"
+                          disabled={idx === 0}
+                          title="Move up"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={() => handleMoveIngredientDown(idx)}
+                          className="move-btn move-down"
+                          disabled={idx === editData.ingredients_composition.length - 1}
+                          title="Move down"
+                        >
+                          ↓
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => handleRemoveIngredient(idx)}
+                        className="remove-ingredient-btn"
+                        title="Delete this ingredient"
+                      >
+                        🗑
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-                  <div className="form-group">
-                    <label>Recommendation</label>
-                    <textarea
-                      value={editData.llm_recommendation || ''}
-                      onChange={(e) => setEditData({ ...editData, llm_recommendation: e.target.value })}
-                      className="edit-textarea"
-                    />
-                  </div>
+            <button onClick={handleAddIngredient} className="add-ingredient-btn">
+              + Add Ingredient
+            </button>
+          </div>
 
-                  <h4>Ingredients ({editData.ingredients_composition?.length || 0})</h4>
-                  <div className="ingredients-editor">
-                    <table className="edit-ingredients-table">
-                      <thead>
-                        <tr>
-                          <th style={{ width: '30px' }}>#</th>
-                          <th>Name</th>
-                          <th style={{ width: '60px' }}>%</th>
-                          <th>Note/Role</th>
-                          <th style={{ width: '100px' }}>Order</th>
-                          <th style={{ width: '50px' }}>Delete</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {editData.ingredients_composition?.map((ing: any, idx: number) => (
-                          <tr key={idx}>
-                            <td className="index-cell">{idx + 1}</td>
-                            <td>
-                              <input
-                                type="text"
-                                value={ing.name}
-                                onChange={(e) => handleIngredientChange(idx, 'name', e.target.value)}
-                                className="edit-input-small"
-                                placeholder="Ingredient name"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="number"
-                                value={ing.percentage}
-                                onChange={(e) => handleIngredientChange(idx, 'percentage', parseFloat(e.target.value) || 0)}
-                                className="edit-input-small"
-                                placeholder="0"
-                                min="0"
-                                max="100"
-                              />
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                value={ing.note_type || ing.role || ''}
-                                onChange={(e) => handleIngredientChange(idx, 'note_type', e.target.value)}
-                                className="edit-input-small"
-                                placeholder="top/middle/base"
-                              />
-                            </td>
-                            <td>
-                              <div className="order-buttons">
-                                <button
-                                  onClick={() => handleMoveIngredientUp(idx)}
-                                  className="move-btn move-up"
-                                  disabled={idx === 0}
-                                  title="Move up"
-                                >
-                                  ↑
-                                </button>
-                                <button
-                                  onClick={() => handleMoveIngredientDown(idx)}
-                                  className="move-btn move-down"
-                                  disabled={idx === editData.ingredients_composition.length - 1}
-                                  title="Move down"
-                                >
-                                  ↓
-                                </button>
-                              </div>
-                            </td>
-                            <td>
-                              <button
-                                onClick={() => handleRemoveIngredient(idx)}
-                                className="remove-ingredient-btn"
-                                title="Delete this ingredient"
-                              >
-                                🗑
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+          <div className="edit-buttons">
+            <button onClick={handleSaveEdit} className="save-btn">
+              ✓ Save
+            </button>
+            <button onClick={() => setEditMode(false)} className="cancel-btn">
+              ✕ Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="detail-content view-form">
+          <p><strong>Type:</strong> {details?.type}</p>
+          <p><strong>Description:</strong> {details?.description}</p>
 
-                    <button onClick={handleAddIngredient} className="add-ingredient-btn">
-                      + Add Ingredient
-                    </button>
-                  </div>
+          <h4>Ingredients ({details?.ingredients_composition?.length || 0})</h4>
+          <table className="ingredients-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>%</th>
+                <th>Note/Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              {details?.ingredients_composition?.map((ing: any, idx: number) => (
+                <tr key={idx}>
+                  <td>{idx + 1}</td>
+                  <td>{ing.name}</td>
+                  <td>{ing.percentage}%</td>
+                  <td>{ing.note_type || ing.role || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-                  <div className="edit-buttons">
-                    <button onClick={handleSaveEdit} className="save-btn">
-                      ✓ Save
-                    </button>
-                    <button onClick={() => setEditMode(false)} className="cancel-btn">
-                      ✕ Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="view-form">
-                  <h3>{details.name}</h3>
-                  <p><strong>Type:</strong> {details.type}</p>
-                  <p><strong>Description:</strong> {details.description}</p>
+          <div className="details-info">
+            <p><strong>Longevity:</strong> {details?.longevity}</p>
+            <p><strong>Sillage:</strong> {details?.sillage}</p>
+            {details?.stability_notes && (
+              <p><strong>Stability:</strong> {details?.stability_notes}</p>
+            )}
+            <p><strong>Recommendation:</strong> {details?.llm_recommendation}</p>
+            <p><strong>Created:</strong> {new Date(details?.created_at).toLocaleString('ko-KR')}</p>
+          </div>
 
-                  <h4>Ingredients ({details.ingredients_composition?.length || 0})</h4>
-                  <table className="ingredients-table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>%</th>
-                        <th>Note/Role</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {details.ingredients_composition?.map((ing: any, idx: number) => (
-                        <tr key={idx}>
-                          <td>{idx + 1}</td>
-                          <td>{ing.name}</td>
-                          <td>{ing.percentage}%</td>
-                          <td>{ing.note_type || ing.role || '-'}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-
-                  <div className="details-info">
-                    <p><strong>Longevity:</strong> {details.longevity}</p>
-                    <p><strong>Sillage:</strong> {details.sillage}</p>
-                    {details.stability_notes && (
-                      <p><strong>Stability:</strong> {details.stability_notes}</p>
-                    )}
-                    <p><strong>Recommendation:</strong> {details.llm_recommendation}</p>
-                    <p><strong>Created:</strong> {new Date(details.created_at).toLocaleString('ko-KR')}</p>
-                  </div>
-
-                  <div className="action-buttons">
-                    <button onClick={() => setEditMode(true)} className="edit-btn">
-                      ✏️ Edit
-                    </button>
-                    <button onClick={handleDelete} className="delete-btn">
-                      🗑 Delete
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="action-buttons">
+            <button onClick={() => setEditMode(true)} className="edit-btn">
+              ✏️ Edit
+            </button>
+            <button onClick={handleDelete} className="delete-btn">
+              🗑 Delete
+            </button>
+          </div>
         </div>
       )}
     </div>

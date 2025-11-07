@@ -122,20 +122,6 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
         synonyms: synonyms.split(',').map(s => s.trim()).filter(s => s),
       });
 
-      setFormData({
-        ingredient_name: '',
-        inci_name: '',
-        cas_number: '',
-        odor_description: '',
-        suggested_usage_level: '',
-        note_family: 'Top',
-        max_usage_percentage: 2,
-        stability: 'Good',
-        tenacity: 'Medium',
-        volatility: 'Medium',
-        perfume_applications: ['Fragrance'],
-      });
-      setSynonyms('');
     } catch (err) {
       console.error('Failed to add ingredient:', err);
     }
@@ -182,6 +168,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 value={formData.ingredient_name}
                 onChange={(e) => setFormData(prev => ({ ...prev, ingredient_name: e.target.value }))}
                 placeholder="e.g., Rose Absolute"
+                autoComplete="off"
                 onKeyPress={(e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -199,6 +186,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 value={formData.inci_name}
                 onChange={handleChange}
                 placeholder="e.g., Rosa damascena Flower Extract"
+                autoComplete="off"
               />
             </div>
 
@@ -210,6 +198,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 value={formData.cas_number}
                 onChange={handleChange}
                 placeholder="e.g., 8007-01-0"
+                autoComplete="off"
               />
             </div>
 
@@ -220,6 +209,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 value={synonyms}
                 onChange={(e) => setSynonyms(e.target.value)}
                 placeholder="e.g., Rose Oil, Rose Extract"
+                autoComplete="off"
               />
             </div>
           </div>
@@ -235,6 +225,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 value={formData.odor_description}
                 onChange={handleChange}
                 placeholder="e.g., Deep floral, honeyed, slightly spicy"
+                autoComplete="off"
                 rows={3}
               />
             </div>
@@ -266,6 +257,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
                 value={formData.suggested_usage_level}
                 onChange={handleChange}
                 placeholder="e.g., 0.1-1%"
+                autoComplete="off"
               />
             </div>
 

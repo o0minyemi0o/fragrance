@@ -194,11 +194,27 @@ body {
   background: #5a7a1f;  /* ✅ 호버 시 더 어두운 올리브색 */
 }
 
-.submit-button:disabled,
+.save-button {
+  padding: 12px 30px;
+  background: var(--secondary-color);  
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-button:hover:not(:disabled) {
+  background: #5a7a1f;
+}
+
 .save-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
 
 .edit-btn,
 .save-btn {
@@ -462,14 +478,14 @@ body {
   text-align: left;
   border-bottom: 1px solid #ddd;
   background: #f8f9fa;
-  color:#333;
+  color:#666;
 }
 
 .ingredients-table th,
 .edit-ingredients-table th {
   background: #f8f9fa;
   font-weight: 600;
-  color: #333;
+  color: #666;
 }
 
 .edit-ingredients-table tbody tr:hover {
@@ -479,7 +495,7 @@ body {
 .index-cell {
   text-align: center;
   font-weight: 600;
-  color: #333;
+  color: #666;
   background: #f8f9fa;
   width: 30px;
 }
@@ -587,13 +603,7 @@ body {
   }
 }
 
-/* ===== 포커스 스타일 ===== */
-button:focus,
-input:focus,
-textarea:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
+
 
 /* ===== 스크롤바 ===== */
 .library-list::-webkit-scrollbar,
@@ -899,12 +909,12 @@ textarea:focus {
 }
 
 .ingredient-card:hover {
-  border-color: var(--primary-color);
   box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
 }
 
 .ingredient-card.owned {
-  background: linear-gradient(135deg, rgba(139, 115, 85, 0.05) 0%, rgba(107, 142, 35, 0.05) 100%);
   border-color: var(--secondary-color);
 }
 
@@ -1039,12 +1049,20 @@ textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  color: var(--primary-color);
+  padding: 0px 10px;
 }
 
 .detail-content p {
   margin: 0;
   font-size: 0.95rem;
   color: #666;
+}
+
+.detail-content p strong {
+  color: var(--primary-color);  /* 라벨: 올리브색 */
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 .detail-checkbox {
@@ -1113,8 +1131,8 @@ textarea:focus {
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  border-radius: 0;
+  background: var(--primary-color);
+  border-radius: 6px;
   color: white;
   position: sticky;
   top: 0;
@@ -1532,4 +1550,120 @@ textarea:focus {
   gap: 8px;
   cursor: pointer;
   font-weight: 500;
+}
+
+
+/* 갤러리 섹션 */
+.library-gallery {
+  flex: 1;
+  min-width: 0;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.gallery-card {
+  border: 2px solid var(--secondary-color);
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gallery-card:hover {
+  box-shadow: 0 4px 12px rgba(164, 172, 134, 0.2);
+  transform: translateY(-2px);
+}
+
+.gallery-card.active {
+  border-color: #8b9d6e;
+  background: #f9faf6;
+  box-shadow: 0 4px 12px rgba(139, 157, 110, 0.25);
+}
+
+.card-header {
+  margin-bottom: 12px;
+}
+
+.card-header h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d2d2d;
+  word-break: break-word;
+}
+
+.card-body {
+  margin-bottom: 12px;
+}
+
+.card-type {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+.card-count {
+  margin: 4px 0;
+  font-size: 13px;
+  color: #999;
+}
+
+.card-footer {
+  border-top: 1px solid #e8e8e8;
+  padding-top: 8px;
+}
+
+.card-date {
+  font-size: 12px;
+  color: #999;
+}
+
+
+/* LibraryView 전용 */
+.library-view .detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: var(--primary-color);
+  border-radius: 6px;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.library-view .detail-header h2 {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  color: white;
+  font-size: 1.3rem;
+}
+
+.library-view .detail-header .back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid white;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.library-view .detail-header .back-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

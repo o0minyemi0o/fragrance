@@ -188,13 +188,9 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                   </div>
                   <div className="card-body">
                     <p className="card-type">{item.type}</p>
-                    <p className="card-count">{item.ingredients_count} 성분</p>
+                    <p className="card-count">{item.ingredients_count} ingredients</p>
                   </div>
-                  <div className="card-footer">
-                    <span className="card-date">
-                      {new Date(item.created_at).toLocaleDateString('ko-KR')}
-                    </span>
-                  </div>
+
                 </div>
               ))}
             </div>
@@ -391,12 +387,12 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
           </table>
 
           <div className="details-info">
-            <p><strong>Longevity:</strong> {details?.longevity}</p>
-            <p><strong>Sillage:</strong> {details?.sillage}</p>
+            <p style={{ marginBottom: '12px' }}><strong>Longevity:</strong> {details?.longevity}</p>
+            <p style={{ marginBottom: '12px' }}><strong>Sillage:</strong> {details?.sillage}</p>
             {details?.stability_notes && (
               <p><strong>Stability:</strong> {details?.stability_notes}</p>
             )}
-            <p><strong>Recommendation:</strong> {details?.llm_recommendation}</p>
+            <p style={{ marginBottom: '12px' }}><strong>Recommendation:</strong> {details?.llm_recommendation}</p>
             <p><strong>Created:</strong> {new Date(details?.created_at).toLocaleString('ko-KR')}</p>
           </div>
 

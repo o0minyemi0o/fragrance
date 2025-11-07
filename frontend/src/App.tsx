@@ -140,13 +140,20 @@ function App() {
               )}
               {result && (
                 <div className="result-card">
-                  <h2>✨ Generated {mode === 'accord' ? 'Accord' : 'Formula'}</h2>
                   
-                  <h3 style={{ color: '#333' }}>{result.name}</h3>
-                  <p><strong>Type:</strong> {result.type}</p>
-                  <p><strong>Description:</strong> {result.description}</p>
+                  <h2 style={{ color: '#85933e' }}>{result.name}</h2>
+                  <p>
+                    <strong style={{ color: 'var(--primary-color)' }}>Type: </strong> 
+                    <span style={{ color: '#666' }}>{result.type}</span>
+                  </p>
+                  <p>
+                    <strong style={{ color: 'var(--primary-color)' }}>Description: </strong> 
+                    <span style={{ color: '#666' }}>{result.description}</span>
+                  </p>
+                  <div style={{ marginBottom: '13px' }}></div>
+
                   
-                  <h4 style={{ color: '#333' }}>Ingredients ({result.ingredients?.length || 0})</h4>
+                  <h4 style={{ color: 'var(--primary-color)' }}>Ingredients ({result.ingredients?.length || 0})</h4>
                   <table className="edit-ingredients-table">
                     <thead>
                       <tr>
@@ -161,7 +168,7 @@ function App() {
                         <tr key={idx}>
                           <td className="index-cell">{idx + 1}</td>
                           <td><strong>{ing.name}</strong></td>
-                          <td style={{ textAlign: 'center', fontWeight: '600', color: '#333' }}>
+                          <td style={{ textAlign: 'center', fontWeight: '600', color: '#666' }}>
                             {ing.percentage}%
                           </td>
                           <td>{ing.note_type || ing.role || '-'}</td>
@@ -171,12 +178,22 @@ function App() {
                   </table>
                   
                   <div className="result-details">
-                    <p><strong>Longevity:</strong> {result.longevity}</p>
-                    <p><strong>Sillage:</strong> {result.sillage}</p>
+                    <p>
+                      <strong style={{ color: 'var(--primary-color)' }}>Longevity: </strong> 
+                      <span style={{ color: '#666' }}>{result.longevity}</span>
+                    </p>
+                    <p>
+                      <strong style={{ color: 'var(--primary-color)' }}>Sillage: </strong> 
+                      <span style={{ color: '#666' }}>{result.sillage}</span>
+                    </p>
                     {result.stability_notes && (
-                      <p><strong>Stability:</strong> {result.stability_notes}</p>
+                      <p><strong style={{ color: 'var(--primary-color)' }}>Stability:</strong> {result.stability_notes}</p>
                     )}
-                    <p><strong>Recommendation:</strong> {result.recommendation}</p>
+                    <p>
+                      <strong style={{ color: 'var(--primary-color)' }}>Recommendation: </strong> 
+                      <span style={{ color: '#666' }}>{result.recommendation}</span>
+                    </p>
+
                   </div>
 
                   <button 

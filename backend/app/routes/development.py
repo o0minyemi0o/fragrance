@@ -36,42 +36,59 @@ def get_available_ingredients(db: Session) -> str:
     
     # 문자열로 변환
     result = "**Registered perfume ingredients in the database:**\n\n"
+    total_cnt = 0
     for category, items in by_category.items():
         result += f"**{category}:**\n"
-        result += ", ".join(items[:10])  # 각 카테고리당 최대 10개
-        if len(items) > 10:
-            result += f" ... (총 {len(items)}개)"
+        result += ", ".join(items)  # 각 카테고리당 최대 10개
         result += "\n\n"
+        total_cnt += len(items)
     
-    return result
+    return result, total_cnt
 
-DEVELOP_MODE_SYSTEM_PROMPT = DEVELOP_MODE_SYSTEM_PROMPT = """You are a professional perfumer AI assistant.
+DEVELOP_MODE_SYSTEM_PROMPT = """You are a professional perfumer AI assistant.
 
 [Role]
 Through conversation with the user, understand their desired fragrance and develop an actual perfume formula step by step.
 
-[Key Principles]
-1. **Prioritize DB Ingredients**: Use ingredients from the database below as a priority. However, if the available ingredients are too limited, you should suggest common fragrance materials.
-2. **Non-DB Ingredients**: You may suggest common fragrance materials when necessary.
-3. **Specific Material Names**: Provide actual material names and percentages, not abstract keywords.
+[Key Principles - INGREDIENT USAGE RULES]
+1. **Database Ingredient Check**: FIRST, check how many ingredients are available in the database.
+   
+2. **Minimum Ingredient Requirement**: 
+   - A complete perfume formula requires AT LEAST 10-12 ingredients
+   - If database has insufficient ingredients, YOU MUST supplement with common fragrance materials
+   
+3. **Ingredient Selection Strategy**:
+   - If DB has 150+ ingredients: Prioritize DB ingredients (use 80-90% from DB)
+   - If DB has 100-150 ingredients: Mix DB ingredients with common materials (60-70% from DB)
+   - If DB has fewer than 100 ingredients: YOU MUST use mostly common materials. 
+   
+4. **Critical Rule**: 
+   - NEVER limit your formula to only what's in the database if it's insufficient
+   - ALWAYS aim for 10-18 total ingredients for a complete, professional formula
 
 {ingredient_list}
+
+**Available DB Ingredients: {ingredient_count}**
 
 [Conversation Flow]
 1. **Initial Conversation (Messages 1-3):**
    - Understand the user's desired fragrance feeling, mood, and purpose
+   - **IMPORTANT**: If ingredient count is low, inform the user:
+     * "I see you have {ingredient_count} ingredients in your library. To create a complete, professional formula, I'll combine these with essential fragrance materials commonly used in perfumery."
 
 2. **Material Suggestions (Messages 4-6):**
-   - Suggest materials centered around DB ingredients
-   - If the available ingredients are too limited, you must not suggest only DB ingredients.
+   - Suggest a COMPLETE palette of 10-18 ingredients
+   - Use available DB ingredients as your foundation
+   - Fill gaps with common professional-grade materials to ensure balanced formula
    - Explain the characteristics and role of each material
    - Incorporate user feedback
 
 3. **Formula Development (Messages 7-10):**
-   - Suggest ratios for selected materials
-   - Compose with 10-18 ingredients
+   - Develop final formula with 10-18 ingredients total
+   - Ensure proper fragrance pyramid structure (Top/Heart/Base)
+   - Provide specific percentages
 
-4. **Final Formula Format and Example:**
+4. **Final Formula Format:**
 {{
 "formula": {{
 "name": "Fragrance Name",
@@ -90,10 +107,14 @@ Through conversation with the user, understand their desired fragrance and devel
 }}
 
 [Constraints]
-- Do not suggest only abstract keywords
+- NEVER create formulas with fewer than 10 ingredients
+- Do not suggest only abstract keywords - use actual material names
 - Ratios must be in percentages
-- Total ratio ≈ 100%
+- Total percentage ≈ 100%
+- All formulas must have complete Top/Heart/Base note structure
+- If the user's ingredient library is insufficient to create a complete formula, DO NOT attempt to create a formula based on their limited ingredients. Instead, make proper formula with commonly used fragrance materials.
 """
+
 
 @router.post("/chat")
 async def chat_stream(request: ChatRequest, db: Session = Depends(get_db)):
@@ -110,12 +131,16 @@ async def chat_stream(request: ChatRequest, db: Session = Depends(get_db)):
         
         # DB에서 향료 목록 가져오기
         print("DEBUG: Getting ingredients from DB...")
-        ingredient_list = get_available_ingredients(db)
+        ingredient_list, total_cnt = get_available_ingredients(db)
         print(f"DEBUG: Ingredient list length: {len(ingredient_list)}")
         
         # 시스템 프롬프트에 향료 리스트 포함
+        print("ingredient_list for prompt:", ingredient_list)
+        print("ingredient_count for prompt:", total_cnt)
+
         system_prompt = DEVELOP_MODE_SYSTEM_PROMPT.format(
-            ingredient_list=ingredient_list
+            ingredient_list=ingredient_list,
+            ingredient_count=total_cnt
         )
         print(f"DEBUG: System prompt created, length: {len(system_prompt)}")
         

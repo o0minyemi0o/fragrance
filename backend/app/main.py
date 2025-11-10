@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import regulations, database_test, formulations, ingredients  
+from app.routes import regulations, database_test, formulations, ingredients, development
 from app.config import settings
 import logging
 
@@ -20,11 +20,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 라우터 (recommendations 제거)
 app.include_router(formulations.router)
 app.include_router(ingredients.router) 
 app.include_router(regulations.router)
 app.include_router(database_test.router)
+app.include_router(development.router)
 
 @app.get("/health")
 async def health_check():
@@ -41,6 +41,7 @@ async def root():
             "formula_generate": "POST /api/formulations/formula/generate",
             "formula_save": "POST /api/formulations/formula/save",
             "accords_list": "GET /api/formulations/accords",
-            "formulas_list": "GET /api/formulations/formulas"
+            "formulas_list": "GET /api/formulations/formulas",
+            "development_chat": "POST /api/development/chat"
         }
     }

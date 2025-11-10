@@ -104,4 +104,33 @@ Return JSON:
             logger.error(f"Formula 생성 실패: {e}", exc_info=True)
             raise
 
+    
+    async def stream_chat(self, messages: list, system_prompt: str):
+        """채팅 스트리밍 생성"""
+        # 시스템 프롬프트를 첫 메시지에 포함
+        chat_history = []
+        
+        if messages:
+            first_message = f"{system_prompt}\n\n사용자 요청: {messages[0]['content']}"
+            chat_history.append({
+                "role": "user",
+                "parts": [{"text": first_message}]
+            })
+            
+            for msg in messages[1:]:
+                role = "model" if msg['role'] == "assistant" else "user"
+                chat_history.append({
+                    "role": role,
+                    "parts": [{"text": msg['content']}]
+                })
+        
+        response = self.client.models.generate_content_stream(
+            model="gemini-2.0-flash-exp",
+            contents=chat_history
+        )
+        
+        for chunk in response:
+            if chunk.text:
+                yield chunk.text
+
 llm_service = LLMService()

@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import DevelopMode from './DevelopMode';
 
+interface FormulaData {
+  name: string;
+  totalIngredients: number;
+  ingredients: Array<{
+    name: string;
+    percentage: number;
+    role: string;
+  }>;
+}
+
 interface Props {
   onGenerate: (mode: 'accord' | 'formula', type: string) => void;
   loading: boolean;
+  onExportFormula?: (formula: FormulaData) => void;
 }
 
-const FormulationMode: React.FC<Props> = ({ onGenerate, loading }) => {
+const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula }) => {
   const [mode, setMode] = useState<'accord' | 'formula' | 'develop'>('accord');
   const [input, setInput] = useState('');
 
@@ -48,12 +59,12 @@ const FormulationMode: React.FC<Props> = ({ onGenerate, loading }) => {
             onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
             disabled={loading}
           />
-          Develop Mode (AI Conversation)
+          Develop Mode (Conversation)
         </label>
       </div>
 
       {mode === 'develop' ? (
-        <DevelopMode />
+        <DevelopMode onExportFormula={onExportFormula} />
       ) : (
         <form onSubmit={handleSubmit} className="formulation-form">
           <div className="form-group">

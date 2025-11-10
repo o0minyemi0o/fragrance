@@ -5,6 +5,16 @@ import LibraryView from './components/LibraryView';
 import IngredientManager from './components/IngredientManager';
 import { formulationApi } from './services/formulation-api';
 
+interface FormulaData {
+  name: string;
+  totalIngredients: number;
+  ingredients: Array<{
+    name: string;
+    percentage: number;
+    role: string;
+  }>;
+}
+
 function App() {
   const [currentTab, setCurrentTab] = useState<'generate' | 'ingredients' | 'accords' | 'formulas'>('generate');
   const [result, setResult] = useState<any>(null);
@@ -40,20 +50,44 @@ function App() {
     }
   };
 
+  // Develop Mode에서 내보내기 처리
+  const handleExportFormula = (formula: FormulaData) => {
+    console.log('Formula exported from Develop Mode:', formula);
+    
+    // AI 포뮬러를 result 형식으로 변환
+    const convertedResult = {
+      name: formula.name,
+      type: '',
+      description: '',
+      ingredients: formula.ingredients.map(ing => ({
+        name: ing.name,
+        percentage: ing.percentage,
+        note_type: ing.role.replace('_', ' '),
+        role: ing.role
+      })),
+      longevity: '', // 기본값
+      sillage: '', // 기본값
+      recommendation: '',
+    };
+
+    setResult(convertedResult);
+    setMode('formula');
+    alert(`✓ "${formula.name}" 포뮬러를 불러왔습니다!`);
+  };
+
   const handleTabChange = (tab: 'generate' | 'ingredients' | 'accords' | 'formulas') => {
-  if (currentTab === 'generate' && tab !== 'generate') {
-    setResult(null);
-    setError(null);
-  }
+    if (currentTab === 'generate' && tab !== 'generate') {
+      setResult(null);
+      setError(null);
+    }
 
-  // 같은 탭 다시 클릭하면 LibraryView 리셋
-  if ((tab === 'accords' && currentTab === 'accords') || 
-      (tab === 'formulas' && currentTab === 'formulas')) {
-    setLibraryKey(prev => prev + 1);
-  }
+    if ((tab === 'accords' && currentTab === 'accords') || 
+        (tab === 'formulas' && currentTab === 'formulas')) {
+      setLibraryKey(prev => prev + 1);
+    }
 
-  setCurrentTab(tab);
-};
+    setCurrentTab(tab);
+  };
 
   const handleSave = async () => {
     if (!result) return;
@@ -131,7 +165,12 @@ function App() {
         <main className="App-main">
           {currentTab === 'generate' && (
             <>
-              <FormulationMode onGenerate={handleGenerate} loading={loading} />
+              {/* onExportFormula prop 전달 */}
+              <FormulationMode 
+                onGenerate={handleGenerate} 
+                loading={loading}
+                onExportFormula={handleExportFormula}
+              />
 
               {error && (
                 <div className="error-message">
@@ -140,7 +179,6 @@ function App() {
               )}
               {result && (
                 <div className="result-card">
-                  
                   <h2 style={{ color: '#85933e' }}>{result.name}</h2>
                   <p>
                     <strong style={{ color: 'var(--primary-color)' }}>Type: </strong> 
@@ -152,7 +190,6 @@ function App() {
                   </p>
                   <div style={{ marginBottom: '13px' }}></div>
 
-                  
                   <h4 style={{ color: 'var(--primary-color)' }}>Ingredients ({result.ingredients?.length || 0})</h4>
                   <table className="edit-ingredients-table">
                     <thead>
@@ -193,7 +230,6 @@ function App() {
                       <strong style={{ color: 'var(--primary-color)' }}>Recommendation: </strong> 
                       <span style={{ color: '#666' }}>{result.recommendation}</span>
                     </p>
-
                   </div>
 
                   <button 
@@ -205,7 +241,6 @@ function App() {
                   </button>
                 </div>
               )}
-
             </>
           )}
 

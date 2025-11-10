@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DevelopMode from './DevelopMode';
 
 interface Props {
   onGenerate: (mode: 'accord' | 'formula', type: string) => void;
@@ -6,25 +7,25 @@ interface Props {
 }
 
 const FormulationMode: React.FC<Props> = ({ onGenerate, loading }) => {
-  const [mode, setMode] = useState<'accord' | 'formula'>('accord');
+  const [mode, setMode] = useState<'accord' | 'formula' | 'develop'>('accord');
   const [input, setInput] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
+    if (input.trim() && mode !== 'develop') {
       onGenerate(mode, input.trim());
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="formulation-form">
+    <div>
       <div className="mode-selector">
         <label>
           <input
             type="radio"
             value="accord"
             checked={mode === 'accord'}
-            onChange={(e) => setMode(e.target.value as 'accord')}
+            onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
             disabled={loading}
           />
           Accord Mode (Simple & Clear)
@@ -34,34 +35,50 @@ const FormulationMode: React.FC<Props> = ({ onGenerate, loading }) => {
             type="radio"
             value="formula"
             checked={mode === 'formula'}
-            onChange={(e) => setMode(e.target.value as 'formula')}
+            onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
             disabled={loading}
           />
           Formula Mode (Complete Product)
         </label>
-      </div>
-
-      <div className="form-group">
         <label>
-          {mode === 'accord' ? 'Accord Type' : 'Formula Type'}:
+          <input
+            type="radio"
+            value="develop"
+            checked={mode === 'develop'}
+            onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
+            disabled={loading}
+          />
+          Develop Mode (AI Conversation)
         </label>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder={
-            mode === 'accord'
-              ? 'e.g., Pineapple Accord'
-              : 'e.g., White Floral Soap Type Formula'
-          }
-          disabled={loading}
-        />
       </div>
 
-      <button type="submit" disabled={loading} className="submit-button">
-        {loading ? 'Generating...' : 'Generate'}
-      </button>
-    </form>
+      {mode === 'develop' ? (
+        <DevelopMode />
+      ) : (
+        <form onSubmit={handleSubmit} className="formulation-form">
+          <div className="form-group">
+            <label>
+              {mode === 'accord' ? 'Accord Type' : 'Formula Type'}:
+            </label>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={
+                mode === 'accord'
+                  ? 'e.g., Pineapple Accord'
+                  : 'e.g., White Floral Soap Type Formula'
+              }
+              disabled={loading}
+            />
+          </div>
+
+          <button type="submit" disabled={loading} className="submit-button">
+            {loading ? 'Generating...' : 'Generate'}
+          </button>
+        </form>
+      )}
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DevelopMode from './DevelopMode';
 
 interface FormulaData {
@@ -15,11 +15,18 @@ interface Props {
   onGenerate: (mode: 'accord' | 'formula', type: string) => void;
   loading: boolean;
   onExportFormula?: (formula: FormulaData) => void;
+  onModeChange?: () => void;
 }
 
-const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula }) => {
+const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula, onModeChange }) => {
   const [mode, setMode] = useState<'accord' | 'formula' | 'develop'>('accord');
   const [input, setInput] = useState('');
+
+  useEffect(() => {
+    setInput('');
+    onModeChange?.();
+  }, [mode]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +71,7 @@ const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula
       </div>
 
       {mode === 'develop' ? (
-        <DevelopMode onExportFormula={onExportFormula} />
+        <DevelopMode key={mode} onExportFormula={onExportFormula} />
       ) : (
         <form onSubmit={handleSubmit} className="formulation-form">
           <div className="form-group">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import './App.css';
 import FormulationMode from './components/FormulationMode';
 import LibraryView from './components/LibraryView';
@@ -15,6 +15,8 @@ interface FormulaData {
   }>;
 }
 
+
+
 function App() {
   const [currentTab, setCurrentTab] = useState<'generate' | 'ingredients' | 'accords' | 'formulas'>('generate');
   const [result, setResult] = useState<any>(null);
@@ -23,6 +25,10 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [refreshLibrary, setRefreshLibrary] = useState(0);
   const [libraryKey, setLibraryKey] = useState(0);
+  const handleModeChange = useCallback(() => {
+    setResult(null);
+    setError(null);
+  }, []);
 
   const handleGenerate = async (selectedMode: 'accord' | 'formula', type: string) => {
     setMode(selectedMode);
@@ -138,13 +144,13 @@ function App() {
         <nav className="app-nav">
           <button
             className={`nav-button ${currentTab === 'generate' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('generate')}
+            onClick={() => handleTabChange('generate')}
           >
              Generate 
           </button>
           <button
             className={`nav-button ${currentTab === 'ingredients' ? 'active' : ''}`}
-            onClick={() => setCurrentTab('ingredients')}
+            onClick={() => handleTabChange('ingredients')}
           >
              Ingredients
           </button>
@@ -170,6 +176,7 @@ function App() {
                 onGenerate={handleGenerate} 
                 loading={loading}
                 onExportFormula={handleExportFormula}
+                onModeChange={handleModeChange}
               />
 
               {error && (

@@ -297,7 +297,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                         type="number"
                         value={ing.percentage}
                         onChange={(e) => handleIngredientChange(idx, 'percentage', parseFloat(e.target.value) || 0)}
-                        className="edit-input-small"
+                        className="edit-input-small-percentage"
                         placeholder="0"
                         min="0"
                         max="100"

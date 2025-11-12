@@ -248,7 +248,7 @@
   box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
 }
 
-.edit-input-small {
+.edit-input-small, .edit-input-small-percentage {
   width: 100%;
   padding: 6px;
   border: 1px solid #ddd;
@@ -256,6 +256,10 @@
   font-size: 0.9rem;
   transition: all 0.3s;
 }
+.edit-input-small-percentage {
+  width: 60px;
+}
+
 
 .edit-input-small:focus {
   outline: none;

@@ -48,6 +48,17 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
         # 모든 빈 문자열을 None으로 변환
         def to_null_if_empty(val):
             return None if val == '' or val is None else val
+
+        # % 제거하고 숫자만 파싱
+        def parse_float_or_none(val):
+            if val is None or val == '':
+                return None
+            try:
+                # "0.5%", "Not Available" 등 처리
+                cleaned = str(val).replace('%', '').strip()
+                return float(cleaned)
+            except (ValueError, TypeError):
+                return None
         
         new_ingredient = Ingredient(
             ingredient_name=data.get("ingredient_name"),
@@ -57,7 +68,7 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
             odor_description=to_null_if_empty(data.get("odor_description")),
             note_family=to_null_if_empty(data.get("note_family")),
             suggested_usage_level=to_null_if_empty(data.get("suggested_usage_level")),
-            max_usage_percentage=data.get("max_usage_percentage"),
+            max_usage_percentage=parse_float_or_none(data.get("max_usage_percentage")),
             stability=to_null_if_empty(data.get("stability")),
             tenacity=to_null_if_empty(data.get("tenacity")),
             volatility=to_null_if_empty(data.get("volatility")),

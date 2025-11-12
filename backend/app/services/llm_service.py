@@ -104,7 +104,6 @@ Return JSON:
             logger.error(f"Formula 생성 실패: {e}", exc_info=True)
             raise
 
-    
     async def stream_chat(self, messages: list, system_prompt: str):
         """채팅 스트리밍 생성"""
         # 시스템 프롬프트를 첫 메시지에 포함

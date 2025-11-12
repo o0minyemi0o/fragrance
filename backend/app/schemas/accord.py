@@ -1,13 +1,13 @@
 from sqlalchemy import Column, Integer, String, Float, Text, DateTime, JSON
 from sqlalchemy.sql import func
-from app.models import Base
+from app.schemas import Base
 
 class Accord(Base):
     __tablename__ = "accords"
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), unique=True, index=True, nullable=False)
-    accordion_type = Column(String(100), nullable=True)  # "Pineapple", "Floral", etc.
+    accord_type = Column(String(100), nullable=True)  # "Pineapple", "Floral", etc.
     description = Column(Text, nullable=True)
     
     # 원료 구성 (JSON 형식)

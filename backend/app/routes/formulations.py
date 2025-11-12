@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.models.accord import Accord
-from app.models.formula import Formula
+from app.database.database import get_db
+from app.schemas.accord import Accord
+from app.schemas.formula import Formula
 from app.services.llm_service import llm_service
 import logging
 
@@ -57,7 +57,7 @@ async def save_accord(
         
         accord = Accord(
             name=name,
-            accordion_type=accord_type,  # DB 컬럼명은 accordion_type 유지
+            accord_type=accord_type,
             description=description,
             ingredients_composition=ingredients_composition,
             total_percentage=100.0,
@@ -167,7 +167,7 @@ async def list_accords(db: Session = Depends(get_db)):
             {
                 "id": a.id,
                 "name": a.name,
-                "type": a.accordion_type,
+                "type": a.accord_type,
                 "ingredients_count": len(a.ingredients_composition) if a.ingredients_composition else 0,
                 "created_at": a.created_at.isoformat() if a.created_at else None
             }
@@ -185,7 +185,7 @@ async def get_accord(id: int, db: Session = Depends(get_db)):
     return {
         "id": accord.id,
         "name": accord.name,
-        "type": accord.accordion_type,
+        "type": accord.accord_type,
         "description": accord.description,
         "ingredients_composition": accord.ingredients_composition,
         "longevity": accord.longevity,

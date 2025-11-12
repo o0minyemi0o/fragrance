@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.models import Ingredient
+from app.database.database import get_db
+from app.schemas import Ingredient
 from google import genai
 import json
 import logging
@@ -55,7 +55,7 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
             ingredient_name=data.get("ingredient_name"),
             inci_name=to_null_if_empty(data.get("inci_name")),
             synonyms=data.get("synonyms", []),
-            cas_number=to_null_if_empty(data.get("cas_number")),  # ✅
+            cas_number=to_null_if_empty(data.get("cas_number")),  
             odor_description=to_null_if_empty(data.get("odor_description")),
             odor_threshold=data.get("odor_threshold"),
             suggested_usage_level=to_null_if_empty(data.get("suggested_usage_level")),
@@ -98,29 +98,7 @@ async def auto_fill_ingredient(data: dict, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Ingredient name is required")
     
     try:
-        # DB에서 유사 재료 찾기
-        similar = db.query(Ingredient).filter(
-            Ingredient.ingredient_name.ilike(f"%{ingredient_name}%")
-        ).first()
-        
-        if similar:
-            logger.info(f"Found in database: {similar.ingredient_name}")
-            return {
-                "success": True,
-                "source": "database",
-                "data": {
-                    "inci_name": similar.inci_name or "",
-                    "cas_number": similar.cas_number or "",
-                    "synonyms": similar.synonyms if similar.synonyms else "",
-                    "odor_description": similar.odor_description or "",
-                    "category": similar.note_family or "Other",
-                    "volatility": similar.volatility or "medium",
-                    "origin": similar.suggested_usage_level or "",
-                    "notes": similar.stability or ""
-                }
-            }
-        
-        logger.info(f"DB miss for '{ingredient_name}', using LLM to generate...")
+        logger.info(f"Using LLM to generate {ingredient_name}")
         
         # LLM으로 생성
         api_key = os.getenv("GOOGLE_API_KEY")
@@ -160,17 +138,17 @@ Return ONLY the JSON object."""
         
         response_text = response.text.strip()
 
-        # 마크다운 제거 (더 정확하게)
+        # 마크다운 제거
         if response_text.startswith('```json'):
-            response_text = response_text[7:]  # ```
+            response_text = response_text[7:]  
         if response_text.startswith('```'):
-            response_text = response_text[3:]  # ```
+            response_text = response_text[3:]  
 
         # 줄바꿈 제거
         response_text = response_text.lstrip('\n').rstrip('\n')
 
         if response_text.endswith('```'):
-            response_text = response_text[:-3]  # 끝의 ```
+            response_text = response_text[:-3]
 
         response_text = response_text.strip()
 
@@ -183,12 +161,12 @@ Return ONLY the JSON object."""
                 "inci_name": parsed_data.get("inci_name", ""),
                 "cas_number": parsed_data.get("cas_number", ""),
                 "synonyms": parsed_data.get("synonyms", ""),
-                "category": parsed_data.get("category", "Other"),
-                "volatility": parsed_data.get("volatility", "medium"),
+                "category": parsed_data.get("category", ""),
+                "volatility": parsed_data.get("volatility", ""),
                 "origin": parsed_data.get("origin", ""),
                 "odor_description": parsed_data.get("odor_description", ""),
                 "notes": parsed_data.get("notes", ""),
-                "suggested_usage_level": parsed_data.get("suggested_usage_level", "0.1-1%")
+                "suggested_usage_level": parsed_data.get("suggested_usage_level", "")
             }
         }
         

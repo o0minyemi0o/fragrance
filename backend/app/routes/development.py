@@ -6,8 +6,8 @@ from typing import List
 import json
 import os
 from sqlalchemy.orm import Session
-from app.database import get_db
-from app.models import Ingredient
+from app.database.database import get_db
+from app.schemas import Ingredient
 
 router = APIRouter(prefix="/api/development", tags=["development"])
 

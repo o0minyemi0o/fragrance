@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { formulationApi } from '../services/formulation-api';
 
 interface AddIngredientModalProps {
   isOpen: boolean;
@@ -20,12 +19,12 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
     cas_number: '',
     odor_description: '',
     suggested_usage_level: '',
-    note_family: 'Top',
-    max_usage_percentage: 2,
-    stability: 'Good',
-    tenacity: 'Medium',
-    volatility: 'Medium',
-    perfume_applications: ['Fragrance'],
+    note_family: '',
+    max_usage_percentage: 0,
+    stability: '',
+    tenacity: '',
+    volatility: '',
+    perfume_applications: [''],
   });
 
   const [synonyms, setSynonyms] = useState('');
@@ -39,12 +38,12 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
             cas_number: '',
             odor_description: '',
             suggested_usage_level: '',
-            note_family: 'Top',
-            max_usage_percentage: 2,
-            stability: 'Good',
-            tenacity: 'Medium',
-            volatility: 'Medium',
-            perfume_applications: ['Fragrance'],
+            note_family: '',
+            max_usage_percentage: 0,
+            stability: '',
+            tenacity: '',
+            volatility: '',
+            perfume_applications: [''],
         });
         setSynonyms('');
         setIsAutoFilling(false);
@@ -55,7 +54,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'max_usage_percentage' ? parseFloat(value) || 2 : value,
+      [name]: name === 'max_usage_percentage' ? parseFloat(value) || 0 : value,
     }));
   };
 

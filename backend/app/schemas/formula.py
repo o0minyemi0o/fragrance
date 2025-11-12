@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Text, DateTime, JSON, Enum
 from sqlalchemy.sql import func
-from app.models import Base
+from app.schemas import Base
 import enum
 
 class FormulaType(str, enum.Enum):

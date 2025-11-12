@@ -51,3 +51,5 @@ htmlcov/
 .vscode/launch.json
 .vscode/settings.json
 
+# Test files
+tests/

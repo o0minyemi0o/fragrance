@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Text, DateTime, ARRAY
 from sqlalchemy.sql import func
-from app.models import Base
+from app.schemas import Base
 
 class Ingredient(Base):
     __tablename__ = "ingredients"

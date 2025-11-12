@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { streamChatMessage } from '../api';
+import { streamChatMessage } from '../services/conversation-api';
 import ReactMarkdown from 'react-markdown';
 import { formulationApi } from '../services/formulation-api';
 import './DevelopMode.css';

@@ -15,8 +15,6 @@ interface FormulaData {
   }>;
 }
 
-
-
 function App() {
   const [currentTab, setCurrentTab] = useState<'generate' | 'ingredients' | 'accords' | 'formulas'>('generate');
   const [result, setResult] = useState<any>(null);

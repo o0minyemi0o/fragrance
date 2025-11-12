@@ -11,6 +11,7 @@ interface FormulaData {
   ingredients: Array<{
     name: string;
     percentage: number;
+    note: string;
     role: string;
   }>;
 }
@@ -66,7 +67,7 @@ function App() {
       ingredients: formula.ingredients.map(ing => ({
         name: ing.name,
         percentage: ing.percentage,
-        note_type: ing.role.replace('_', ' '),
+        note: ing.note,
         role: ing.role
       })),
       longevity: '', // 기본값
@@ -200,9 +201,10 @@ function App() {
                     <thead>
                       <tr>
                         <th style={{ width: '30px' }}>#</th>
-                        <th>Name</th>
-                        <th style={{ width: '60px' }}>%</th>
-                        <th>Note/Role</th>
+                        <th style={{ width: '180px'}}>Name</th>
+                        <th style={{ width: '130px', textAlign: "center" }}>%</th>
+                        <th style={{ width: '100px' }}>Note</th>
+                        <th>Role</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -213,7 +215,8 @@ function App() {
                           <td style={{ textAlign: 'center', fontWeight: '600', color: '#666' }}>
                             {ing.percentage}%
                           </td>
-                          <td>{ing.note_type || ing.role || '-'}</td>
+                          <td>{ing.note || '-'}</td>
+                          <td>{ing.role || '-'}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -25,9 +25,9 @@ Return JSON format:
   "type": "{accord_type}",
   "description": "Clear description of this accord",
   "ingredients": [
-    {{"name": "Ingredient Name", "percentage": 40, "note_type": "top/middle/base"}},
-    {{"name": "Ingredient Name 2", "percentage": 35, "note_type": "middle/base"}},
-    {{"name": "Ingredient Name 3", "percentage": 25, "note_type": "base"}}
+    {{"name": "Ingredient", "percentage": 25, "note": "top", "role": "Top Impact", "cas_number": "", "supplier": ""}},
+    {{"name": "Ingredient", "percentage": 50, "note": "middle", "role": "Supporting", "cas_number": "", "supplier": ""}},
+    {{"name": "Ingredient", "percentage": 25, "note": "base", "role": "Masking", "cas_number": "", "supplier": ""}}
   ],
   "longevity": "6-8 hours",
   "sillage": "moderate",
@@ -66,15 +66,18 @@ Include proper percentages for:
 - Middle notes (50-70%)
 - Base notes (15-30%)
 
+Your formula can include roles such as:
+Fixative, Main Accord, Supporting, Top Impact, Bridge, Modifier, Booster, Character, Masking, Sweetener, Texture
+
 Return JSON:
 {{
   "name": "{formula_type} Formula",
   "type": "{formula_type}",
   "description": "Professional fragrance formula description",
   "ingredients": [
-    {{"name": "Ingredient", "percentage": 10, "role": "top_note", "cas_number": "", "supplier": ""}},
-    {{"name": "Ingredient", "percentage": 50, "role": "heart_note", "cas_number": "", "supplier": ""}},
-    {{"name": "Ingredient", "percentage": 25, "role": "base_note", "cas_number": "", "supplier": ""}}
+    {{"name": "Ingredient", "percentage": 25, "note": "top", "role": "Top Impact", "cas_number": "", "supplier": ""}},
+    {{"name": "Ingredient", "percentage": 50, "note": "middle", "role": "Supporting", "cas_number": "", "supplier": ""}},
+    {{"name": "Ingredient", "percentage": 25, "note": "base", "role": "Masking", "cas_number": "", "supplier": ""}}
   ],
   "total_percentage": 100.0,
   "longevity": "10+ hours",

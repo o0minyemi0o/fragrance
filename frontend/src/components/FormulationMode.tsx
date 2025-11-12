@@ -8,6 +8,7 @@ interface FormulaData {
   ingredients: Array<{
     name: string;
     percentage: number;
+    note: string;
     role: string;
   }>;
 }

@@ -23,6 +23,7 @@ interface FormulaData {
   ingredients: Array<{
     name: string;
     percentage: number;
+    note: string;
     role: string;
   }>;
   type?: string;  
@@ -181,7 +182,7 @@ const DevelopMode: React.FC<DevelopModeProps> = ({ onExportFormula }) => {
         ingredients: formula.ingredients.map(ing => ({
             name: ing.name,
             percentage: ing.percentage,
-            note_type: ing.role.replace('_', ' '),
+            note: ing.note,
             role: ing.role
         })),
         longevity: formula.longevity || '',  

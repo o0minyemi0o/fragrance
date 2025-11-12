@@ -94,7 +94,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
         await formulationApi.updateFormula(selectedId, updateData);
       }
 
-      alert('✓ 수정이 완료되었습니다');
+      alert('Successfully updated');
       setEditMode(false);
       await loadDetails(selectedId);
       await loadItems();
@@ -107,7 +107,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
 
   const handleDelete = async () => {
     if (!selectedId) return;
-    if (!window.confirm('정말 삭제하시겠습니까?')) return;
+    if (!window.confirm('Are you sure you want to delete this?')) return;
 
     try {
       setLoading(true);
@@ -117,7 +117,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
         await formulationApi.deleteFormula(selectedId);
       }
 
-      alert('✓ 삭제되었습니다');
+      alert('Deleted');
       backToGallery();
       await loadItems();
       onRefresh?.();
@@ -137,7 +137,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
   const handleAddIngredient = () => {
     const newIngredients = [
       ...editData.ingredients_composition,
-      { name: '', percentage: 0, note_type: '' }
+      { name: '', percentage: 0, note: '' }
     ];
     setEditData({ ...editData, ingredients_composition: newIngredients });
   };
@@ -163,7 +163,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
     setEditData({ ...editData, ingredients_composition: newIngredients });
   };
 
-  if (loading && items.length === 0) return <div className="library-view">로딩 중...</div>;
+  if (loading && items.length === 0) return <div className="library-view">Loading...</div>;
 
   // 갤러리 뷰
   if (viewMode === 'gallery') {
@@ -174,7 +174,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
         {error && <div className="error-message">❌ {error}</div>}
 
         {items.length === 0 ? (
-          <p className="empty-message">아직 저장한 항목이 없습니다.</p>
+          <p className="empty-message">No items have been saved yet.</p>
         ) : (
           <div className="library-gallery">
             <div className="gallery-grid">
@@ -272,11 +272,12 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
               <thead>
                 <tr>
                   <th style={{ width: '30px' }}>#</th>
-                  <th>Name</th>
-                  <th style={{ width: '60px' }}>%</th>
-                  <th>Note/Role</th>
-                  <th style={{ width: '100px' }}>Order</th>
-                  <th style={{ width: '50px' }}>Delete</th>
+                  <th style={{ width: '200px' }}>Name</th>
+                  <th style={{ width: '40px' }}>%</th>
+                  <th style={{ width: '80px' }}>Note</th>
+                  <th style={{ width: '220px' }}>Role</th>
+                  <th style={{ width: '80px' }}>Order</th>
+                  <th style={{ width: '40px' }}>Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -292,7 +293,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                         placeholder="Ingredient name"
                       />
                     </td>
-                    <td>
+                    <td style={{ width: '50px' }}>
                       <input
                         type="number"
                         value={ing.percentage}
@@ -306,10 +307,19 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                     <td>
                       <input
                         type="text"
-                        value={ing.note_type || ing.role || ''}
-                        onChange={(e) => handleIngredientChange(idx, 'note_type', e.target.value)}
+                        value={ing.note || ''}
+                        onChange={(e) => handleIngredientChange(idx, 'note', e.target.value)}
                         className="edit-input-small"
                         placeholder="top/middle/base"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={ ing.role || ''}
+                        onChange={(e) => handleIngredientChange(idx, 'note', e.target.value)}
+                        className="edit-input-small"
+                        placeholder="e.g., Fixative"
                       />
                     </td>
                     <td>
@@ -372,16 +382,18 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
                 <th>#</th>
                 <th>Name</th>
                 <th>%</th>
-                <th>Note/Role</th>
+                <th>Note</th>
+                <th>Role</th>
               </tr>
             </thead>
             <tbody>
               {details?.ingredients_composition?.map((ing: any, idx: number) => (
                 <tr key={idx}>
-                  <td>{idx + 1}</td>
-                  <td>{ing.name}</td>
-                  <td>{ing.percentage}%</td>
-                  <td>{ing.note_type || ing.role || '-'}</td>
+                  <td style={{ width : '40px'}}>{idx + 1}</td>
+                  <td style={{ width : '220px'}}>{ing.name}</td>
+                  <td style={{ width : '80px'}}>{ing.percentage}%</td>
+                  <td style={{ width : '100px'}}>{ing.note || '-'}</td>
+                  <td>{ing.role || '-'}</td>
                 </tr>
               ))}
             </tbody>

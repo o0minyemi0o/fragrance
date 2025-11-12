@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './AddIngredientModal.css';
 
 interface AddIngredientModalProps {
   isOpen: boolean;

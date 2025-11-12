@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import DevelopMode from './DevelopMode';
+import './FormulationMode.css';
 
 interface FormulaData {
   name: string;

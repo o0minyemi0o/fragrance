@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { formulationApi } from '../services/formulation-api';
+import './LibraryView.css';
 
 interface Accord {
   id: number;

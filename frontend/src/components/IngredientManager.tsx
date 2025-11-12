@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { formulationApi } from '../services/formulation-api';
 import AddIngredientModal from './AddIngredientModal';
+import './IngredientManager.css';
 
 interface Ingredient {
   id: number;

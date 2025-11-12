@@ -117,6 +117,16 @@ async addIngredient(data: any) {
   return response.json();
 },
 
+async updateIngredient(id: number, data: any) {
+  const response = await fetch(`${API_BASE_URL}/api/ingredients/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json();
+},
+
 async deleteIngredient(id: number) {
   const response = await fetch(`${API_BASE_URL}/api/ingredients/${id}`, {
     method: 'DELETE'

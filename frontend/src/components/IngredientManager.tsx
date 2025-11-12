@@ -13,7 +13,7 @@ interface Ingredient {
   odor_threshold?: number;
   suggested_usage_level?: string;
   note_family?: string;
-  max_usage_percentage?: number;
+  max_usage_percentage?: string;
   perfume_applications?: string[];
   stability?: string;
   tenacity?: string;
@@ -29,6 +29,8 @@ const IngredientManager: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedForDelete, setSelectedForDelete] = useState<Set<number>>(new Set());
+  const [editMode, setEditMode] = useState(false);
+  const [editData, setEditData] = useState<Ingredient | null>(null);
 
   useEffect(() => {
     loadIngredients();
@@ -114,6 +116,64 @@ const IngredientManager: React.FC = () => {
     }
   };
 
+  const handleSaveEdit = async () => {
+    if (!selectedId || !editData) return;
+
+    try {
+      setLoading(true);
+      const updateData = {
+        ingredient_name: editData.ingredient_name,
+        inci_name: editData.inci_name,
+        synonyms: editData.synonyms,
+        cas_number: editData.cas_number,
+        odor_description: editData.odor_description,
+        odor_threshold: editData.odor_threshold,
+        suggested_usage_level: editData.suggested_usage_level,
+        note_family: editData.note_family,
+        max_usage_percentage: editData.max_usage_percentage,
+        perfume_applications: editData.perfume_applications,
+        stability: editData.stability,
+        tenacity: editData.tenacity,
+        volatility: editData.volatility,
+      };
+
+      await formulationApi.updateIngredient(selectedId, updateData);
+      alert('✓ Ingredient updated successfully!');
+      setEditMode(false);
+      await loadIngredients();
+
+      // 수정된 재료 다시 선택
+      const updatedIngredient = ingredients.find(ing => ing.id === selectedId);
+      if (updatedIngredient) {
+        setEditData({ ...updatedIngredient });
+      }
+    } catch (err) {
+      console.error('Failed to update ingredient:', err);
+      alert('Failed to update ingredient');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteSingle = async () => {
+    if (!selectedId) return;
+    if (!window.confirm('Delete this ingredient?')) return;
+
+    try {
+      setLoading(true);
+      await formulationApi.deleteIngredient(selectedId);
+      alert('✓ Deleted successfully!');
+      setIngredients(ingredients.filter(ing => ing.id !== selectedId));
+      setSelectedId(null);
+      setEditMode(false);
+    } catch (err) {
+      console.error('Failed to delete ingredient:', err);
+      alert('Failed to delete ingredient');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredIngredients = ingredients.filter(ing => {
     const matchesSearch = ing.ingredient_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = !filterOwned || ing.owned;
@@ -130,7 +190,10 @@ const IngredientManager: React.FC = () => {
         <div className="ingredient-detail-fullscreen">
           <div className="detail-header">
             <button
-              onClick={() => setSelectedId(null)}
+              onClick={() => {
+                setSelectedId(null);
+                setEditMode(false);
+              }}
               className="back-btn"
             >
               ← Back
@@ -139,118 +202,260 @@ const IngredientManager: React.FC = () => {
             <div style={{ width: '50px' }}></div>
           </div>
 
-          <div className="detail-fullscreen-content">
-            {selectedIngredient.inci_name && selectedIngredient.inci_name.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>INCI Name:</strong>
-                <p>{selectedIngredient.inci_name}</p>
-              </div>
-            )}
-
-            {selectedIngredient.cas_number && selectedIngredient.cas_number.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>CAS Number:</strong>
-                <p>{selectedIngredient.cas_number}</p>
-              </div>
-            )}
-
-            {selectedIngredient.synonyms && Array.isArray(selectedIngredient.synonyms) && selectedIngredient.synonyms.length > 0 && (
-              <div className="detail-info-row">
-                <strong>Synonyms:</strong>
-                <p>{selectedIngredient.synonyms.join(', ')}</p>
-              </div>
-            )}
-
-            {selectedIngredient.odor_description && selectedIngredient.odor_description.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>Odor Description:</strong>
-                <p>{selectedIngredient.odor_description}</p>
-              </div>
-            )}
-
-            {selectedIngredient.odor_threshold !== null && selectedIngredient.odor_threshold !== undefined && (
-              <div className="detail-info-row">
-                <strong>Odor Threshold:</strong>
-                <p>{selectedIngredient.odor_threshold}</p>
-              </div>
-            )}
-
-            {selectedIngredient.note_family && selectedIngredient.note_family.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>Note Family:</strong>
-                <p>{selectedIngredient.note_family}</p>
-              </div>
-            )}
-
-            {selectedIngredient.suggested_usage_level && selectedIngredient.suggested_usage_level.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>Suggested Usage Level:</strong>
-                <p>{selectedIngredient.suggested_usage_level}</p>
-              </div>
-            )}
-
-            {selectedIngredient.max_usage_percentage !== null && selectedIngredient.max_usage_percentage !== undefined && (
-              <div className="detail-info-row">
-                <strong>Max Usage Percentage:</strong>
-                <p>{selectedIngredient.max_usage_percentage}%</p>
-              </div>
-            )}
-
-            {selectedIngredient.perfume_applications && Array.isArray(selectedIngredient.perfume_applications) && selectedIngredient.perfume_applications.length > 0 && (
-              <div className="detail-info-row">
-                <strong>Perfume Applications:</strong>
-                <p>{selectedIngredient.perfume_applications.join(', ')}</p>
-              </div>
-            )}
-
-            {selectedIngredient.stability && selectedIngredient.stability.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>Stability:</strong>
-                <p>{selectedIngredient.stability}</p>
-              </div>
-            )}
-
-            {selectedIngredient.tenacity && selectedIngredient.tenacity.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>Tenacity:</strong>
-                <p>{selectedIngredient.tenacity}</p>
-              </div>
-            )}
-
-            {selectedIngredient.volatility && selectedIngredient.volatility.trim() !== '' && (
-              <div className="detail-info-row">
-                <strong>Volatility:</strong>
-                <p>{selectedIngredient.volatility}</p>
-              </div>
-            )}
-
-            {!selectedIngredient.inci_name && 
-             !selectedIngredient.cas_number && 
-             !selectedIngredient.odor_description &&
-             (!selectedIngredient.note_family || selectedIngredient.note_family === 'Top') && (
-              <div className="detail-info-row">
-                <p style={{ textAlign: 'center', color: '#999' }}>No additional details available</p>
-              </div>
-            )}
-
-            <div className="detail-actions">
-              <label className="detail-checkbox">
+          {editMode && editData ? (
+            /* Edit Mode */
+            <div className="detail-fullscreen-content edit-form">
+              <div className="form-group">
+                <label>Ingredient Name *</label>
                 <input
-                  type="checkbox"
-                  checked={selectedIngredient.owned}
-                  onChange={() => {
-                    const updated = ingredients.map(ing =>
-                      ing.id === selectedIngredient.id ? { ...ing, owned: !ing.owned } : ing
-                    );
-                    setIngredients(updated);
-                    const ownedIds = updated.filter(i => i.owned).map(i => i.id);
-                    localStorage.setItem('owned_ingredients', JSON.stringify(ownedIds));
-                  }}
+                  type="text"
+                  value={editData.ingredient_name}
+                  onChange={(e) => setEditData({ ...editData, ingredient_name: e.target.value })}
+                  className="edit-input"
                 />
-                I have this ingredient
-              </label>
+              </div>
+
+              <div className="form-group">
+                <label>INCI Name</label>
+                <input
+                  type="text"
+                  value={editData.inci_name || ''}
+                  onChange={(e) => setEditData({ ...editData, inci_name: e.target.value })}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>CAS Number</label>
+                <input
+                  type="text"
+                  value={editData.cas_number || ''}
+                  onChange={(e) => setEditData({ ...editData, cas_number: e.target.value })}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Synonyms (comma-separated)</label>
+                <input
+                  type="text"
+                  value={editData.synonyms ? editData.synonyms.join(', ') : ''}
+                  onChange={(e) => setEditData({
+                    ...editData,
+                    synonyms: e.target.value.split(',').map(s => s.trim()).filter(s => s !== '')
+                  })}
+                  className="edit-input"
+                  placeholder="synonym1, synonym2, ..."
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Odor Description</label>
+                <textarea
+                  value={editData.odor_description || ''}
+                  onChange={(e) => setEditData({ ...editData, odor_description: e.target.value })}
+                  className="edit-textarea"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>Note Family</label>
+                <input
+                  type="text"
+                  value={editData.note_family || ''}
+                  onChange={(e) => setEditData({ ...editData, note_family: e.target.value })}
+                  className="edit-input"
+                  placeholder="Top, Middle, Base"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Suggested Usage Level</label>
+                <input
+                  type="text"
+                  value={editData.suggested_usage_level || ''}
+                  onChange={(e) => setEditData({ ...editData, suggested_usage_level: e.target.value })}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Max Usage Percentage</label>
+                <input
+                  type="text"
+                  value={editData.max_usage_percentage || ''}
+                  onChange={(e) => setEditData({ ...editData, max_usage_percentage: e.target.value})}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Stability</label>
+                <input
+                  type="text"
+                  value={editData.stability || ''}
+                  onChange={(e) => setEditData({ ...editData, stability: e.target.value })}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Tenacity</label>
+                <input
+                  type="text"
+                  value={editData.tenacity || ''}
+                  onChange={(e) => setEditData({ ...editData, tenacity: e.target.value })}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Volatility</label>
+                <input
+                  type="text"
+                  value={editData.volatility || ''}
+                  onChange={(e) => setEditData({ ...editData, volatility: e.target.value })}
+                  className="edit-input"
+                />
+              </div>
+
+              <div className="edit-buttons">
+                <button onClick={handleSaveEdit} className="save-btn" disabled={loading}>
+                  ✓ Save
+                </button>
+                <button onClick={() => {
+                  setEditMode(false);
+                  setEditData({ ...selectedIngredient });
+                }} className="cancel-btn" disabled={loading}>
+                  ✕ Cancel
+                </button>
+              </div>
             </div>
-          </div>
+          ) : (
+            /* View Mode */
+            <div className="detail-fullscreen-content view-form">
+              {selectedIngredient.inci_name && selectedIngredient.inci_name.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>INCI Name:</strong>
+                  <p>{selectedIngredient.inci_name}</p>
+                </div>
+              )}
+
+              {selectedIngredient.cas_number && selectedIngredient.cas_number.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>CAS Number:</strong>
+                  <p>{selectedIngredient.cas_number}</p>
+                </div>
+              )}
+
+              {selectedIngredient.synonyms && Array.isArray(selectedIngredient.synonyms) && selectedIngredient.synonyms.length > 0 && (
+                <div className="detail-info-row">
+                  <strong>Synonyms:</strong>
+                  <p>{selectedIngredient.synonyms.join(', ')}</p>
+                </div>
+              )}
+
+              {selectedIngredient.odor_description && selectedIngredient.odor_description.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>Odor Description:</strong>
+                  <p>{selectedIngredient.odor_description}</p>
+                </div>
+              )}
+
+              {selectedIngredient.odor_threshold !== null && selectedIngredient.odor_threshold !== undefined && (
+                <div className="detail-info-row">
+                  <strong>Odor Threshold:</strong>
+                  <p>{selectedIngredient.odor_threshold}</p>
+                </div>
+              )}
+
+              {selectedIngredient.note_family && selectedIngredient.note_family.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>Note Family:</strong>
+                  <p>{selectedIngredient.note_family}</p>
+                </div>
+              )}
+
+              {selectedIngredient.suggested_usage_level && selectedIngredient.suggested_usage_level.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>Suggested Usage Level:</strong>
+                  <p>{selectedIngredient.suggested_usage_level}</p>
+                </div>
+              )}
+
+              {selectedIngredient.max_usage_percentage !== null && selectedIngredient.max_usage_percentage !== undefined && (
+                <div className="detail-info-row">
+                  <strong>Max Usage Percentage:</strong>
+                  <p>{selectedIngredient.max_usage_percentage}%</p>
+                </div>
+              )}
+
+              {selectedIngredient.perfume_applications && Array.isArray(selectedIngredient.perfume_applications) && selectedIngredient.perfume_applications.length > 0 && (
+                <div className="detail-info-row">
+                  <strong>Perfume Applications:</strong>
+                  <p>{selectedIngredient.perfume_applications.join(', ')}</p>
+                </div>
+              )}
+
+              {selectedIngredient.stability && selectedIngredient.stability.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>Stability:</strong>
+                  <p>{selectedIngredient.stability}</p>
+                </div>
+              )}
+
+              {selectedIngredient.tenacity && selectedIngredient.tenacity.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>Tenacity:</strong>
+                  <p>{selectedIngredient.tenacity}</p>
+                </div>
+              )}
+
+              {selectedIngredient.volatility && selectedIngredient.volatility.trim() !== '' && (
+                <div className="detail-info-row">
+                  <strong>Volatility:</strong>
+                  <p>{selectedIngredient.volatility}</p>
+                </div>
+              )}
+
+              {!selectedIngredient.inci_name &&
+               !selectedIngredient.cas_number &&
+               !selectedIngredient.odor_description &&
+               (!selectedIngredient.note_family || selectedIngredient.note_family === 'Top') && (
+                <div className="detail-info-row">
+                  <p style={{ textAlign: 'center', color: '#999' }}>No additional details available</p>
+                </div>
+              )}
+
+              <div className="detail-actions">
+                <label className="detail-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedIngredient.owned}
+                    onChange={() => {
+                      const updated = ingredients.map(ing =>
+                        ing.id === selectedIngredient.id ? { ...ing, owned: !ing.owned } : ing
+                      );
+                      setIngredients(updated);
+                      const ownedIds = updated.filter(i => i.owned).map(i => i.id);
+                      localStorage.setItem('owned_ingredients', JSON.stringify(ownedIds));
+                    }}
+                  />
+                  I have this ingredient
+                </label>
+              </div>
+
+              <div className="action-buttons">
+                <button onClick={() => setEditMode(true)} className="edit-btn">
+                  ✏️ Edit
+                </button>
+                <button onClick={handleDeleteSingle} className="delete-btn">
+                  🗑 Delete
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* List View */
@@ -306,7 +511,11 @@ const IngredientManager: React.FC = () => {
                 <div
                   key={ing.id}
                   className={`ingredient-card ${ing.owned ? 'owned' : ''}`}
-                  onClick={() => setSelectedId(ing.id)}
+                  onClick={() => {
+                    setSelectedId(ing.id);
+                    setEditData({ ...ing });
+                    setEditMode(false);
+                  }}
                 >
                   <div className="ingredient-content">
                     <span className="ingredient-name">{ing.ingredient_name}</span>

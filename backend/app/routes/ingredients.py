@@ -49,17 +49,6 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
         def to_null_if_empty(val):
             return None if val == '' or val is None else val
 
-        # % 제거하고 숫자만 파싱
-        def parse_float_or_none(val):
-            if val is None or val == '':
-                return None
-            try:
-                # "0.5%", "Not Available" 등 처리
-                cleaned = str(val).replace('%', '').strip()
-                return float(cleaned)
-            except (ValueError, TypeError):
-                return None
-        
         new_ingredient = Ingredient(
             ingredient_name=data.get("ingredient_name"),
             inci_name=to_null_if_empty(data.get("inci_name")),
@@ -68,7 +57,7 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
             odor_description=to_null_if_empty(data.get("odor_description")),
             note_family=to_null_if_empty(data.get("note_family")),
             suggested_usage_level=to_null_if_empty(data.get("suggested_usage_level")),
-            max_usage_percentage=parse_float_or_none(data.get("max_usage_percentage")),
+            max_usage_percentage=to_null_if_empty(data.get("max_usage_percentage")),
             stability=to_null_if_empty(data.get("stability")),
             tenacity=to_null_if_empty(data.get("tenacity")),
             volatility=to_null_if_empty(data.get("volatility")),
@@ -186,3 +175,15 @@ Return ONLY the JSON object."""
     except Exception as e:
         logger.error(f"Auto-fill error: {type(e).__name__}: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Auto-fill failed: {str(e)}")
+
+
+@router.put("/{id}")
+async def update_ingredient(id: int, data: dict, db: Session = Depends(get_db)):
+    ingredient = db.query(Ingredient).filter(Ingredient.id == id).first()
+    if not ingredient:
+        raise HTTPException(status_code=404, detail="Ingredient not found")
+    for key, value in data.items():
+        setattr(ingredient, key, value)
+    db.commit()
+    db.refresh(ingredient)
+    return {"id": ingredient.id, "message": "Ingredient updated successfully"}

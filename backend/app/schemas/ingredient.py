@@ -16,7 +16,7 @@ class Ingredient(Base):
     suggested_usage_level = Column(String(100), nullable=True)
     note_family = Column(String(100), nullable=True)
     
-    max_usage_percentage = Column(Float, nullable=True)
+    max_usage_percentage = Column(Text, nullable=True)
     perfume_applications = Column(ARRAY(String), nullable=True)
     stability = Column(Text, nullable=True)
     tenacity = Column(String(50), nullable=True)

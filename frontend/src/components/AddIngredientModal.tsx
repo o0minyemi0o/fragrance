@@ -21,7 +21,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
     odor_description: '',
     suggested_usage_level: '',
     note_family: '',
-    max_usage_percentage: 0,
+    max_usage_percentage: '',
     stability: '',
     tenacity: '',
     volatility: '',
@@ -40,7 +40,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
             odor_description: '',
             suggested_usage_level: '',
             note_family: '',
-            max_usage_percentage: 0,
+            max_usage_percentage: '',
             stability: '',
             tenacity: '',
             volatility: '',
@@ -86,10 +86,12 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           inci_name: result.data.inci_name || '',
           cas_number: result.data.cas_number || '',
           odor_description: result.data.odor_description || '',
-          note_family: result.data.category || '',
-          volatility: result.data.volatility || '',
+          note_family: result.data.note_family || '',
           suggested_usage_level: result.data.suggested_usage_level || '',
-          stability: result.data.notes || '',
+          max_usage_percentage: result.data.max_usage_percentage || '',
+          stability: result.data.stability || '',
+          tenacity: result.data.tenacity || '',
+          volatility: result.data.volatility || '',
         }));
 
         if (result.data.synonyms) {
@@ -232,16 +234,13 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Note Family</label>
-              <select
+              <input
                 name="note_family"
                 value={formData.note_family}
                 onChange={handleChange}
-              >
-                <option>Top</option>
-                <option>Heart/Base</option>
-                <option>Base</option>
-                <option>Middle</option>
-              </select>
+                placeholder="e.g., Middle Note"
+                autoComplete="off"
+              />
             </div>
           </div>
 
@@ -264,11 +263,12 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
             <div className="form-group">
               <label>Max Usage Percentage (%)</label>
               <input
-                type="number"
+                type="text"
                 name="max_usage_percentage"
                 value={formData.max_usage_percentage}
                 onChange={handleChange}
-                step="0.1"
+                placeholder="e.g., 1%"
+                autoComplete="off"
               />
             </div>
           </div>
@@ -277,47 +277,38 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           <div className="form-section">
             <h3>Characteristics</h3>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label>Stability</label>
-                <select
-                  name="stability"
-                  value={formData.stability}
-                  onChange={handleChange}
-                >
-                  <option>Good</option>
-                  <option>Fair</option>
-                  <option>Poor</option>
-                </select>
-              </div>
+            <div className="form-group">
+              <label>Stability</label>
+              <input
+                type="text"
+                name="stability"
+                value={formData.stability}
+                onChange={handleChange}
+                placeholder="e.g., Stable"
+                autoComplete="off"
+              />
+            </div>
 
-              <div className="form-group">
-                <label>Tenacity</label>
-                <select
-                  name="tenacity"
-                  value={formData.tenacity}
-                  onChange={handleChange}
-                >
-                  <option>Low</option>
-                  <option>Medium</option>
-                  <option>High</option>
-                  <option>Very High</option>
-                </select>
-              </div>
+            <div className="form-group">
+              <label>Tenacity</label>
+              <input
+                name="tenacity"
+                value={formData.tenacity}
+                onChange={handleChange}
+                placeholder="e.g., High"
+                autoComplete="off"
+              />
+            </div>
 
-              <div className="form-group">
-                <label>Volatility</label>
-                <select
-                  name="volatility"
-                  value={formData.volatility}
-                  onChange={handleChange}
-                >
-                  <option>Low</option>
-                  <option>Medium</option>
-                  <option>High</option>
-                  <option>Very High</option>
-                </select>
-              </div>
+            <div className="form-group">
+              <label>Volatility</label>
+              <input
+                name="volatility"
+                value={formData.volatility}
+                onChange={handleChange}
+                placeholder="e.g., High"
+                autoComplete="off"
+              />
             </div>
           </div>
 

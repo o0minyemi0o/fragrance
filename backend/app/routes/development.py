@@ -27,18 +27,18 @@ def get_available_ingredients(db: Session) -> str:
         return "There are no ingredients registered in the current database."
     
     # 카테고리별로 그룹화
-    by_category = {}
+    by_note_family= {}
     for ing in ingredients:
-        category = ing.note_family or "Other"
-        if category not in by_category:
-            by_category[category] = []
-        by_category[category].append(f"{ing.ingredient_name} ({ing.inci_name or 'N/A'})")
+        note_family = ing.note_family or "Other"
+        if note_family not in by_note_family:
+            by_note_family[note_family] = []
+        by_note_family[note_family].append(f"{ing.ingredient_name} ({ing.inci_name or 'N/A'})")
     
     # 문자열로 변환
     result = "**Registered perfume ingredients in the database:**\n\n"
     total_cnt = 0
-    for category, items in by_category.items():
-        result += f"**{category}:**\n"
+    for note_family, items in by_note_family.items():
+        result += f"**{note_family}:**\n"
         result += ", ".join(items)  # 각 카테고리당 최대 10개
         result += "\n\n"
         total_cnt += len(items)

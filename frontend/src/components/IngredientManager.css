@@ -197,7 +197,7 @@
   cursor: pointer;
   padding-right: 18px;
 }
-.ingredient-category {
+.ingredient-note-family {
   margin-right: -20px; 
 }
 
@@ -243,7 +243,7 @@
   font-size: 0.95rem;
 }
 
-.ingredient-category {
+.ingredient-note-family {
   font-size: 0.8rem;
   color: #999;
   background: #f0f0f0;

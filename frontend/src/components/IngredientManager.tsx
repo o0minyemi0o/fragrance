@@ -311,7 +311,7 @@ const IngredientManager: React.FC = () => {
                   <div className="ingredient-content">
                     <span className="ingredient-name">{ing.ingredient_name}</span>
                     {ing.note_family && (
-                      <div className="ingredient-category">{ing.note_family}</div>
+                      <div className="ingredient-note-family">{ing.note_family}</div>
                     )}
                   </div>
                   

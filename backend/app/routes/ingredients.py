@@ -27,14 +27,12 @@ async def list_ingredients(db: Session = Depends(get_db)):
                 "id": ing.id,
                 "ingredient_name": ing.ingredient_name,
                 "inci_name": ing.inci_name,
-                "synonyms": ing.synonyms,
                 "cas_number": ing.cas_number,
+                "synonyms": ing.synonyms,
                 "odor_description": ing.odor_description,
-                "odor_threshold": ing.odor_threshold,
-                "suggested_usage_level": ing.suggested_usage_level,
                 "note_family": ing.note_family,
+                "suggested_usage_level": ing.suggested_usage_level,
                 "max_usage_percentage": ing.max_usage_percentage,
-                "perfume_applications": ing.perfume_applications,
                 "stability": ing.stability,
                 "tenacity": ing.tenacity,
                 "volatility": ing.volatility,
@@ -54,14 +52,12 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
         new_ingredient = Ingredient(
             ingredient_name=data.get("ingredient_name"),
             inci_name=to_null_if_empty(data.get("inci_name")),
-            synonyms=data.get("synonyms", []),
             cas_number=to_null_if_empty(data.get("cas_number")),  
+            synonyms=data.get("synonyms", []),
             odor_description=to_null_if_empty(data.get("odor_description")),
-            odor_threshold=data.get("odor_threshold"),
-            suggested_usage_level=to_null_if_empty(data.get("suggested_usage_level")),
             note_family=to_null_if_empty(data.get("note_family")),
+            suggested_usage_level=to_null_if_empty(data.get("suggested_usage_level")),
             max_usage_percentage=data.get("max_usage_percentage"),
-            perfume_applications=data.get("perfume_applications", []),
             stability=to_null_if_empty(data.get("stability")),
             tenacity=to_null_if_empty(data.get("tenacity")),
             volatility=to_null_if_empty(data.get("volatility")),
@@ -118,12 +114,13 @@ Return ONLY valid JSON (no markdown, no code blocks, no additional text) with th
   "inci_name": "INCI chemical name",
   "cas_number": "CAS number",
   "synonyms": "comma-separated synonyms",
-  "category": "Floral, Woody, Citrus, Herbal, Spicy, Fresh, Sweet, Oriental, or Other",
-  "volatility": "high, medium, or low",
-  "origin": "country or plant origin",
   "odor_description": "descriptive odor profile",
+  "note_family": "Floral, Woody, Citrus, Herbal, Spicy, Fresh, Sweet, Oriental, or Other",
   "suggested_usage_level": "typical usage percentage (e.g., 0.1-1%)",
-  "notes": "additional technical notes"
+  "max_usage_percentage": "maximum allowed usage percentage",
+  "stability": "description of chemical or environmental stability",
+  "tenacity": "duration of scent on skin or blotter",
+  "volatility": "high, medium, or low"
 }}
 
 Return ONLY the JSON object."""
@@ -161,12 +158,13 @@ Return ONLY the JSON object."""
                 "inci_name": parsed_data.get("inci_name", ""),
                 "cas_number": parsed_data.get("cas_number", ""),
                 "synonyms": parsed_data.get("synonyms", ""),
-                "category": parsed_data.get("category", ""),
-                "volatility": parsed_data.get("volatility", ""),
-                "origin": parsed_data.get("origin", ""),
                 "odor_description": parsed_data.get("odor_description", ""),
-                "notes": parsed_data.get("notes", ""),
-                "suggested_usage_level": parsed_data.get("suggested_usage_level", "")
+                "note_family": parsed_data.get("note_family", ""),
+                "suggested_usage_level": parsed_data.get("suggested_usage_level", ""),
+                "max_usage_percentage": parsed_data.get("max_usage_percentage", ""),
+                "stability": parsed_data.get("stability", ""),
+                "tenacity": parsed_data.get("tenacity", ""),
+                "volatility": parsed_data.get("volatility", "")   
             }
         }
         

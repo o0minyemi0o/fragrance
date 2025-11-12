@@ -37,7 +37,8 @@
 .form-group label {
   font-weight: 600;
   color: #333;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  margin-bottom: 3px;
 }
 
 .form-group input,

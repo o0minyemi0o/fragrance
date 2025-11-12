@@ -40,3 +40,40 @@
 .submit-button:hover:not(:disabled) {
   background: #5a7a1f;  /* ✅ 호버 시 더 어두운 올리브색 */
 }
+
+/* ===== 폼 및 입력 요소 ===== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.form-group textarea,
+.form-group input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.form-group textarea:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}

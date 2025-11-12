@@ -365,7 +365,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
           <p><strong>Type:</strong> {details?.type}</p>
           <p><strong>Description:</strong> {details?.description}</p>
 
-          <h4>Ingredients ({details?.ingredients_composition?.length || 0})</h4>
+          <p><strong>Ingredients ({details?.ingredients_composition?.length || 0})</strong></p>
           <table className="ingredients-table">
             <thead>
               <tr>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AddIngredientModal.css';
+const API_URL = import.meta.env.API_URL;
 
 interface AddIngredientModalProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
     setIsAutoFilling(true);
     try {
-      const response = await fetch('http://localhost:8000/api/ingredients/auto-fill', {
+      const response = await fetch(`${API_URL}/api/ingredients/auto-fill`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: formData.ingredient_name }),

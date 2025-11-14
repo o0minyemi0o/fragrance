@@ -20,7 +20,7 @@ class Formula(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), unique=True, index=True, nullable=False)
-    formula_type = Column(String(50), nullable=False)  # "White Floral Soap Type"
+    formula_type = Column(Text, nullable=False)  # "White Floral Soap Type"
     description = Column(Text, nullable=True)
     
     # 원료 구성

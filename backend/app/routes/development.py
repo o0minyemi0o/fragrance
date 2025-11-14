@@ -96,12 +96,12 @@ Through conversation with the user, understand their desired fragrance and devel
 "description": "Brief description of this fragrance",
 "totalIngredients": 12,
 "ingredients": [
-{{"name": "Bergamot Oil (expressed)", "percentage": 8, "role": "top_note"}},
-{{"name": "Rose Absolute (Bulgarian)", "percentage": 15, "role": "heart_note"}},
-{{"name": "Patchouli Oil", "percentage": 18, "role": "base_note"}}
+{{"name": "Bergamot Oil (expressed)", "percentage": 8, "note": "top", "role": "Top Impact"}},
+{{"name": "Rose Absolute (Bulgarian)", "percentage": 15, "note": "middle", "role": "Main Accord"}},
+{{"name": "Patchouli Oil", "percentage": 18, "note": "base", "role": "Fixative"}},
 ],
 "longevity": "Medium",
-"sillage": "Moderate",
+"sillage": "Strong and patchouli-heavy",
 "recommendation": "Suitable daily fragrance for spring and autumn"
 }}
 }}

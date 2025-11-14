@@ -24,7 +24,7 @@ def get_available_ingredients(db: Session) -> str:
     ingredients = db.query(Ingredient).all()
     
     if not ingredients:
-        return "There are no ingredients registered in the current database."
+        return "There are no ingredients registered in the current database.", 0
     
     # 카테고리별로 그룹화
     by_note_family= {}

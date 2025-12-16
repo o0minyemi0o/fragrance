@@ -65,7 +65,7 @@ agents/
 
 **특징**:
 - **Formulation 중심**: 배합 생성이 핵심, 다른 Agent는 보조 역할
-- **옵셔널 Agent**: Validation, Strategy는 필요시에만 호출
+- **옵셔널 Agent**: Research, Strategy는 필요시에만 호출
 - **순차 실행**: 병렬 처리 없이 필요한 순서대로 실행
 - **대화형**: 사용자와 대화하며 필요한 Agent를 동적으로 호출
 
@@ -139,8 +139,10 @@ Returns:
 - 실패 시 대체안 제안
 
 ---
+comment : #### 4. research 누락
 
-#### 4. `apply_strategy(state: CoordinatorState)`
+
+#### 5. `apply_strategy(state: CoordinatorState)`
 **역할**: 전략 Agent로 포지셔닝 및 가격 전략 수립
 
 시장 조사 결과와 배합 정보를 바탕으로 전략 수립

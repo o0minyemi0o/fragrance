@@ -14,10 +14,10 @@ RAG + LLM을 활용하여 향료 배합을 생성하는 Agent 그룹입니다.
 **역할**: 완전한 배합 생성
 
 **프로세스**:
-1. Vector Store에서 유사 과거 배합 검색 (RAG)
+1. 기존 배합 레퍼런스 요청시, Vector Store에서 유사 과거 배합 검색 (RAG)
 2. DB에서 적합한 원료 필터링 (노트 패밀리, 가격대)
-3. LLM으로 배합 10개 생성
-4. 각 배합의 원가 계산
+3. LLM으로 배합 생성
+4. 배합의 원가 계산
 
 **주요 함수**:
 ```python
@@ -55,11 +55,11 @@ def generate_formulation(user_request: str, db: Session) -> List[Dict]:
 ---
 
 ### accord_generator.py
-**역할**: 어코드(3-5개 원료 조합) 생성
+**역할**: 어코드(포뮬러보다 간단하고 단일 특성에 가까운 조합) 생성
 
 **특징**:
 - Formula보다 단순 (Top/Middle/Base 구분 없음)
-- 빠른 생성 (10초 이내)
+- 빠른 생성
 
 ---
 

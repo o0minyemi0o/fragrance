@@ -36,7 +36,7 @@ agents/
 
 ## 🎯 전체 워크플로우
 
-### 1. 사용자 요청 흐름
+### 1. 대화형 워크플로우
 ```
                             [사용자 입력]
                    "30대 여성, 프레시 플로럴, 3만원대"
@@ -44,15 +44,30 @@ agents/
                            [Coordinator]
                            parse_request
                                 ↓
-      ┌──────────────────┬──────┴────────┬──────────────┐
-      ↓                  ↓               ↓              ↓
-  [Validation]  ⟷  [Formulation]  ⟷  [Research]  ⟷  [Strategy]  
-      ↓                  ↓               ↓              ↓
-      └──────────────────┴──────┬────────┴──────────────┘
+                         [Formulation] ← 핵심 Agent
+                         (배합 생성)
+                                ↓
+            ┌───────────────────┼───────────────────┐
+            ↓                   ↓                   ↓
+      [Validation]         [Research]         [Strategy]
+      (옵셔널)              (필요시)            (옵셔널)
+      - IFRA 체크           - 시장 트렌드       - 포지셔닝
+      - 부향률 고려         - 소비자 인사이트   - 가격 전략
+            ↓                   ↓                   ↓
+            └───────────────────┼───────────────────┘
                                 ↓
                            [최종 결과]
-                        추천 배합 + 전략 리포트
+                      단일 배합 + 전략 리포트
+
+                     ※ 대화 중 Formulation은
+                     언제든지 다시 호출 가능
 ```
+
+**특징**:
+- **Formulation 중심**: 배합 생성이 핵심, 다른 Agent는 보조 역할
+- **옵셔널 Agent**: Validation, Strategy는 필요시에만 호출
+- **순차 실행**: 병렬 처리 없이 필요한 순서대로 실행
+- **대화형**: 사용자와 대화하며 필요한 Agent를 동적으로 호출
 
 ---
 
@@ -61,7 +76,7 @@ agents/
 ### 역할
 - 전체 워크플로우 제어
 - 4개 Agent 그룹 조율
-- 병렬 실행 관리
+- 대화 흐름에 따른 동적 Agent 호출
 - 에러 핸들링 및 재시도
 
 ### 주요 함수
@@ -92,49 +107,78 @@ def parse_request(state: CoordinatorState) -> CoordinatorState:
 
 ---
 
-#### 2. `run_parallel_agents(state: CoordinatorState)` => comment : 불필요함. 필요시 순차적으로 실행하는 것으로. 
-**역할**: Formulation + Research Agent 병렬 실행
+#### 2. `call_agent_on_demand(agent_name: str, state: CoordinatorState)`
+**역할**: 필요한 Agent를 순차적으로 호출
 
 ```python
-async def run_parallel_agents(state: CoordinatorState):
+def call_agent_on_demand(agent_name: str, state: CoordinatorState) -> CoordinatorState:
     """
-    배합 생성과 시장 조사를 동시에 수행하여 시간 단축
-    """
-    tasks = [
-        formulation_agent.run(state),
-        research_agent.run(state)
-    ]
+    대화 흐름에 따라 필요한 Agent만 순차 실행
 
-    results = await asyncio.gather(*tasks)
-    state['formulations'] = results[0]
-    state['research_data'] = results[1]
+    Args:
+        agent_name: 'formulation', 'research', 'validation', 'strategy' 중 하나
+        state: 현재 상태
+
+    Returns:
+        업데이트된 상태
+    """
+    if agent_name == 'formulation':
+        state = formulation_agent.run(state)
+    elif agent_name == 'research':
+        state = research_agent.run(state)
+    elif agent_name == 'validation':
+        state = validation_agent.run(state)
+    elif agent_name == 'strategy':
+        state = strategy_agent.run(state)
+
     return state
 ```
+
+**특징**:
+- 병렬 실행 없음 (비용 절감, 순차 제어)
+- 필요한 Agent만 선택적으로 호출
+- 대화형 워크플로우에 적합
 
 ---
 
-#### 3. `validate_and_filter(state: CoordinatorState)` => comment : 어차피 하나만 생성할 것임. 
-**역할**: 생성된 배합을 검증하고 통과한 것만 필터링
+#### 3. `validate_single_formulation(state: CoordinatorState)`
+**역할**: 생성된 단일 배합을 검증 (옵셔널)
 
 ```python
-def validate_and_filter(state: CoordinatorState):
+def validate_single_formulation(state: CoordinatorState) -> CoordinatorState:
     """
-    IFRA 규제, 밸런스, 안전성 체크
-    통과하지 못한 배합은 제외하거나 수정
-    """
-    validated = []
-    for formulation in state['formulations']:
-        result = validation_agent.check(formulation)
-        if result['passed']:
-            validated.append(formulation)
-        elif result['alternatives']:
-            # 대체안이 있으면 수정 후 재검증
-            fixed = apply_alternatives(formulation, result['alternatives'])
-            validated.append(fixed)
+    단일 배합의 IFRA 규제, 밸런스, 안전성 체크
+    부향률을 고려한 검증이 필요할 때만 호출
 
-    state['validated_formulations'] = validated
+    Args:
+        state['formulation']: 검증할 단일 배합
+
+    Returns:
+        검증 결과 및 대체안 포함
+    """
+    formulation = state.get('formulation')
+    if not formulation:
+        return state
+
+    result = validation_agent.check(formulation)
+
+    if result['passed']:
+        state['validation_status'] = 'passed'
+    else:
+        state['validation_status'] = 'failed'
+        state['validation_issues'] = result['issues']
+
+        # 대체안 제안
+        if result['alternatives']:
+            state['alternative_suggestions'] = result['alternatives']
+
     return state
 ```
+
+**특징**:
+- 다중 배합 필터링 제거 → 단일 배합 검증
+- 부향률 고려 시에만 호출 (옵셔널)
+- 실패 시 대체안 제안
 
 ---
 
@@ -158,30 +202,78 @@ def apply_strategy(state: CoordinatorState):
 
 ---
 
-### LangGraph 그래프 정의
+### LangGraph 그래프 정의 (대화형 구조)
 
 ```python
 from langgraph.graph import StateGraph
 from app.schema.states import CoordinatorState
 
 def build_coordinator_graph():
+    """
+    대화형 워크플로우: Formulation 중심의 유연한 Agent 호출
+    """
     graph = StateGraph(CoordinatorState)
 
     # 노드 추가
     graph.add_node("parse", parse_request)
-    graph.add_node("parallel", run_parallel_agents)
-    graph.add_node("validate", validate_and_filter)
-    graph.add_node("strategy", apply_strategy)
+    graph.add_node("formulation", formulation_agent.run)
+    graph.add_node("research", research_agent.run)
+    graph.add_node("validation", validation_agent.run)  # 옵셔널
+    graph.add_node("strategy", strategy_agent.run)      # 옵셔널
 
-    # 엣지 연결 -> comment :   [Formulation] ⟷ [Validation] (이거는 부향률까지 고려했을 경우에 불러와야함, 옵셔널)  , [Formulation]  ⟷  [Research], [Formulation]  ⟷  [Strategy]  (옵셔널), 대화시 필요하다면 [Formulation]은 언제든지 계속 할 수 있음. 
-    graph.set_entry_point("parse") 
-    graph.add_edge("parse", "parallel")
-    graph.add_edge("parallel", "validate")
-    graph.add_edge("validate", "strategy")
-    graph.set_finish_point("strategy")
+    # 기본 진입점
+    graph.set_entry_point("parse")
+
+    # Formulation 중심의 유연한 연결
+    # parse → formulation (필수)
+    graph.add_edge("parse", "formulation")
+
+    # Formulation ⟷ Research (양방향, 필요시)
+    graph.add_conditional_edges(
+        "formulation",
+        lambda state: "research" if state.get("need_research") else "end",
+        {
+            "research": "research",
+            "end": END
+        }
+    )
+    graph.add_edge("research", "formulation")  # Research 후 다시 Formulation
+
+    # Formulation ⟷ Validation (양방향, 부향률 고려 시 옵셔널)
+    graph.add_conditional_edges(
+        "formulation",
+        lambda state: "validation" if state.get("need_validation") else "end",
+        {
+            "validation": "validation",
+            "end": END
+        }
+    )
+    graph.add_edge("validation", "formulation")  # Validation 후 다시 Formulation
+
+    # Formulation ⟷ Strategy (양방향, 옵셔널)
+    graph.add_conditional_edges(
+        "formulation",
+        lambda state: "strategy" if state.get("need_strategy") else "end",
+        {
+            "strategy": "strategy",
+            "end": END
+        }
+    )
+    graph.add_edge("strategy", "formulation")  # Strategy 후 다시 Formulation
 
     return graph.compile()
 ```
+
+**특징**:
+- **Formulation 중심**: 모든 Agent가 Formulation과 양방향 연결
+- **조건부 실행**: 필요 여부에 따라 동적으로 Agent 호출
+- **반복 가능**: 대화 중 Formulation을 계속 호출 가능
+- **옵셔널 Agent**: Validation, Strategy는 상황에 따라 선택적 호출
+
+**Agent 호출 조건**:
+- `need_research`: 시장 조사가 필요한 경우 (트렌드, 경쟁 분석)
+- `need_validation`: 부향률 고려, IFRA 체크가 필요한 경우
+- `need_strategy`: 포지셔닝, 가격 전략이 필요한 경우
 
 ---
 
@@ -374,19 +466,27 @@ def run(self, state):
 
 ## ⚠️ 주의사항
 
-1. **비동기 처리**
-   - 병렬 Agent는 `async/await` 사용
+1. **순차 실행**
+   - 모든 Agent는 순차적으로 실행 (병렬 처리 없음)
+   - 비동기가 필요하면 개별 Agent 내부에서만 사용
    - DB 세션은 스레드 안전하지 않으므로 주의
 
 2. **상태 불변성**
    - State를 직접 수정하지 말고 새 객체 반환
+   - Formulation이 반복 호출되어도 이전 상태 유지
 
 3. **에러 격리**
    - 한 Agent의 실패가 전체를 중단시키지 않도록 try-except
+   - 옵셔널 Agent는 실패해도 Formulation 계속 가능
 
 4. **LLM 비용 관리**
-   - 불필요한 LLM 호출 최소화
+   - 불필요한 LLM 호출 최소화 (순차 실행으로 비용 절감)
    - 캐싱 활용
+   - 대화 중 같은 요청은 재사용
+
+5. **대화 흐름 제어**
+   - `need_research`, `need_validation`, `need_strategy` 플래그로 Agent 호출 제어
+   - 사용자 요청에 따라 동적으로 플래그 설정
 
 ---
 

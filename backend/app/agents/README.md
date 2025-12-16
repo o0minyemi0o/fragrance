@@ -46,15 +46,13 @@ agents/
                                 ↓
             ┌───────────────────┼───────────────────┐
             ↓                   ↓                   ↓
-      [Formulation]        [Research]         [Strategy]
-      ← 핵심 Agent          (필요시)            (옵셔널)
-      (배합 생성)           - 시장 트렌드       - 포지셔닝
-                           - 소비자 인사이트   - 가격 전략
+      [Formulation]        [Research]         [Strategy]      
+        - 배합 생성          - 시장 트렌드          - 포지셔닝
+        - 핵심 기능          - 소비자 인사이트       - 가격 전략
             ↓                   ↓                   ↓
             └───────────────────┼───────────────────┘
                                 ↓
                           [Validation]
-                           (옵셔널)
                          - IFRA 체크
                          - 부향률 고려
                                 ↓
@@ -86,100 +84,58 @@ agents/
 #### 1. `parse_request(state: CoordinatorState)`
 **역할**: 사용자 입력 파싱 및 구조화
 
-```python
-def parse_request(state: CoordinatorState) -> CoordinatorState:
-    """
-    사용자 입력을 구조화된 요청으로 변환
 
-    입력 예시:
-        "30대 여성, 프레시 플로럴, 3만원대"
+사용자 입력을 구조화된 요청으로 변환
 
-    출력:
-        {
-            'target_audience': {'age': 30, 'gender': 'female'},
-            'fragrance_type': 'Fresh Floral',
-            'price_range': {'min': 25000, 'max': 35000},
-            ...
-        }
-    """
-```
+입력 예시:
+    "30대 여성, 프레시 플로럴, 3만원대"
 
-**LLM 사용**: Gemini로 자연어 파싱
-**프롬프트**: `prompts/formulation_prompts.py` - `PARSE_REQUEST_PROMPT`
+출력:
+    {
+        'target_audience': {'age': 30, 'gender': 'female'},
+        'fragrance_type': 'Fresh Floral',
+        'price_range': {'min': 25000, 'max': 35000},
+        ...
+    }
 
 ---
 
 #### 2. `call_agent_on_demand(agent_name: str, state: CoordinatorState)`
 **역할**: 필요한 Agent를 순차적으로 호출
 
-```python
-def call_agent_on_demand(agent_name: str, state: CoordinatorState) -> CoordinatorState:
-    """
-    대화 흐름에 따라 필요한 Agent만 순차 실행
 
-    Args:
-        agent_name: 'formulation', 'research', 'validation', 'strategy' 중 하나
-        state: 현재 상태
+대화 흐름에 따라 필요한 Agent만 순차 실행
 
-    Returns:
-        업데이트된 상태
-    """
-    if agent_name == 'formulation':
-        state = formulation_agent.run(state)
-    elif agent_name == 'research':
-        state = research_agent.run(state)
-    elif agent_name == 'validation':
-        state = validation_agent.run(state)
-    elif agent_name == 'strategy':
-        state = strategy_agent.run(state)
+Args:
+    agent_name: 'formulation', 'research', 'validation', 'strategy' 중 하나
+    state: 현재 상태
 
-    return state
-```
+Returns:
+    업데이트된 상태
+
 
 **특징**:
-- 병렬 실행 없음 (비용 절감, 순차 제어)
 - 필요한 Agent만 선택적으로 호출
 - 대화형 워크플로우에 적합
 
 ---
 
 #### 3. `validate_single_formulation(state: CoordinatorState)`
-**역할**: 생성된 단일 배합을 검증 (옵셔널)
+**역할**: 생성된 단일 배합을 검증 
 
-```python
-def validate_single_formulation(state: CoordinatorState) -> CoordinatorState:
-    """
-    단일 배합의 IFRA 규제, 밸런스, 안전성 체크
-    부향률을 고려한 검증이 필요할 때만 호출
 
-    Args:
-        state['formulation']: 검증할 단일 배합
+단일 배합의 IFRA 규제, 밸런스, 안전성 체크
+부향률을 고려한 검증이 필요할 때만 호출
 
-    Returns:
-        검증 결과 및 대체안 포함
-    """
-    formulation = state.get('formulation')
-    if not formulation:
-        return state
+Args:
+    state['formulation']: 검증할 단일 배합
 
-    result = validation_agent.check(formulation)
-
-    if result['passed']:
-        state['validation_status'] = 'passed'
-    else:
-        state['validation_status'] = 'failed'
-        state['validation_issues'] = result['issues']
-
-        # 대체안 제안
-        if result['alternatives']:
-            state['alternative_suggestions'] = result['alternatives']
-
-    return state
-```
+Returns:
+    검증 결과 및 대체안 포함
 
 **특징**:
-- 다중 배합 필터링 제거 → 단일 배합 검증
-- 부향률 고려 시에만 호출 (옵셔널)
+- 단일 배합 검증
+- 최종 제안 전 검증
 - 실패 시 대체안 제안
 
 ---
@@ -187,84 +143,16 @@ def validate_single_formulation(state: CoordinatorState) -> CoordinatorState:
 #### 4. `apply_strategy(state: CoordinatorState)`
 **역할**: 전략 Agent로 포지셔닝 및 가격 전략 수립
 
-```python
-def apply_strategy(state: CoordinatorState):
-    """
-    시장 조사 결과와 배합 정보를 바탕으로 전략 수립
-    """
-    strategy = strategy_agent.run(
-        formulations=state['validated_formulations'],
-        research=state['research_data'],
-        target_audience=state['target_audience']
-    )
+시장 조사 결과와 배합 정보를 바탕으로 전략 수립
 
-    state['strategy'] = strategy
-    return state
-```
 
 ---
 
 ### LangGraph 그래프 정의 (대화형 구조)
 
-```python
-from langgraph.graph import StateGraph
-from app.schema.states import CoordinatorState
+Coordinator가 Formulation, Research, Strategy, Validation 중 필요한 단계를 제안한다. Formulation가 만들어지기 전에 Validation이 호출될 순 없다. 항상 Coordinator로 간다. 
+시작할 수 있는 것들 : Research, Strategy, Coordinator 
 
-def build_coordinator_graph():
-    """
-    대화형 워크플로우: Formulation 중심의 유연한 Agent 호출
-    """
-    graph = StateGraph(CoordinatorState)
-
-    # 노드 추가
-    graph.add_node("parse", parse_request)
-    graph.add_node("formulation", formulation_agent.run)
-    graph.add_node("research", research_agent.run)
-    graph.add_node("validation", validation_agent.run)  # 옵셔널
-    graph.add_node("strategy", strategy_agent.run)      # 옵셔널
-
-    # 기본 진입점
-    graph.set_entry_point("parse")
-
-    # Formulation 중심의 유연한 연결
-    # parse → formulation (필수)
-    graph.add_edge("parse", "formulation")
-
-    # Formulation ⟷ Research (양방향, 필요시)
-    graph.add_conditional_edges(
-        "formulation",
-        lambda state: "research" if state.get("need_research") else "end",
-        {
-            "research": "research",
-            "end": END
-        }
-    )
-    graph.add_edge("research", "formulation")  # Research 후 다시 Formulation
-
-    # Formulation ⟷ Validation (양방향, 부향률 고려 시 옵셔널)
-    graph.add_conditional_edges(
-        "formulation",
-        lambda state: "validation" if state.get("need_validation") else "end",
-        {
-            "validation": "validation",
-            "end": END
-        }
-    )
-    graph.add_edge("validation", "formulation")  # Validation 후 다시 Formulation
-
-    # Formulation ⟷ Strategy (양방향, 옵셔널)
-    graph.add_conditional_edges(
-        "formulation",
-        lambda state: "strategy" if state.get("need_strategy") else "end",
-        {
-            "strategy": "strategy",
-            "end": END
-        }
-    )
-    graph.add_edge("strategy", "formulation")  # Strategy 후 다시 Formulation
-
-    return graph.compile()
-```
 
 **특징**:
 - **Formulation 중심**: 모든 Agent가 Formulation과 양방향 연결
@@ -281,20 +169,8 @@ def build_coordinator_graph():
 
 ### 재시도 로직
 
-```python
-from tenacity import retry, stop_after_attempt, wait_exponential
+LLM 호출 실패 시 최대 3회 재시도
 
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10)
-)
-def call_llm_with_retry(prompt: str):
-    """
-    LLM 호출 실패 시 최대 3회 재시도
-    대기 시간: 2초 → 4초 → 8초
-    """
-    return llm_service.generate(prompt)
-```
 
 ---
 
@@ -346,130 +222,13 @@ def call_llm_with_retry(prompt: str):
 
 ### Agent 기본 구조
 
-```python
-from app.schema.states import CoordinatorState
-from app.db.queries import ingredient_queries
-from app.prompts import formulation_prompts
-import logging
-
-logger = logging.getLogger(__name__)
-
-class MyAgent:
-    def __init__(self, llm_service, db_session):
-        self.llm = llm_service
-        self.db = db_session
-
-    def run(self, state: CoordinatorState) -> CoordinatorState:
-        """
-        Agent 실행 메인 함수
-
-        Args:
-            state: 현재 워크플로우 상태
-
-        Returns:
-            업데이트된 상태
-        """
-        try:
-            # 1. DB에서 데이터 조회
-            data = self._fetch_data(state)
-
-            # 2. LLM 호출
-            result = self._call_llm(data)
-
-            # 3. 결과 검증
-            validated = self._validate_result(result)
-
-            # 4. 상태 업데이트
-            state['my_agent_result'] = validated
-            return state
-
-        except Exception as e:
-            logger.error(f"Agent failed: {e}")
-            state['errors'].append(str(e))
-            return state
-
-    def _fetch_data(self, state):
-        """DB 조회"""
-        pass
-
-    def _call_llm(self, data):
-        """LLM 호출"""
-        pass
-
-    def _validate_result(self, result):
-        """결과 검증"""
-        pass
-```
-
----
-
-### Agent 테스트
-
-```python
-import pytest
-from app.agents.my_agent import MyAgent
-
-def test_my_agent():
-    # Mock 상태
-    state = {
-        'user_input': 'test input',
-        'target_audience': {'age': 30}
-    }
-
-    agent = MyAgent(llm_service, db_session)
-    result = agent.run(state)
-
-    assert 'my_agent_result' in result
-    assert result['my_agent_result'] is not None
-```
-
----
-
-## 📊 성능 모니터링
-
-### 로깅 예시
-
-```python
-import time
-
-def run(self, state):
-    start = time.time()
-    logger.info(f"Agent started: {self.__class__.__name__}")
-
-    result = self._process(state)
-
-    elapsed = time.time() - start
-    logger.info(f"Agent finished in {elapsed:.2f}s")
-
-    return result
-```
-
-### 메트릭 수집
-
-- **실행 시간**: 각 Agent별 처리 시간
-- **LLM 토큰 사용량**: 비용 추적
-- **성공률**: 검증 통과율
-- **재시도 횟수**: 안정성 지표
-
----
-
-## 🔗 의존성
-
-**의존하는 모듈**:
-- `app.schema.states` (State 타입)
-- `app.prompts.` (프롬프트 템플릿)
-- `app.db.queries.` (데이터 조회)
-- `app.services.llm_service` (LLM 호출)
-
-**사용하는 곳**:
-- `app.routes.` (API 엔드포인트에서 Coordinator 호출)
 
 ---
 
 ## ⚠️ 주의사항
 
 1. **순차 실행**
-   - 모든 Agent는 순차적으로 실행 (병렬 처리 없음)
+   - 모든 Agent는 순차적으로 실행
    - 비동기가 필요하면 개별 Agent 내부에서만 사용
    - DB 세션은 스레드 안전하지 않으므로 주의
 
@@ -491,8 +250,3 @@ def run(self, state):
    - 사용자 요청에 따라 동적으로 플래그 설정
 
 ---
-
-## 📚 참고 자료
-- [LangGraph Documentation](https://python.langchain.com/docs/langgraph)
-- [Agent Design Patterns](https://www.anthropic.com/research/agent-design-patterns)
-- [Tenacity Retry Library](https://tenacity.readthedocs.io/)

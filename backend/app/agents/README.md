@@ -139,8 +139,13 @@ Returns:
 - 실패 시 대체안 제안
 
 ---
-comment : #### 4. research 누락
 
+#### 4. `run_research(state: CoordinatorState)`
+**역할**: 시장 조사 및 소비자 인사이트 분석
+
+시장 트렌드와 소비자 페르소나를 분석하여 배합 생성에 참고할 데이터 제공
+
+---
 
 #### 5. `apply_strategy(state: CoordinatorState)`
 **역할**: 전략 Agent로 포지셔닝 및 가격 전략 수립

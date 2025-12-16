@@ -38,27 +38,21 @@ agents/
 
 ### 1. 사용자 요청 흐름
 ```
-[사용자 입력]
-"30대 여성, 프레시 플로럴, 3만원대"
-         ↓
-   [Coordinator]
-    parse_request
-         ↓
-   ┌─────┴──────┐
-   ↓            ↓
-[Formulation] [Research]  ← 병렬 실행 (30초)
-   ↓            ↓
-   └─────┬──────┘
-         ↓
-   [Validation]  ← IFRA 체크, 대체안 제안 (10초)
-         ↓
-    [Strategy]   ← 포지셔닝, 가격 전략 (10초)
-         ↓
-   [최종 결과]
-검증된 배합 10개 + 전략 리포트
+                            [사용자 입력]
+                   "30대 여성, 프레시 플로럴, 3만원대"
+                                ↓
+                           [Coordinator]
+                           parse_request
+                                ↓
+      ┌──────────────────┬──────┴────────┬──────────────┐
+      ↓                  ↓               ↓              ↓
+  [Validation]  ⟷  [Formulation]  ⟷  [Research]  ⟷  [Strategy]  
+      ↓                  ↓               ↓              ↓
+      └──────────────────┴──────┬────────┴──────────────┘
+                                ↓
+                           [최종 결과]
+                        추천 배합 + 전략 리포트
 ```
-
-**예상 처리 시간**: 총 50초 ~ 2분
 
 ---
 
@@ -87,7 +81,8 @@ def parse_request(state: CoordinatorState) -> CoordinatorState:
         {
             'target_audience': {'age': 30, 'gender': 'female'},
             'fragrance_type': 'Fresh Floral',
-            'price_range': {'min': 25000, 'max': 35000}
+            'price_range': {'min': 25000, 'max': 35000},
+            ...
         }
     """
 ```
@@ -97,7 +92,7 @@ def parse_request(state: CoordinatorState) -> CoordinatorState:
 
 ---
 
-#### 2. `run_parallel_agents(state: CoordinatorState)`
+#### 2. `run_parallel_agents(state: CoordinatorState)` => comment : 불필요함. 필요시 순차적으로 실행하는 것으로. 
 **역할**: Formulation + Research Agent 병렬 실행
 
 ```python
@@ -118,7 +113,7 @@ async def run_parallel_agents(state: CoordinatorState):
 
 ---
 
-#### 3. `validate_and_filter(state: CoordinatorState)`
+#### 3. `validate_and_filter(state: CoordinatorState)` => comment : 어차피 하나만 생성할 것임. 
 **역할**: 생성된 배합을 검증하고 통과한 것만 필터링
 
 ```python
@@ -178,8 +173,8 @@ def build_coordinator_graph():
     graph.add_node("validate", validate_and_filter)
     graph.add_node("strategy", apply_strategy)
 
-    # 엣지 연결
-    graph.set_entry_point("parse")
+    # 엣지 연결 -> comment :   [Formulation] ⟷ [Validation] (이거는 부향률까지 고려했을 경우에 불러와야함, 옵셔널)  , [Formulation]  ⟷  [Research], [Formulation]  ⟷  [Strategy]  (옵셔널), 대화시 필요하다면 [Formulation]은 언제든지 계속 할 수 있음. 
+    graph.set_entry_point("parse") 
     graph.add_edge("parse", "parallel")
     graph.add_edge("parallel", "validate")
     graph.add_edge("validate", "strategy")

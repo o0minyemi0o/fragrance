@@ -44,17 +44,19 @@ agents/
                            [Coordinator]
                            parse_request
                                 ↓
-                         [Formulation] ← 핵심 Agent
-                         (배합 생성)
-                                ↓
             ┌───────────────────┼───────────────────┐
             ↓                   ↓                   ↓
-      [Validation]         [Research]         [Strategy]
-      (옵셔널)              (필요시)            (옵셔널)
-      - IFRA 체크           - 시장 트렌드       - 포지셔닝
-      - 부향률 고려         - 소비자 인사이트   - 가격 전략
+      [Formulation]        [Research]         [Strategy]
+      ← 핵심 Agent          (필요시)            (옵셔널)
+      (배합 생성)           - 시장 트렌드       - 포지셔닝
+                           - 소비자 인사이트   - 가격 전략
             ↓                   ↓                   ↓
             └───────────────────┼───────────────────┘
+                                ↓
+                          [Validation]
+                           (옵셔널)
+                         - IFRA 체크
+                         - 부향률 고려
                                 ↓
                            [최종 결과]
                       단일 배합 + 전략 리포트

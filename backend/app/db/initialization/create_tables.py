@@ -1,4 +1,4 @@
-from app.schemas import Base
+from app.db.schema import Base
 from app.db.initialization.engine import engine
 
 print("Creating tables...")

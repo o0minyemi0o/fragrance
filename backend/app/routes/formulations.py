@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.initialization.session import get_db
-from app.schemas.accord import Accord
-from app.schemas.formula import Formula
+from app.db.schema import Accord, Formula
 from app.services.llm_service import llm_service
 import logging
 

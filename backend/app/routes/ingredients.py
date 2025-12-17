@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.initialization.session import get_db
-from app.schemas import Ingredient
+from app.db.schema import Ingredient
 from google import genai
 import json
 import logging

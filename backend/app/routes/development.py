@@ -7,7 +7,7 @@ import json
 import os
 from sqlalchemy.orm import Session
 from app.db.initialization.session import get_db
-from app.schemas import Ingredient
+from app.db.schema import Ingredient
 
 router = APIRouter(prefix="/api/development", tags=["development"])
 

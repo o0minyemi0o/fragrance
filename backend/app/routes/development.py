@@ -6,7 +6,7 @@ from typing import List
 import json
 import os
 from sqlalchemy.orm import Session
-from app.database.database import get_db
+from app.db.initialization.session import get_db
 from app.schemas import Ingredient
 
 router = APIRouter(prefix="/api/development", tags=["development"])

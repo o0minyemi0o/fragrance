@@ -1,6 +1,5 @@
 """
 DB Queries Layer
-pt0 t¤ ü \ÁD ¡TX” t´
 """
 
 from .ingredient_queries import (

@@ -2,6 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.initialization.session import get_db
 from app.db.schema import Ingredient
+from app.db.queries import (
+    get_all_ingredients,
+    get_ingredient_by_id,
+    create_ingredient,
+    update_ingredient,
+    delete_ingredient,
+)
 from google import genai
 import json
 import logging
@@ -20,7 +27,7 @@ router = APIRouter(prefix="/api/ingredients", tags=["ingredients"])
 @router.get("")
 async def list_ingredients(db: Session = Depends(get_db)):
     """모든 재료 조회"""
-    ingredients = db.query(Ingredient).all()
+    ingredients = get_all_ingredients(db)
     return {
         "ingredients": [
             {
@@ -72,14 +79,12 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.delete("/{id}")
-async def delete_ingredient(id: int, db: Session = Depends(get_db)):
+async def delete_ingredient_route(id: int, db: Session = Depends(get_db)):
     """재료 삭제"""
-    ingredient = db.query(Ingredient).filter(Ingredient.id == id).first()
-    if not ingredient:
+    success = delete_ingredient(db, id)
+    if not success:
         raise HTTPException(status_code=404, detail="Ingredient not found")
-    
-    db.delete(ingredient)
-    db.commit()
+
     return {"message": "Ingredient deleted successfully"}
 
 @router.post("/auto-fill")
@@ -178,12 +183,8 @@ Return ONLY the JSON object."""
 
 
 @router.put("/{id}")
-async def update_ingredient(id: int, data: dict, db: Session = Depends(get_db)):
-    ingredient = db.query(Ingredient).filter(Ingredient.id == id).first()
+async def update_ingredient_route(id: int, data: dict, db: Session = Depends(get_db)):
+    ingredient = update_ingredient(db, id, data)
     if not ingredient:
         raise HTTPException(status_code=404, detail="Ingredient not found")
-    for key, value in data.items():
-        setattr(ingredient, key, value)
-    db.commit()
-    db.refresh(ingredient)
     return {"id": ingredient.id, "message": "Ingredient updated successfully"}

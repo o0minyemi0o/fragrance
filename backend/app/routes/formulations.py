@@ -2,6 +2,20 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.initialization.session import get_db
 from app.db.schema import Accord, Formula
+from app.db.queries import (
+    get_all_accords,
+    get_accord_by_id,
+    get_accord_by_name,
+    create_accord,
+    update_accord,
+    delete_accord,
+    get_all_formulas,
+    get_formula_by_id,
+    get_formula_by_name,
+    create_formula,
+    update_formula,
+    delete_formula,
+)
 from app.services.llm_service import llm_service
 import logging
 
@@ -45,32 +59,30 @@ async def save_accord(
         longevity = request.get("longevity")
         sillage = request.get("sillage")
         llm_recommendation = request.get("recommendation", "")
-        
+
         if not name or not accord_type:
             raise HTTPException(status_code=400, detail="Name and type required")
-        
+
         # 중복 확인
-        existing = db.query(Accord).filter(Accord.name == name).first()
+        existing = get_accord_by_name(db, name)
         if existing:
             raise HTTPException(status_code=409, detail="Accord already exists")
-        
-        accord = Accord(
-            name=name,
-            accord_type=accord_type,
-            description=description,
-            ingredients_composition=ingredients_composition,
-            total_percentage=100.0,
-            longevity=longevity,
-            sillage=sillage,
-            llm_recommendation=llm_recommendation
-        )
-        
-        db.add(accord)
-        db.commit()
-        db.refresh(accord)
-        
+
+        accord_data = {
+            "name": name,
+            "accord_type": accord_type,
+            "description": description,
+            "ingredients_composition": ingredients_composition,
+            "total_percentage": 100.0,
+            "longevity": longevity,
+            "sillage": sillage,
+            "llm_recommendation": llm_recommendation
+        }
+
+        accord = create_accord(db, accord_data)
+
         logger.info(f"Accord 저장 완료: ID={accord.id}, Name={name}")
-        
+
         return {
             "status": "success",
             "message": f"Accord '{name}' saved",
@@ -119,33 +131,31 @@ async def save_formula(
         sillage = request.get("sillage")
         stability_notes = request.get("stability_notes")
         llm_recommendation = request.get("recommendation", "")
-        
+
         if not name or not formula_type:
             raise HTTPException(status_code=400, detail="Name and type required")
-        
+
         # 중복 확인
-        existing = db.query(Formula).filter(Formula.name == name).first()
+        existing = get_formula_by_name(db, name)
         if existing:
             raise HTTPException(status_code=409, detail="Formula already exists")
-        
-        formula = Formula(
-            name=name,
-            formula_type=formula_type,
-            description=description,
-            ingredients_composition=ingredients_composition,
-            total_percentage=100.0,
-            longevity=longevity,
-            sillage=sillage,
-            stability_notes=stability_notes,
-            llm_recommendation=llm_recommendation
-        )
-        
-        db.add(formula)
-        db.commit()
-        db.refresh(formula)
-        
+
+        formula_data = {
+            "name": name,
+            "formula_type": formula_type,
+            "description": description,
+            "ingredients_composition": ingredients_composition,
+            "total_percentage": 100.0,
+            "longevity": longevity,
+            "sillage": sillage,
+            "stability_notes": stability_notes,
+            "llm_recommendation": llm_recommendation
+        }
+
+        formula = create_formula(db, formula_data)
+
         logger.info(f"Formula 저장 완료: ID={formula.id}, Name={name}")
-        
+
         return {
             "status": "success",
             "message": f"Formula '{name}' saved",
@@ -159,7 +169,7 @@ async def save_formula(
 @router.get("/accords")
 async def list_accords(db: Session = Depends(get_db)):
     """저장된 Accord 목록"""
-    accords = db.query(Accord).all()
+    accords = get_all_accords(db)
     return {
         "count": len(accords),
         "accords": [
@@ -175,12 +185,12 @@ async def list_accords(db: Session = Depends(get_db)):
     }
 
 @router.get("/accords/{id}")
-async def get_accord(id: int, db: Session = Depends(get_db)):
+async def get_accord_route(id: int, db: Session = Depends(get_db)):
     """특정 Accord 상세 조회"""
-    accord = db.query(Accord).filter(Accord.id == id).first()
+    accord = get_accord_by_id(db, id)
     if not accord:
         raise HTTPException(status_code=404, detail="Accord not found")
-    
+
     return {
         "id": accord.id,
         "name": accord.name,
@@ -194,22 +204,20 @@ async def get_accord(id: int, db: Session = Depends(get_db)):
     }
 
 @router.delete("/accords/{id}")
-async def delete_accord(id: int, db: Session = Depends(get_db)):
+async def delete_accord_route(id: int, db: Session = Depends(get_db)):
     """Accord 삭제"""
-    accord = db.query(Accord).filter(Accord.id == id).first()
-    if not accord:
+    success = delete_accord(db, id)
+    if not success:
         raise HTTPException(status_code=404, detail="Accord not found")
-    
-    db.delete(accord)
-    db.commit()
+
     logger.info(f"Accord 삭제 완료: ID={id}")
-    
+
     return {"status": "success", "message": f"Accord deleted"}
 
 @router.get("/formulas")
 async def list_formulas(db: Session = Depends(get_db)):
     """저장된 Formula 목록"""
-    formulas = db.query(Formula).all()
+    formulas = get_all_formulas(db)
     return {
         "count": len(formulas),
         "formulas": [
@@ -225,12 +233,12 @@ async def list_formulas(db: Session = Depends(get_db)):
     }
 
 @router.get("/formulas/{id}")
-async def get_formula(id: int, db: Session = Depends(get_db)):
+async def get_formula_route(id: int, db: Session = Depends(get_db)):
     """특정 Formula 상세 조회"""
-    formula = db.query(Formula).filter(Formula.id == id).first()
+    formula = get_formula_by_id(db, id)
     if not formula:
         raise HTTPException(status_code=404, detail="Formula not found")
-    
+
     return {
         "id": formula.id,
         "name": formula.name,
@@ -245,50 +253,46 @@ async def get_formula(id: int, db: Session = Depends(get_db)):
     }
 
 @router.delete("/formulas/{id}")
-async def delete_formula(id: int, db: Session = Depends(get_db)):
+async def delete_formula_route(id: int, db: Session = Depends(get_db)):
     """Formula 삭제"""
-    formula = db.query(Formula).filter(Formula.id == id).first()
-    if not formula:
+    success = delete_formula(db, id)
+    if not success:
         raise HTTPException(status_code=404, detail="Formula not found")
-    
-    db.delete(formula)
-    db.commit()
+
     logger.info(f"Formula 삭제 완료: ID={id}")
-    
+
     return {"status": "success", "message": f"Formula deleted"}
 
 
 @router.put("/accords/{id}")
-async def update_accord(
+async def update_accord_route(
     id: int,
     request: dict,
     db: Session = Depends(get_db)
 ):
     """Accord 수정"""
     try:
-        accord = db.query(Accord).filter(Accord.id == id).first()
+        # 수정 가능한 필드들 필터링
+        update_data = {}
+        if "name" in request:
+            update_data["name"] = request["name"].strip()
+        if "description" in request:
+            update_data["description"] = request["description"]
+        if "ingredients_composition" in request:
+            update_data["ingredients_composition"] = request["ingredients_composition"]
+        if "longevity" in request:
+            update_data["longevity"] = request["longevity"]
+        if "sillage" in request:
+            update_data["sillage"] = request["sillage"]
+        if "llm_recommendation" in request:
+            update_data["llm_recommendation"] = request["llm_recommendation"]
+
+        accord = update_accord(db, id, update_data)
         if not accord:
             raise HTTPException(status_code=404, detail="Accord not found")
-        
-        # 수정 가능한 필드들
-        if "name" in request:
-            accord.name = request["name"].strip()
-        if "description" in request:
-            accord.description = request["description"]
-        if "ingredients_composition" in request:
-            accord.ingredients_composition = request["ingredients_composition"]
-        if "longevity" in request:
-            accord.longevity = request["longevity"]
-        if "sillage" in request:
-            accord.sillage = request["sillage"]
-        if "llm_recommendation" in request:
-            accord.llm_recommendation = request["llm_recommendation"]
-        
-        db.commit()
-        db.refresh(accord)
-        
+
         logger.info(f"Accord 수정 완료: ID={id}")
-        
+
         return {
             "status": "success",
             "message": f"Accord updated",
@@ -302,37 +306,36 @@ async def update_accord(
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/formulas/{id}")
-async def update_formula(
+async def update_formula_route(
     id: int,
     request: dict,
     db: Session = Depends(get_db)
 ):
     """Formula 수정"""
     try:
-        formula = db.query(Formula).filter(Formula.id == id).first()
+        # 수정 가능한 필드들 필터링
+        update_data = {}
+        if "name" in request:
+            update_data["name"] = request["name"].strip()
+        if "description" in request:
+            update_data["description"] = request["description"]
+        if "ingredients_composition" in request:
+            update_data["ingredients_composition"] = request["ingredients_composition"]
+        if "longevity" in request:
+            update_data["longevity"] = request["longevity"]
+        if "sillage" in request:
+            update_data["sillage"] = request["sillage"]
+        if "stability_notes" in request:
+            update_data["stability_notes"] = request["stability_notes"]
+        if "llm_recommendation" in request:
+            update_data["llm_recommendation"] = request["llm_recommendation"]
+
+        formula = update_formula(db, id, update_data)
         if not formula:
             raise HTTPException(status_code=404, detail="Formula not found")
-        
-        if "name" in request:
-            formula.name = request["name"].strip()
-        if "description" in request:
-            formula.description = request["description"]
-        if "ingredients_composition" in request:
-            formula.ingredients_composition = request["ingredients_composition"]
-        if "longevity" in request:
-            formula.longevity = request["longevity"]
-        if "sillage" in request:
-            formula.sillage = request["sillage"]
-        if "stability_notes" in request:
-            formula.stability_notes = request["stability_notes"]
-        if "llm_recommendation" in request:
-            formula.llm_recommendation = request["llm_recommendation"]
-        
-        db.commit()
-        db.refresh(formula)
-        
+
         logger.info(f"Formula 수정 완료: ID={id}")
-        
+
         return {
             "status": "success",
             "message": f"Formula updated",

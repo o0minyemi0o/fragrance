@@ -129,8 +129,8 @@ from app.schema.config import settings
 engine = create_engine(
     settings.DATABASE_URL,
     echo=(settings.ENV == "development"),
-    pool_size=10,                      # 커넥션 풀
-    max_overflow=20
+    pool_size=2,                      # 커넥션 풀
+    max_overflow=3
 )
 ```
 

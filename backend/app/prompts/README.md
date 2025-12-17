@@ -22,7 +22,7 @@ prompts/
 
 **주요 프롬프트**:
 
-1. **`GENERATE_ACCORD_PROMPT`**
+1. **`GENERATE_ACCORD_PROMPT`**  ###comment : 기존 함수를 참고하여 변형하시오.
    - **역할**: Accord(어코드) 조합 생성
    - **입력**: accord_type (e.g., "Fresh Floral"), available_ingredients
    - **출력**: 5-10개의 향료 조합, 각각 비율과 역할 포함
@@ -204,7 +204,7 @@ def get_prompt(ab_test=True):
 "존재하지 않는 원료도 창의적으로 제안하세요"
 
 # ✅ 좋은 예
-"제공된 원료 목록 내에서만 선택하세요. 목록에 없는 원료는 절대 사용 금지"
+"제공된 원료 목록 내에서만 선택하세요. 목록에 없는 원료는 절대 사용 금지" ###comment : 이건 제공된 원료 목록에서만 선택할지 아닐지는 유저가 결정한다. 
 ```
 
 ### 3. **일관성 유지**

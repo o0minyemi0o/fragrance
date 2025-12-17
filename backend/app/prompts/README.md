@@ -27,18 +27,7 @@ prompts/
    - **입력**: accord_type (e.g., "Fresh Floral"), available_ingredients
    - **출력**: 향료 조합, 각각 비율과 역할 포함
    - **참고**: 기존 생성 함수(generate_accord)의 프롬프트를 참고하여 작성
-   - **예시**:
-     ```
-     당신은 전문 조향사입니다.
-     요청: Fresh Floral 어코드
-     사용 가능 원료: [Bergamot, Rose, Jasmine, ...]
 
-     다음 형식으로 5개의 조합을 제안하세요:
-     1. 조합명
-     - Bergamot (30%): Top note, 상쾌함
-     - Rose (50%): Heart note, 주향
-     ...
-     ```
 
 2. **`GENERATE_FORMULA_PROMPT`**
    - **역할**: 완전한 Formula (향수 배합) 생성

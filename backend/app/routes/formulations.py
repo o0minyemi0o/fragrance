@@ -32,9 +32,11 @@ async def generate_accord(
         accord_type = request.get("accord_type", "").strip()
         if not accord_type:
             raise HTTPException(status_code=400, detail="Accord type required")
-        
-        logger.info(f"Accord 생성 요청: {accord_type}")
-        result = llm_service.generate_accord(accord_type, db)
+
+        use_available = request.get("use_available_ingredients", False)
+
+        logger.info(f"Accord 생성 요청: {accord_type}, use_available={use_available}")
+        result = llm_service.generate_accord(accord_type, db, use_available)
 
         return {
             "status": "success",
@@ -103,10 +105,11 @@ async def generate_formula(
         formula_type = request.get("formula_type", "").strip()
         if not formula_type:
             raise HTTPException(status_code=400, detail="Formula type required")
-        
-        logger.info(f"Formula 생성 요청: {formula_type}")
-        result = llm_service.generate_formula(formula_type, db)
 
+        use_available = request.get("use_available_ingredients", False)
+
+        logger.info(f"Formula 생성 요청: {formula_type}, use_available={use_available}")
+        result = llm_service.generate_formula(formula_type, db, use_available)
 
         return {
             "status": "success",

@@ -19,11 +19,11 @@ class LLMService:
             logger.error(f"Gemini Client 초기화 실패: {e}")
             raise
     
-    def generate_accord(self, accord_type: str, db: Optional[Session] = None) -> dict:
+    def generate_accord(self, accord_type: str, db: Optional[Session] = None, use_available_ingredients: bool = False) -> dict:
         """Accord 조합 생성"""
-        # Get ingredient names from DB if available
+        # Get ingredient names from DB only if explicitly requested
         ingredient_names = None
-        if db:
+        if use_available_ingredients and db:
             try:
                 ingredient_names = get_ingredient_names(db)
                 logger.info(f"Loaded {len(ingredient_names)} ingredients from DB for context")
@@ -55,11 +55,11 @@ class LLMService:
             logger.error(f"Accord 생성 실패: {e}", exc_info=True)
             raise
 
-    def generate_formula(self, formula_type: str, db: Optional[Session] = None) -> dict:
+    def generate_formula(self, formula_type: str, db: Optional[Session] = None, use_available_ingredients: bool = False) -> dict:
         """Formula 조합 생성 (완제품용, 고완성도)"""
-        # Get ingredient names from DB if available
+        # Get ingredient names from DB only if explicitly requested
         ingredient_names = None
-        if db:
+        if use_available_ingredients and db:
             try:
                 ingredient_names = get_ingredient_names(db)
                 logger.info(f"Loaded {len(ingredient_names)} ingredients from DB for context")

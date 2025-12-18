@@ -8,118 +8,41 @@ Development Mode의 multi-agent workflow를 정의합니다.
 from typing import Literal
 from langgraph.graph import StateGraph, END
 from app.schema.states import DevelopmentState, CoordinatorState
+from app.agents.development_agent import development_agent
 
 
 # ============================================================================
-# Node Functions (Placeholder - 실제 Agent 구현은 agents/ 폴더에서)
+# Node Functions (Development Agent 사용)
 # ============================================================================
 
 def parse_request_node(state: DevelopmentState) -> DevelopmentState:
-    """
-    사용자 입력 파싱 노드
-
-    사용자의 메시지를 분석하여:
-    - 의도 파악 (배합 요청, 원료 질문, 수정 요청 등)
-    - 현재 대화 단계 판단
-    - 다음 액션 결정
-    """
-    print(f"[parse_request_node] Input: {state.get('current_user_input', 'N/A')}")
-
-    # TODO: 실제 LLM을 사용한 의도 파악 로직
-    # 현재는 기본값 설정
-    state["conversation_stage"] = state.get("conversation_stage", "initial")
-    state["next_action"] = "gather_preferences"
-
-    return state
+    """사용자 입력 파싱 노드"""
+    return development_agent.parse_request(state)
 
 
 def gather_preferences_node(state: DevelopmentState) -> DevelopmentState:
-    """
-    사용자 선호도 수집 노드
-
-    대화를 통해 다음 정보를 수집:
-    - 향수 타입 (플로럴, 우디, 시트러스 등)
-    - 타겟 (성별, 연령대, 상황)
-    - 특별 요구사항
-    """
-    print("[gather_preferences_node] Gathering user preferences...")
-
-    # TODO: 실제 선호도 추출 로직
-    state["user_preferences"] = state.get("user_preferences", {})
-
-    return state
+    """사용자 선호도 수집 노드"""
+    return development_agent.gather_preferences(state)
 
 
 def search_ingredients_node(state: DevelopmentState) -> DevelopmentState:
-    """
-    원료 검색 노드
-
-    사용자 선호도를 바탕으로:
-    - DB에서 적합한 원료 검색 (name-based, semantic)
-    - ChromaDB를 활용한 유사 원료 찾기
-    - 추천 원료 리스트 생성
-    """
-    print("[search_ingredients_node] Searching for ingredients...")
-
-    # TODO: 실제 검색 로직 (ChromaDB + DB 쿼리)
-    state["suggested_ingredients"] = state.get("suggested_ingredients", [])
-
-    return state
+    """원료 검색 노드"""
+    return development_agent.search_ingredients(state)
 
 
 def create_formulation_node(state: DevelopmentState) -> DevelopmentState:
-    """
-    배합 생성 노드
-
-    선택된 원료를 바탕으로:
-    - Top/Middle/Base note 구조 설계
-    - 각 원료의 비율 계산
-    - 배합안 생성
-    """
-    print("[create_formulation_node] Creating formulation...")
-
-    # TODO: 실제 배합 생성 로직
-    state["current_formulation"] = state.get("current_formulation", None)
-
-    return state
+    """배합 생성 노드"""
+    return development_agent.create_formulation(state)
 
 
 def validate_formulation_node(state: DevelopmentState) -> DevelopmentState:
-    """
-    배합 검증 노드
-
-    생성된 배합이:
-    - 총 비율 100% 체크
-    - 각 원료의 사용량 범위 체크
-    - IFRA 규제 준수 체크
-    """
-    print("[validate_formulation_node] Validating formulation...")
-
-    # TODO: 실제 검증 로직
-    formulation = state.get("current_formulation")
-    if formulation:
-        # 기본 검증만 수행
-        state["current_formulation"]["validation_status"] = "valid"
-
-    return state
+    """배합 검증 노드"""
+    return development_agent.validate_formulation(state)
 
 
 def generate_response_node(state: DevelopmentState) -> DevelopmentState:
-    """
-    응답 생성 노드
-
-    현재 상태를 바탕으로 사용자에게 보여줄 응답 생성:
-    - 대화 단계에 맞는 질문/안내
-    - 배합안 설명
-    - 다음 단계 제안
-    """
-    print("[generate_response_node] Generating response...")
-
-    # TODO: 실제 응답 생성 로직
-    stage = state.get("conversation_stage", "initial")
-    state["response"] = f"Current stage: {stage}"
-
-    return state
+    """응답 생성 노드"""
+    return development_agent.generate_response(state)
 
 
 # ============================================================================

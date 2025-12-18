@@ -14,13 +14,9 @@ from app.db.vector import (
     search_ingredients_semantic,
     index_all_ingredients,
 )
-from google import genai
-import json
+from app.services.ingredient_service import ingredient_service
 import logging
-import re
-import os
 from dotenv import load_dotenv
-import os
 
 # 최우선으로 .env 파일 로드
 load_dotenv()
@@ -95,93 +91,17 @@ async def delete_ingredient_route(id: int, db: Session = Depends(get_db)):
 @router.post("/auto-fill")
 async def auto_fill_ingredient(data: dict, db: Session = Depends(get_db)):
     """재료명으로 정보 자동 채우기 LLM"""
-    ingredient_name = data.get("name", "").strip()
-    
-    logger.info(f"Auto-fill request received: '{ingredient_name}'")
-    
-    if not ingredient_name:
-        logger.error("Ingredient name is empty")
-        raise HTTPException(status_code=400, detail="Ingredient name is required")
-    
     try:
-        logger.info(f"Using LLM to generate {ingredient_name}")
-        
-        # LLM으로 생성
-        api_key = os.getenv("GOOGLE_API_KEY")
-        if not api_key:
-            logger.error("GOOGLE_API_KEY environment variable not set")
-            raise HTTPException(status_code=500, detail="API key not configured")
-        
-        logger.info("Initializing Gemini client...")
-        client = genai.Client(api_key=api_key)
-        
-        prompt = f"""You are a fragrance chemistry expert. Given an ingredient name, provide detailed information in JSON format.
+        ingredient_name = data.get("name", "").strip()
 
-Ingredient Name: {ingredient_name}
+        if not ingredient_name:
+            raise HTTPException(status_code=400, detail="Ingredient name is required")
 
-Return ONLY valid JSON (no markdown, no code blocks, no additional text) with this exact structure:
-{{
-  "inci_name": "INCI chemical name",
-  "cas_number": "CAS number",
-  "synonyms": "comma-separated synonyms",
-  "odor_description": "descriptive odor profile",
-  "note_family": "Floral, Woody, Citrus, Herbal, Spicy, Fresh, Sweet, Oriental, or Other",
-  "suggested_usage_level": "typical usage percentage (e.g., 0.1-1%)",
-  "max_usage_percentage": "maximum allowed usage percentage",
-  "stability": "description of chemical or environmental stability",
-  "tenacity": "duration of scent on skin or blotter",
-  "volatility": "high, medium, or low"
-}}
+        result = ingredient_service.auto_fill(ingredient_name)
+        return result
 
-Return ONLY the JSON object."""
-
-        logger.info("Calling Gemini API...")
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=prompt
-        )
-        
-        logger.info(f"Gemini response received: {response.text[:100]}...")
-        
-        response_text = response.text.strip()
-
-        # 마크다운 제거
-        if response_text.startswith('```json'):
-            response_text = response_text[7:]  
-        if response_text.startswith('```'):
-            response_text = response_text[3:]  
-
-        # 줄바꿈 제거
-        response_text = response_text.lstrip('\n').rstrip('\n')
-
-        if response_text.endswith('```'):
-            response_text = response_text[:-3]
-
-        response_text = response_text.strip()
-
-        logger.info(f"Cleaned response: {response_text}")
-        parsed_data = json.loads(response_text)
-        return {
-            "success": True,
-            "source": "llm",
-            "data": {
-                "inci_name": parsed_data.get("inci_name", ""),
-                "cas_number": parsed_data.get("cas_number", ""),
-                "synonyms": parsed_data.get("synonyms", ""),
-                "odor_description": parsed_data.get("odor_description", ""),
-                "note_family": parsed_data.get("note_family", ""),
-                "suggested_usage_level": parsed_data.get("suggested_usage_level", ""),
-                "max_usage_percentage": parsed_data.get("max_usage_percentage", ""),
-                "stability": parsed_data.get("stability", ""),
-                "tenacity": parsed_data.get("tenacity", ""),
-                "volatility": parsed_data.get("volatility", "")   
-            }
-        }
-        
-    except json.JSONDecodeError as e:
-        logger.error(f"JSON parsing error: {e}")
-        logger.error(f"Response text was: {response_text}")
-        raise HTTPException(status_code=500, detail=f"Failed to parse LLM response: {str(e)}")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Auto-fill error: {type(e).__name__}: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Auto-fill failed: {str(e)}")

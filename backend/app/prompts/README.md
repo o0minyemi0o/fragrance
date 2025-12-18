@@ -7,15 +7,54 @@
 ```
 prompts/
 ├── README.md
-├── formulation_prompts.py    # 배합 생성 관련
-├── research_prompts.py        # 시장 조사 관련
-├── strategy_prompts.py        # 전략 수립 관련
-└── validation_prompts.py      # 검증 관련
+├── ingredient_prompts.py      # 원료 자동 채우기 프롬프트
+├── development_prompts.py     # Development Mode 시스템 프롬프트
+└── formulation_prompts.py     # 배합 생성 관련 프롬프트
 ```
+
+**향후 추가 예정**:
+- research_prompts.py: 시장 조사 관련
+- strategy_prompts.py: 전략 수립 관련
+- validation_prompts.py: 검증 관련
 
 ---
 
 ## 📄 각 파일의 역할
+
+### ingredient_prompts.py
+**목적**: 원료 자동 채우기 (Auto-fill) 프롬프트
+
+**주요 함수**:
+- `get_ingredient_autofill_prompt(ingredient_name: str)`: 원료명으로 정보 자동 생성 프롬프트
+
+**입력**: 원료명 (예: "Bergamot Oil")
+**출력**: JSON 형식의 원료 정보
+- INCI name
+- CAS number
+- Odor description
+- Note family
+- Usage level
+- Stability, Tenacity, Volatility
+
+**호출 위치**: `services/ingredient_service.py`
+
+---
+
+### development_prompts.py
+**목적**: Development Mode의 시스템 프롬프트
+
+**주요 함수**:
+- `get_development_system_prompt(ingredient_list: str, ingredient_count: int)`: Development Mode 대화형 배합 개발 시스템 프롬프트
+
+**역할**:
+- 사용자와 대화하며 향수 배합 개발
+- DB에 등록된 원료 목록 제공
+- 최소 10-12개 원료 사용 유도
+- 대화 단계별 가이드 제공
+
+**호출 위치**: `agents/development_agent.py`
+
+---
 
 ### formulation_prompts.py
 **목적**: 향료 배합 생성을 위한 프롬프트

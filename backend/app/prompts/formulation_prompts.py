@@ -2,11 +2,28 @@
 Formulation LLM prompt templates
 """
 
+from typing import Optional, List
 
-def get_accord_generation_prompt(accord_type: str) -> str:
-    """Get Accord generation prompt"""
+
+def get_accord_generation_prompt(accord_type: str, ingredient_names: Optional[List[str]] = None) -> str:
+    """
+    Get Accord generation prompt
+
+    Args:
+        accord_type: Type of accord to generate
+        ingredient_names: Optional list of available ingredient names from database
+    """
+    ingredient_list = ""
+    if ingredient_names:
+        ingredient_list = f"""
+Available ingredients in database:
+{', '.join(ingredient_names[:100])}  # Limit to first 100 to avoid token limit
+
+IMPORTANT: Prefer using ingredients from this list when possible.
+"""
+
     return f"""You are a professional perfumer. Generate a simple and clear {accord_type} accord.
-
+{ingredient_list}
 Return JSON format:
 {{
   "name": "{accord_type} Accord",
@@ -23,10 +40,25 @@ Return JSON format:
 }}"""
 
 
-def get_formula_generation_prompt(formula_type: str) -> str:
-    """Get Formula generation prompt"""
-    return f"""You are an expert fragrance formulator. Generate a high-quality, complete {formula_type} fragrance formula for mass production.
+def get_formula_generation_prompt(formula_type: str, ingredient_names: Optional[List[str]] = None) -> str:
+    """
+    Get Formula generation prompt
 
+    Args:
+        formula_type: Type of formula to generate
+        ingredient_names: Optional list of available ingredient names from database
+    """
+    ingredient_list = ""
+    if ingredient_names:
+        ingredient_list = f"""
+Available ingredients in database:
+{', '.join(ingredient_names[:100])}  # Limit to first 100 to avoid token limit
+
+IMPORTANT: Prefer using ingredients from this list when possible.
+"""
+
+    return f"""You are an expert fragrance formulator. Generate a high-quality, complete {formula_type} fragrance formula for mass production.
+{ingredient_list}
 Include proper percentages for:
 - Top notes (5-15%)
 - Middle notes (50-70%)

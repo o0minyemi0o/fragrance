@@ -8,6 +8,11 @@ from app.db.queries import (
     create_ingredient,
     update_ingredient,
     delete_ingredient,
+    search_ingredients_by_name,
+)
+from app.db.vector import (
+    search_ingredients_semantic,
+    index_all_ingredients,
 )
 from google import genai
 import json
@@ -188,3 +193,68 @@ async def update_ingredient_route(id: int, data: dict, db: Session = Depends(get
     if not ingredient:
         raise HTTPException(status_code=404, detail="Ingredient not found")
     return {"id": ingredient.id, "message": "Ingredient updated successfully"}
+
+
+@router.get("/search/name")
+async def search_by_name(query: str, db: Session = Depends(get_db)):
+    """Search ingredients by name (partial match)"""
+    try:
+        if not query or len(query) < 2:
+            raise HTTPException(status_code=400, detail="Query must be at least 2 characters")
+
+        results = search_ingredients_by_name(db, query)
+
+        return {
+            "query": query,
+            "count": len(results),
+            "results": [
+                {
+                    "id": ing.id,
+                    "ingredient_name": ing.ingredient_name,
+                    "inci_name": ing.inci_name,
+                    "note_family": ing.note_family,
+                    "odor_description": ing.odor_description,
+                }
+                for ing in results
+            ]
+        }
+    except Exception as e:
+        logger.error(f"Name search failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/search/semantic")
+async def search_semantic(query: str, limit: int = 10):
+    """Search ingredients using semantic similarity (ChromaDB)"""
+    try:
+        if not query or len(query) < 3:
+            raise HTTPException(status_code=400, detail="Query must be at least 3 characters")
+
+        if limit < 1 or limit > 50:
+            raise HTTPException(status_code=400, detail="Limit must be between 1 and 50")
+
+        results = search_ingredients_semantic(query, n_results=limit)
+
+        return {
+            "query": query,
+            "count": len(results),
+            "results": results
+        }
+    except Exception as e:
+        logger.error(f"Semantic search failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/index/vector")
+async def index_vector(db: Session = Depends(get_db)):
+    """Index all ingredients into ChromaDB for semantic search"""
+    try:
+        count = index_all_ingredients(db)
+        return {
+            "status": "success",
+            "message": f"Indexed {count} ingredients into ChromaDB",
+            "count": count
+        }
+    except Exception as e:
+        logger.error(f"Indexing failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

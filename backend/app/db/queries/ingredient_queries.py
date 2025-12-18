@@ -49,3 +49,17 @@ def delete_ingredient(db: Session, ingredient_id: int) -> bool:
     db.delete(ingredient)
     db.commit()
     return True
+
+
+def search_ingredients_by_name(db: Session, query: str) -> List[Ingredient]:
+    """Search ingredients by name (partial match, case-insensitive)"""
+    search_pattern = f"%{query}%"
+    return db.query(Ingredient).filter(
+        Ingredient.ingredient_name.ilike(search_pattern)
+    ).all()
+
+
+def get_ingredient_names(db: Session) -> List[str]:
+    """Get all ingredient names for LLM context"""
+    ingredients = db.query(Ingredient.ingredient_name).all()
+    return [ing[0] for ing in ingredients]

@@ -8,6 +8,8 @@ from .ingredient_queries import (
     create_ingredient,
     update_ingredient,
     delete_ingredient,
+    search_ingredients_by_name,
+    get_ingredient_names,
 )
 
 from .accord_queries import (
@@ -35,6 +37,8 @@ __all__ = [
     "create_ingredient",
     "update_ingredient",
     "delete_ingredient",
+    "search_ingredients_by_name",
+    "get_ingredient_names",
 
     # Accord queries
     "get_all_accords",

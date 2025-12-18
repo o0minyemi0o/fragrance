@@ -1,6 +1,9 @@
 from google import genai
 from app.config import settings
 from app.prompts import get_accord_generation_prompt, get_formula_generation_prompt
+from app.db.queries import get_ingredient_names
+from sqlalchemy.orm import Session
+from typing import Optional
 import logging
 import json
 
@@ -16,9 +19,18 @@ class LLMService:
             logger.error(f"Gemini Client 초기화 실패: {e}")
             raise
     
-    def generate_accord(self, accord_type: str) -> dict:
+    def generate_accord(self, accord_type: str, db: Optional[Session] = None) -> dict:
         """Accord 조합 생성"""
-        prompt = get_accord_generation_prompt(accord_type)
+        # Get ingredient names from DB if available
+        ingredient_names = None
+        if db:
+            try:
+                ingredient_names = get_ingredient_names(db)
+                logger.info(f"Loaded {len(ingredient_names)} ingredients from DB for context")
+            except Exception as e:
+                logger.warning(f"Failed to load ingredients: {e}")
+
+        prompt = get_accord_generation_prompt(accord_type, ingredient_names)
 
         try:
             logger.info(f"🚀 Accord 생성 시작: {accord_type}")
@@ -43,9 +55,18 @@ class LLMService:
             logger.error(f"Accord 생성 실패: {e}", exc_info=True)
             raise
 
-    def generate_formula(self, formula_type: str) -> dict:
+    def generate_formula(self, formula_type: str, db: Optional[Session] = None) -> dict:
         """Formula 조합 생성 (완제품용, 고완성도)"""
-        prompt = get_formula_generation_prompt(formula_type)
+        # Get ingredient names from DB if available
+        ingredient_names = None
+        if db:
+            try:
+                ingredient_names = get_ingredient_names(db)
+                logger.info(f"Loaded {len(ingredient_names)} ingredients from DB for context")
+            except Exception as e:
+                logger.warning(f"Failed to load ingredients: {e}")
+
+        prompt = get_formula_generation_prompt(formula_type, ingredient_names)
 
         try:
             logger.info(f"🚀 Formula 생성 시작: {formula_type}")

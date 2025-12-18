@@ -34,8 +34,8 @@ async def generate_accord(
             raise HTTPException(status_code=400, detail="Accord type required")
         
         logger.info(f"Accord 생성 요청: {accord_type}")
-        result = llm_service.generate_accord(accord_type)
-        
+        result = llm_service.generate_accord(accord_type, db)
+
         return {
             "status": "success",
             "mode": "accord",
@@ -105,8 +105,9 @@ async def generate_formula(
             raise HTTPException(status_code=400, detail="Formula type required")
         
         logger.info(f"Formula 생성 요청: {formula_type}")
-        result = llm_service.generate_formula(formula_type)
-        
+        result = llm_service.generate_formula(formula_type, db)
+
+
         return {
             "status": "success",
             "mode": "formula",

@@ -2,13 +2,36 @@
 LangGraph 워크플로우 정의
 
 Development Mode의 multi-agent workflow를 정의합니다.
-각 노드는 특정 역할을 가진 Agent를 나타내며, 엣지는 데이터 흐름을 나타냅니다.
+Coordinator가 상태를 분석하여 다음 실행할 노드를 동적으로 결정하는 유연한 구조입니다.
 """
 
 from typing import Literal
 from langgraph.graph import StateGraph, END
 from app.schema.states import DevelopmentState, CoordinatorState
 from app.agents.development_agent import development_agent
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# Coordinator Node - 모든 흐름을 제어
+# ============================================================================
+
+def coordinator_node(state: DevelopmentState) -> DevelopmentState:
+    """
+    Coordinator: 현재 상태를 분석하여 다음 실행할 노드를 결정
+
+    판단 기준:
+    1. 사용자 입력 분석 (새로운 요청인지, 수정 요청인지 등)
+    2. 현재 대화 단계 확인
+    3. 수집된 정보의 충분성 체크
+    4. 배합 존재 여부 및 검증 필요성
+    5. 무한 루프 방지 (iteration_count)
+
+    반환: next_node 필드에 다음 노드 설정
+    """
+    return development_agent.coordinate(state)
 
 
 # ============================================================================
@@ -46,49 +69,43 @@ def generate_response_node(state: DevelopmentState) -> DevelopmentState:
 
 
 # ============================================================================
-# Routing Functions (조건부 엣지)
+# Routing Functions (Coordinator 기반 동적 라우팅)
 # ============================================================================
 
-def route_by_stage(state: DevelopmentState) -> Literal["gather_preferences", "search_ingredients", "create_formulation", "generate_response"]:
+def route_from_coordinator(state: DevelopmentState) -> str:
     """
-    대화 단계에 따른 라우팅
+    Coordinator가 결정한 다음 노드로 라우팅
 
-    - initial: gather_preferences
-    - preference_gathering: search_ingredients (충분한 정보가 모였다면)
-    - ingredient_suggestion: create_formulation (사용자가 원료를 선택했다면)
-    - formulation: generate_response (배합이 완성되었다면)
+    Coordinator 노드에서 설정한 'next_node' 필드를 읽어서 라우팅합니다.
+    가능한 값: "parse", "gather", "search", "formulation", "validation", "response", "END"
     """
-    stage = state.get("conversation_stage", "initial")
+    next_node = state.get("next_node", "END")
 
-    if stage == "initial":
-        return "gather_preferences"
-    elif stage == "preference_gathering":
-        # 충분한 선호도 정보가 있는지 체크
-        preferences = state.get("user_preferences", {})
-        if len(preferences) >= 2:  # 최소 2개 이상의 선호도
-            return "search_ingredients"
-        else:
-            return "gather_preferences"
-    elif stage == "ingredient_suggestion":
-        return "create_formulation"
-    elif stage == "formulation":
-        return "generate_response"
-    else:
-        return "generate_response"
+    logger.info(f"[Routing] Coordinator decision: {next_node}")
+    logger.debug(f"[Routing] Reasoning: {state.get('coordinator_reasoning', 'N/A')}")
+
+    return next_node
 
 
-def should_validate(state: DevelopmentState) -> Literal["validate", "skip"]:
+def route_back_to_coordinator(state: DevelopmentState) -> Literal["coordinator", "END"]:
     """
-    배합 검증 필요 여부 판단
+    각 노드 실행 후 Coordinator로 되돌아가기
 
-    배합이 생성되었고, 아직 검증되지 않았다면 검증 수행
+    무한 루프 방지를 위해 iteration_count를 체크합니다.
     """
-    formulation = state.get("current_formulation")
+    iteration = state.get("iteration_count", 0)
+    max_iterations = 30  # 최대 반복 횟수 (안전장치)
 
-    if formulation and not formulation.get("validation_status"):
-        return "validate"
-    else:
-        return "skip"
+    if iteration >= max_iterations:
+        logger.warning(f"[Routing] Max iterations ({max_iterations}) reached. Forcing END.")
+        return "END"
+
+    # 응답 노드 실행 후에는 종료
+    if state.get("response"):
+        logger.info(f"[Routing] Response generated. Ending workflow.")
+        return "END"
+
+    return "coordinator"
 
 
 # ============================================================================
@@ -97,28 +114,32 @@ def should_validate(state: DevelopmentState) -> Literal["validate", "skip"]:
 
 def build_development_graph() -> StateGraph:
     """
-    Development Mode 워크플로우 그래프 빌드
+    Coordinator 기반 유연한 Development Mode 워크플로우
 
-    워크플로우:
+    워크플로우 구조:
         [START]
            ↓
-      [parse_request] ← 사용자 입력 파싱
+      [parse_request] ← 초기 사용자 입력 파싱 (1회만)
            ↓
-      [route_by_stage] ← 조건부 라우팅
+      [coordinator] ← 상태 분석 및 다음 노드 결정
            ↓
-      ┌────┴────┬──────────────┬────────────┐
-      ↓         ↓              ↓            ↓
-    [gather]  [search]  [formulation]  [response]
-      ↓         ↓              ↓            ↓
-      └────┬────┴──────────────┴────────────┘
+      [동적 라우팅] ← coordinator의 next_node 결정에 따라 분기
            ↓
-     [should_validate?]
+      ┌────┴────┬──────────┬────────────┬──────────┬──────────┐
+      ↓         ↓          ↓            ↓          ↓          ↓
+    [gather] [search] [formulation] [validation] [response] [END]
+      ↓         ↓          ↓            ↓          ↓
+      └────┬────┴──────────┴────────────┴──────────┘
            ↓
-      [validate] (조건부)
+      [coordinator] ← 다시 coordinator로 복귀 (순환)
            ↓
-     [generate_response]
-           ↓
-         [END]
+         (반복)
+
+    특징:
+    - Coordinator가 매번 상태를 체크하여 다음 노드 결정
+    - 노드들은 언제든 자유롭게 호출 가능 (순서 제약 없음)
+    - 대화 흐름이 유연하고 동적으로 변화
+    - iteration_count로 무한 루프 방지
     """
 
     # StateGraph 생성
@@ -126,49 +147,47 @@ def build_development_graph() -> StateGraph:
 
     # 노드 등록
     workflow.add_node("parse_request", parse_request_node)
-    workflow.add_node("gather_preferences", gather_preferences_node)
-    workflow.add_node("search_ingredients", search_ingredients_node)
-    workflow.add_node("create_formulation", create_formulation_node)
-    workflow.add_node("validate_formulation", validate_formulation_node)
-    workflow.add_node("generate_response", generate_response_node)
+    workflow.add_node("coordinator", coordinator_node)
+    workflow.add_node("gather", gather_preferences_node)
+    workflow.add_node("search", search_ingredients_node)
+    workflow.add_node("formulation", create_formulation_node)
+    workflow.add_node("validation", validate_formulation_node)
+    workflow.add_node("response", generate_response_node)
 
-    # 시작점 설정
+    # 시작점: parse_request (초기 입력 파싱)
     workflow.set_entry_point("parse_request")
 
-    # 엣지 연결
-    # 1. parse_request → 조건부 라우팅
+    # parse_request → coordinator (초기 진입)
+    workflow.add_edge("parse_request", "coordinator")
+
+    # coordinator → 동적 라우팅 (next_node에 따라)
     workflow.add_conditional_edges(
-        "parse_request",
-        route_by_stage,
+        "coordinator",
+        route_from_coordinator,
         {
-            "gather_preferences": "gather_preferences",
-            "search_ingredients": "search_ingredients",
-            "create_formulation": "create_formulation",
-            "generate_response": "generate_response",
+            "parse": "parse_request",
+            "gather": "gather",
+            "search": "search",
+            "formulation": "formulation",
+            "validation": "validation",
+            "response": "response",
+            "END": END,
         }
     )
 
-    # 2. gather_preferences → search_ingredients
-    workflow.add_edge("gather_preferences", "search_ingredients")
+    # 각 노드 → coordinator로 복귀 (순환 구조)
+    for node in ["gather", "search", "formulation", "validation"]:
+        workflow.add_conditional_edges(
+            node,
+            route_back_to_coordinator,
+            {
+                "coordinator": "coordinator",
+                "END": END,
+            }
+        )
 
-    # 3. search_ingredients → create_formulation
-    workflow.add_edge("search_ingredients", "create_formulation")
-
-    # 4. create_formulation → 조건부 검증
-    workflow.add_conditional_edges(
-        "create_formulation",
-        should_validate,
-        {
-            "validate": "validate_formulation",
-            "skip": "generate_response",
-        }
-    )
-
-    # 5. validate_formulation → generate_response
-    workflow.add_edge("validate_formulation", "generate_response")
-
-    # 6. generate_response → END
-    workflow.add_edge("generate_response", END)
+    # response 노드만 예외: 응답 생성 후 종료
+    workflow.add_edge("response", END)
 
     return workflow
 

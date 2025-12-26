@@ -89,8 +89,21 @@ Client → Routes → Services/LangGraph → DB/LLM → Routes → Client
 ```
 
 **응답**:
-- 10개의 배합 리스트
-- 각 배합: 원가, 지속력, 전략 리포트 포함
+```json
+{
+  "status": "success",
+  "mode": "formula",
+  "data": {
+    "name": "Eau de Parfum Formula",
+    "type": "Eau de Parfum",
+    "ingredients": [...],
+    "longevity": "10+ hours",
+    "sillage": "strong",
+    "stability_notes": "...",
+    "recommendation": "..."
+  }
+}
+```
 
 ---
 

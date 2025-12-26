@@ -57,6 +57,7 @@ class DevelopmentState(TypedDict, total=False):
     Development Mode의 메인 상태
 
     사용자와의 대화를 통해 향수 배합을 개발하는 과정의 전체 상태를 관리합니다.
+    Coordinator가 이 상태를 기반으로 다음 노드를 동적으로 결정합니다.
     """
     # 대화 관련
     messages: Annotated[List[Dict[str, str]], add]  # 대화 히스토리 (누적)
@@ -72,9 +73,11 @@ class DevelopmentState(TypedDict, total=False):
     formulations: List[Dict[str, any]]  # 생성된 배합안들
     current_formulation: Optional[Dict[str, any]]  # 현재 작업 중인 배합
 
-    # 진행 상태
+    # Coordinator 제어
     conversation_stage: str  # "initial", "preference_gathering", "ingredient_suggestion", "formulation", "refinement"
-    next_action: Optional[str]  # 다음 수행할 액션
+    next_node: Optional[str]  # Coordinator가 결정한 다음 실행할 노드 ("gather", "search", "formulation", "validation", "response", "END")
+    coordinator_reasoning: Optional[str]  # Coordinator의 판단 근거 (디버깅용)
+    iteration_count: int  # 순환 방지를 위한 반복 횟수
 
     # 응답
     response: str  # AI의 최종 응답

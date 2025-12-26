@@ -17,7 +17,7 @@ def get_accord_generation_prompt(accord_type: str, ingredient_names: Optional[Li
     if ingredient_names:
         ingredient_list = f"""
 Available ingredients in database:
-{', '.join(ingredient_names[:100])}  # Limit to first 100 to avoid token limit
+{', '.join(ingredient_names)}
 
 IMPORTANT: Prefer using ingredients from this list when possible.
 """
@@ -52,7 +52,7 @@ def get_formula_generation_prompt(formula_type: str, ingredient_names: Optional[
     if ingredient_names:
         ingredient_list = f"""
 Available ingredients in database:
-{', '.join(ingredient_names[:100])}  # Limit to first 100 to avoid token limit
+{', '.join(ingredient_names)} 
 
 IMPORTANT: Prefer using ingredients from this list when possible.
 """

@@ -32,14 +32,5 @@ async def health_check():
 async def root():
     return {
         "message": "Fragrance Formulation API",
-        "version": "0.2.0",
-        "endpoints": {
-            "accord_generate": "POST /api/formulations/accord/generate",
-            "accord_save": "POST /api/formulations/accord/save",
-            "formula_generate": "POST /api/formulations/formula/generate",
-            "formula_save": "POST /api/formulations/formula/save",
-            "accords_list": "GET /api/formulations/accords",
-            "formulas_list": "GET /api/formulations/formulas",
-            "development_chat": "POST /api/development/chat"
-        }
+        "version": "0.2.0"
     }

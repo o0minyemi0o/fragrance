@@ -109,7 +109,7 @@ class LLMService:
                 })
         
         response = self.client.models.generate_content_stream(
-            model="gemini-2.0-flash-exp",
+            model="gemini-2.0-flash",
             contents=chat_history
         )
         

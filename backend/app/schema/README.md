@@ -46,6 +46,10 @@ api_key = settings.GOOGLE_API_KEY
 1. **DevelopmentState**
    - Development Mode의 메인 상태
    - 대화 히스토리, 사용자 선호도, 배합안, 진행 단계 관리
+   - **Coordinator 제어 필드**:
+     - `next_node`: Coordinator가 결정한 다음 실행 노드
+     - `coordinator_reasoning`: 판단 근거 (디버깅용)
+     - `iteration_count`: 순환 방지를 위한 반복 횟수
 
 2. **IngredientSearchState**
    - 원료 검색 Agent의 상태
@@ -60,7 +64,7 @@ api_key = settings.GOOGLE_API_KEY
    - IFRA 규제 체크 결과, 검증 오류/경고, 대체안
 
 5. **CoordinatorState**
-   - 전체 워크플로우의 최상위 상태
+   - 전체 워크플로우의 최상위 상태 (향후 확장용)
    - 여러 Agent 결과 통합 및 라우팅 제어
 
 **TypedDict vs Pydantic**:
@@ -85,37 +89,44 @@ def my_agent_node(state: DevelopmentState) -> DevelopmentState:
 ---
 
 ### graph.py
-**목적**: LangGraph 워크플로우의 노드 및 엣지 정의
+**목적**: Coordinator 기반 유연한 LangGraph 워크플로우 정의
 
-**워크플로우 구조** (Development Mode):
+**워크플로우 구조** (Coordinator Pattern):
 ```
           [START]
              ↓
-      [parse_request]  ← 사용자 입력 파싱
+      [parse_request]  ← 초기 사용자 입력 파싱 (1회만)
              ↓
-      [route_by_stage] ← 조건부 라우팅
+      [coordinator]    ← 상태 분석 및 다음 노드 결정
              ↓
-      ┌────┴────┬──────────────┬────────────┐
-      ↓         ↓              ↓            ↓
-    [gather]  [search]  [formulation]  [response]
- (선호도 수집) (원료 검색)  (배합 생성)   (응답 생성)
-      ↓         ↓              ↓
-      └────┬────┴──────────────┘
+      [동적 라우팅]    ← coordinator의 next_node 결정에 따라 분기
+             ↓
+      ┌────┴────┬──────────┬────────────┬──────────┬──────────┐
+      ↓         ↓          ↓            ↓          ↓          ↓
+    [gather] [search] [formulation] [validation] [response] [END]
+ (선호도 수집)(원료 검색) (배합 생성)    (검증)    (응답 생성)
+      ↓         ↓          ↓            ↓          ↓
+      └────┬────┴──────────┴────────────┴──────────┘
            ↓
-     [should_validate?]
+      [coordinator]    ← 다시 coordinator로 복귀 (순환)
            ↓
-      [validate_formulation] (조건부)
-           ↓
-     [generate_response]
-           ↓
-          [END]
+         (반복)
 ```
 
-**주요 기능**:
-- 노드(Node) 등록: 각 Agent를 그래프 노드로 등록
-- 조건부 엣지(Conditional Edge): 대화 단계에 따른 동적 라우팅
-- 조건부 검증: 배합 생성 시에만 검증 수행
-- 스테이지 관리: initial → preference_gathering → ingredient_suggestion → formulation
+**주요 특징**:
+- **Coordinator 중심 제어**: 매 단계마다 coordinator가 상태를 분석하여 다음 노드 결정
+- **유연한 순서**: gather, search, formulation, validation, response 노드가 언제든 자유롭게 호출 가능
+- **순환 구조**: 각 노드 실행 후 coordinator로 복귀하여 다음 액션 결정
+- **무한 루프 방지**: iteration_count로 최대 반복 횟수 제한 (30회)
+- **동적 대화 흐름**: 사용자 요청과 상태에 따라 대화 흐름이 유연하게 변화
+
+**Coordinator 동작 방식**:
+1. `parse_request`: 사용자 입력을 파싱하여 의도 파악
+2. `coordinator`: 현재 상태 분석 → `next_node` 결정
+   - 충분한 선호도 정보 있는가? → `gather` 또는 `search`
+   - 원료 선택 완료? → `formulation`
+   - 배합 생성됨? → `validation` 또는 `response`
+3. 결정된 노드 실행 → coordinator로 복귀 → 반복
 
 **사용 예시**:
 ```python
@@ -129,10 +140,12 @@ result = workflow.invoke({
     "current_user_input": "30대 여성을 위한 프레시 플로럴 향수를 만들고 싶어요",
     "messages": [],
     "available_ingredients": [...],
-    "ingredient_count": 150
+    "ingredient_count": 150,
+    "iteration_count": 0  # 순환 카운터 초기화
 })
 
 print(result["response"])
+print(f"Total iterations: {result['iteration_count']}")
 ```
 
 ---
@@ -177,10 +190,12 @@ LOG_LEVEL=INFO
 - 불필요한 필드는 Optional로 설정
 - 타입 힌트 필수 (mypy 호환)
 
-### 3. Graph 설계 원칙
-- **단방향 흐름**: 순환 참조 금지
-- **조건부 분기**: 실패 시 대체 경로 제공
-- **타임아웃 설정**: 무한 대기 방지
+### 3. Graph 설계 원칙 (Coordinator Pattern)
+- **Coordinator 중심**: 모든 흐름 결정은 coordinator가 담당
+- **순환 허용**: 노드 → coordinator → 노드 반복 가능 (iteration_count로 제어)
+- **유연한 분기**: 상태에 따라 동적으로 다음 노드 선택
+- **안전장치**: 최대 반복 횟수(30회)로 무한 루프 방지
+- **명확한 종료**: response 노드 실행 후 또는 max iteration 도달 시 종료
 
 ---
 

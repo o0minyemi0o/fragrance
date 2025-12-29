@@ -8,7 +8,7 @@ Coordinator가 상태를 분석하여 다음 실행할 노드를 동적으로 �
 from typing import Literal
 from langgraph.graph import StateGraph, END
 from app.schema.states import DevelopmentState, CoordinatorState
-from app.agents.development_agent import development_agent
+from app.agents.development.development_agent import development_agent
 import logging
 
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ def route_from_coordinator(state: DevelopmentState) -> str:
     Coordinator가 결정한 다음 노드로 라우팅
 
     Coordinator 노드에서 설정한 'next_node' 필드를 읽어서 라우팅합니다.
-    가능한 값: "parse", "gather", "search", "formulation", "validation", "response", "END"
+    가능한 값: "parse", "gather", "search", "formulation", "validation", "generate_response", "END"
     """
     next_node = state.get("next_node", "END")
 
@@ -152,7 +152,7 @@ def build_development_graph() -> StateGraph:
     workflow.add_node("search", search_ingredients_node)
     workflow.add_node("formulation", create_formulation_node)
     workflow.add_node("validation", validate_formulation_node)
-    workflow.add_node("response", generate_response_node)
+    workflow.add_node("generate_response", generate_response_node)
 
     # 시작점: parse_request (초기 입력 파싱)
     workflow.set_entry_point("parse_request")
@@ -170,7 +170,7 @@ def build_development_graph() -> StateGraph:
             "search": "search",
             "formulation": "formulation",
             "validation": "validation",
-            "response": "response",
+            "generate_response": "generate_response",
             "END": END,
         }
     )
@@ -186,8 +186,8 @@ def build_development_graph() -> StateGraph:
             }
         )
 
-    # response 노드만 예외: 응답 생성 후 종료
-    workflow.add_edge("response", END)
+    # generate_response 노드만 예외: 응답 생성 후 종료
+    workflow.add_edge("generate_response", END)
 
     return workflow
 

@@ -1,5 +1,5 @@
-from google import genai
-from app.config import settings
+from groq import Groq
+from app.schema.config import settings
 from app.prompts import get_accord_generation_prompt, get_formula_generation_prompt
 from app.db.queries import get_ingredient_names
 from sqlalchemy.orm import Session
@@ -12,11 +12,11 @@ logger = logging.getLogger(__name__)
 class LLMService:
     def __init__(self):
         try:
-            logger.info("🔧 Gemini Client 초기화 중...")
-            self.client = genai.Client(api_key=settings.GOOGLE_API_KEY)
-            logger.info("✓ Gemini Client 초기화 완료")
+            logger.info("🔧 Groq Client 초기화 중...")
+            self.client = Groq(api_key=settings.GROQ_API_KEY)
+            logger.info("✓ Groq Client 초기화 완료")
         except Exception as e:
-            logger.error(f"Gemini Client 초기화 실패: {e}")
+            logger.error(f"Groq Client 초기화 실패: {e}")
             raise
     
     def generate_accord(self, accord_type: str, db: Optional[Session] = None, use_available_ingredients: bool = False) -> dict:
@@ -34,11 +34,12 @@ class LLMService:
 
         try:
             logger.info(f"🚀 Accord 생성 시작: {accord_type}")
-            response = self.client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt
+            response = self.client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
             )
-            result_text = response.text
+            result_text = response.choices[0].message.content
             logger.info(f"✓ Accord 응답 완료")
             
             # JSON 파싱
@@ -70,11 +71,12 @@ class LLMService:
 
         try:
             logger.info(f"🚀 Formula 생성 시작: {formula_type}")
-            response = self.client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt
+            response = self.client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
             )
-            result_text = response.text
+            result_text = response.choices[0].message.content
             logger.info(f"✓ Formula 응답 완료")
             
             try:
@@ -91,30 +93,26 @@ class LLMService:
 
     async def stream_chat(self, messages: list, system_prompt: str):
         """채팅 스트리밍 생성"""
-        # 시스템 프롬프트를 첫 메시지에 포함
-        chat_history = []
-        
-        if messages:
-            first_message = f"{system_prompt}\n\n사용자 요청: {messages[0]['content']}"
+        # 시스템 프롬프트를 첫 메시지로 추가
+        chat_history = [{"role": "system", "content": system_prompt}]
+
+        # 기존 메시지 추가
+        for msg in messages:
             chat_history.append({
-                "role": "user",
-                "parts": [{"text": first_message}]
+                "role": msg['role'],
+                "content": msg['content']
             })
-            
-            for msg in messages[1:]:
-                role = "model" if msg['role'] == "assistant" else "user"
-                chat_history.append({
-                    "role": role,
-                    "parts": [{"text": msg['content']}]
-                })
-        
-        response = self.client.models.generate_content_stream(
-            model="gemini-2.0-flash",
-            contents=chat_history
+
+        # Groq streaming API
+        stream = self.client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=chat_history,
+            temperature=0.7,
+            stream=True
         )
-        
-        for chunk in response:
-            if chunk.text:
-                yield chunk.text
+
+        for chunk in stream:
+            if chunk.choices[0].delta.content:
+                yield chunk.choices[0].delta.content
 
 llm_service = LLMService()

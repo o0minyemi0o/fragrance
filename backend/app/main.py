@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import formulations, ingredients, development
-from app.config import settings
+from app.schema.config import settings
 import logging
 
 logging.basicConfig(level=logging.INFO)

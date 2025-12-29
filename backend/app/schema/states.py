@@ -75,12 +75,16 @@ class DevelopmentState(TypedDict, total=False):
 
     # Coordinator 제어
     conversation_stage: str  # "initial", "preference_gathering", "ingredient_suggestion", "formulation", "refinement"
-    next_node: Optional[str]  # Coordinator가 결정한 다음 실행할 노드 ("gather", "search", "formulation", "validation", "response", "END")
+    next_node: Optional[str]  # Coordinator가 결정한 다음 실행할 노드 ("gather", "search", "formulation", "validation", "generate_response", "END")
     coordinator_reasoning: Optional[str]  # Coordinator의 판단 근거 (디버깅용)
     iteration_count: int  # 순환 방지를 위한 반복 횟수
 
     # 응답
     response: str  # AI의 최종 응답
+
+    # 에러 처리
+    api_error: Optional[str]  # API 에러 타입 ("quota_exceeded", "general_error")
+    error_message: Optional[str]  # 에러 메시지
 
 
 class IngredientSearchState(TypedDict, total=False):

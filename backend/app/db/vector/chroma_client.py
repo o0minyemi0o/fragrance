@@ -3,8 +3,8 @@ ChromaDB client for vector search
 """
 
 import chromadb
-from chromadb.config import Settings
 import logging
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -23,11 +23,16 @@ class ChromaClient:
         if self._client is None:
             try:
                 logger.info("Initializing ChromaDB client...")
-                self._client = chromadb.Client(Settings(
-                    chroma_db_impl="duckdb+parquet",
-                    persist_directory="./chroma_db"
-                ))
-                logger.info("ChromaDB client initialized successfully")
+
+                # 최신 ChromaDB 설정 방식 (v0.4.0+)
+                # PersistentClient 사용 (persist_directory 지정)
+                persist_dir = os.getenv("CHROMADB_PATH", "./chroma_db")
+
+                self._client = chromadb.PersistentClient(
+                    path=persist_dir
+                )
+
+                logger.info(f"ChromaDB client initialized successfully at {persist_dir}")
             except Exception as e:
                 logger.error(f"Failed to initialize ChromaDB: {e}")
                 raise

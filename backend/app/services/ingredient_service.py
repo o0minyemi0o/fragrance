@@ -2,8 +2,8 @@
 Ingredient business logic service
 """
 
-from google import genai
-from app.config import settings
+from groq import Groq
+from app.schema.config import settings
 from app.prompts.ingredient_prompts import get_ingredient_autofill_prompt
 import logging
 import json
@@ -15,13 +15,13 @@ class IngredientService:
     """Service for ingredient-related operations"""
 
     def __init__(self):
-        """Initialize Gemini client"""
+        """Initialize Groq client"""
         try:
-            logger.info("Initializing Gemini Client for IngredientService...")
-            self.client = genai.Client(api_key=settings.GOOGLE_API_KEY)
-            logger.info("Gemini Client initialized successfully")
+            logger.info("Initializing Groq Client for IngredientService...")
+            self.client = Groq(api_key=settings.GROQ_API_KEY)
+            logger.info("Groq Client initialized successfully")
         except Exception as e:
-            logger.error(f"Failed to initialize Gemini Client: {e}")
+            logger.error(f"Failed to initialize Groq Client: {e}")
             raise
 
     def auto_fill(self, ingredient_name: str) -> dict:
@@ -47,14 +47,15 @@ class IngredientService:
         try:
             prompt = get_ingredient_autofill_prompt(ingredient_name)
 
-            logger.info("Calling Gemini API...")
-            response = self.client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt
+            logger.info("Calling Groq API...")
+            response = self.client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
             )
 
-            response_text = response.text.strip()
-            logger.info(f"Gemini response received: {response_text[:100]}...")
+            response_text = response.choices[0].message.content.strip()
+            logger.info(f"Groq response received: {response_text[:100]}...")
 
             # Clean markdown formatting
             if response_text.startswith('```json'):

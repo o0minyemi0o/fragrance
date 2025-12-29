@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     # Google Gemini
     GOOGLE_API_KEY: str
 
+    # Groq
+    GROQ_API_KEY: str
+
     # Environment
     ENV: str = "development"
 

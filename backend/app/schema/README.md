@@ -8,9 +8,11 @@
 schema/
 ├── README.md
 ├── config.py           # 환경 변수 및 설정 관리
-├── states.py          # LangGraph State 타입 정의
-└── graph.py           # LangGraph 워크플로우 구조
+└── states.py          # LangGraph State 타입 정의
 ```
+
+**Note**: LangGraph 워크플로우는 각 Agent 폴더로 이동되었습니다.
+- Development 워크플로우: `agents/development/development_graph.py`
 
 ## 📄 각 파일의 역할
 
@@ -88,8 +90,10 @@ def my_agent_node(state: DevelopmentState) -> DevelopmentState:
 
 ---
 
-### graph.py
-**목적**: Coordinator 기반 유연한 LangGraph 워크플로우 정의
+## 🔗 관련 파일
+
+### Development 워크플로우 (agents/development/development_graph.py)
+**목적**: Development Agent를 위한 Coordinator 기반 유연한 LangGraph 워크플로우
 
 **워크플로우 구조** (Coordinator Pattern):
 ```
@@ -130,7 +134,7 @@ def my_agent_node(state: DevelopmentState) -> DevelopmentState:
 
 **사용 예시**:
 ```python
-from app.schema.graph import get_development_workflow
+from app.agents.development.development_graph import get_development_workflow
 
 # 컴파일된 워크플로우 가져오기
 workflow = get_development_workflow()

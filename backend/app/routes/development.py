@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import List, AsyncGenerator
 from sqlalchemy.orm import Session
 from app.db.initialization.session import get_db
-from app.schema.graph import get_development_workflow
+from app.agents.development.development_graph import get_development_workflow
 from app.schema.states import DevelopmentState
 import json
 
@@ -42,7 +42,10 @@ async def chat_stream(request: ChatRequest, db: Session = Depends(get_db)):
             "formulations": [],
             "current_formulation": None,
             "next_action": None,
-            "response": ""
+            "response": "",
+            "api_error": None,
+            "error_message": None,
+            "iteration_count": 0
         }
 
         # Get compiled workflow

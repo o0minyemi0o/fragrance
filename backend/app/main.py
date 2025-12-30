@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import formulations, ingredients, development
+from app.routes import accords, formulas, ingredients, development
 from app.schema.config import settings
 import logging
 
@@ -20,8 +20,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(formulations.router)
-app.include_router(ingredients.router) 
+app.include_router(accords.router)
+app.include_router(formulas.router)
+app.include_router(ingredients.router)
 app.include_router(development.router)
 
 @app.get("/health")

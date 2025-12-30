@@ -3,10 +3,14 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, AsyncGenerator
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.db.initialization.session import get_db
-from app.agents.development.development_graph import get_development_workflow
-from app.schema.states import DevelopmentState
+from app.db.schema import Ingredient
+from app.services.development_service import development_service
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/development", tags=["development"])
 
@@ -22,66 +26,51 @@ class ChatRequest(BaseModel):
 
 @router.post("/chat")
 async def chat_stream(request: ChatRequest, db: Session = Depends(get_db)):
-    """Development Mode AI chat using LangGraph workflow"""
+    """
+    Development Mode - 간단한 대화형 향수 개발 서비스
+
+    복잡한 Agent 구조 없이 스트리밍 대화만 제공합니다.
+    """
     try:
         # Convert Pydantic models to dicts
         messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
 
-        # Get current user input (last message)
-        current_input = messages[-1]["content"] if messages else ""
+        logger.info(f"[/api/development/chat] 메시지 수: {len(messages)}")
 
-        # Initialize DevelopmentState
-        initial_state: DevelopmentState = {
-            "messages": messages[:-1] if len(messages) > 1 else [],  # Previous messages
-            "current_user_input": current_input,
-            "conversation_stage": "initial",
-            "available_ingredients": [],
-            "ingredient_count": 0,
-            "user_preferences": {},
-            "suggested_ingredients": [],
-            "formulations": [],
-            "current_formulation": None,
-            "next_action": None,
-            "response": "",
-            "api_error": None,
-            "error_message": None,
-            "iteration_count": 0
-        }
+        # DB에서 원료 개수 조회 (시스템 프롬프트용)
+        ingredient_count = db.query(func.count(Ingredient.id)).scalar() or 0
+        logger.info(f"[/api/development/chat] DB 원료 개수: {ingredient_count}")
 
-        # Get compiled workflow
-        workflow = get_development_workflow()
-
-        # Stream workflow execution
+        # Stream chat
         async def generate() -> AsyncGenerator[str, None]:
             try:
-                # Execute workflow with streaming
-                for output in workflow.stream(initial_state):
-                    # LangGraph stream returns dict with node name as key
-                    # We're interested in the final response
-                    for node_name, node_output in output.items():
-                        print(f"[workflow] Node '{node_name}' executed")
+                # Development service로 스트리밍
+                async for chunk in development_service.stream_chat(
+                    messages=messages,
+                    db=db,
+                    ingredient_count=ingredient_count
+                ):
+                    # SSE 형식으로 전송
+                    yield f"data: {json.dumps({'content': chunk})}\n\n"
 
-                        # If this node generated a response, stream it
-                        if "response" in node_output and node_output["response"]:
-                            response_text = node_output["response"]
-                            # Send as SSE format
-                            yield f"data: {json.dumps({'content': response_text})}\n\n"
-
-                # Send completion signal
+                # 완료 신호
+                logger.info("[/api/development/chat] ✓ 완료")
                 yield "data: [DONE]\n\n"
 
             except Exception as e:
-                print(f"[workflow] Error: {e}")
-                import traceback
-                traceback.print_exc()
+                logger.error(f"[/api/development/chat] 에러: {e}", exc_info=True)
                 yield f"data: {json.dumps({'error': str(e)})}\n\n"
+                yield "data: [DONE]\n\n"
 
         return StreamingResponse(
             generate(),
-            media_type="text/event-stream"
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+            }
         )
 
     except Exception as e:
-        import traceback
-        traceback.print_exc()
+        logger.error(f"[/api/development/chat] 초기화 에러: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))

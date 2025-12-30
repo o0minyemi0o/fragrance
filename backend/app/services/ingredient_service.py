@@ -2,7 +2,7 @@
 Ingredient business logic service
 """
 
-from groq import Groq
+from anthropic import Anthropic
 from app.schema.config import settings
 from app.prompts.ingredient_prompts import get_ingredient_autofill_prompt
 import logging
@@ -15,13 +15,14 @@ class IngredientService:
     """Service for ingredient-related operations"""
 
     def __init__(self):
-        """Initialize Groq client"""
+        """Initialize Anthropic client"""
         try:
-            logger.info("Initializing Groq Client for IngredientService...")
-            self.client = Groq(api_key=settings.GROQ_API_KEY)
-            logger.info("Groq Client initialized successfully")
+            logger.info("Initializing Anthropic Client for IngredientService...")
+            self.client = Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+            self.model = "claude-sonnet-4-5-20250929"
+            logger.info("Anthropic Client initialized successfully")
         except Exception as e:
-            logger.error(f"Failed to initialize Groq Client: {e}")
+            logger.error(f"Failed to initialize Anthropic Client: {e}")
             raise
 
     def auto_fill(self, ingredient_name: str) -> dict:
@@ -47,15 +48,16 @@ class IngredientService:
         try:
             prompt = get_ingredient_autofill_prompt(ingredient_name)
 
-            logger.info("Calling Groq API...")
-            response = self.client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+            logger.info("Calling Anthropic API...")
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=4096,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7
             )
 
-            response_text = response.choices[0].message.content.strip()
-            logger.info(f"Groq response received: {response_text[:100]}...")
+            response_text = response.content[0].text.strip()
+            logger.info(f"Anthropic response received: {response_text[:100]}...")
 
             # Clean markdown formatting
             if response_text.startswith('```json'):

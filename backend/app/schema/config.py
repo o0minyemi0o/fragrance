@@ -5,11 +5,8 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
 
-    # Google Gemini
-    GOOGLE_API_KEY: str
-
-    # Groq
-    GROQ_API_KEY: str
+    # Anthropic Claude
+    ANTHROPIC_API_KEY: str
 
     # Environment
     ENV: str = "development"

@@ -8,8 +8,8 @@ Development Service - 간단한 대화형 향수 개발 서비스
 from anthropic import Anthropic
 from app.schema.config import settings
 from app.prompts.development_prompts import get_development_system_prompt
+from app.db.queries import get_ingredient_names
 from sqlalchemy.orm import Session
-from typing import Optional
 import logging
 
 logger = logging.getLogger(__name__)
@@ -28,25 +28,31 @@ class DevelopmentService:
             logger.error(f"Anthropic Client 초기화 실패: {e}")
             raise
 
-    async def stream_chat(
-        self,
-        messages: list,
-        db: Optional[Session] = None,
-        ingredient_count: int = 0
-    ):
+    async def stream_chat(self, messages: list, db: Session):
         """
         대화 스트리밍 생성
 
         Args:
             messages: 대화 히스토리 [{"role": "user", "content": "..."}, ...]
-            db: Database session (옵션, 향후 툴 사용 시)
-            ingredient_count: DB 내 원료 개수 (시스템 프롬프트용)
+            db: Database session
 
         Yields:
             스트리밍 텍스트 청크
         """
+        # DB에서 향료 리스트 가져오기
+        try:
+            ingredient_names = get_ingredient_names(db)
+            ingredient_list = ", ".join(ingredient_names)
+            ingredient_count = len(ingredient_names)
+            logger.info(f"Loaded {ingredient_count} ingredients from DB")
+        except Exception as e:
+            logger.error(f"Failed to load ingredients: {e}")
+            ingredient_list = ""
+            ingredient_count = 0
+
         # System prompt 생성
         system_prompt = get_development_system_prompt(
+            ingredient_list=ingredient_list,
             ingredient_count=ingredient_count
         )
 

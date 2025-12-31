@@ -3,9 +3,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, AsyncGenerator
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from app.db.initialization.session import get_db
-from app.db.schema import Ingredient
 from app.services.development_service import development_service
 import json
 import logging
@@ -37,18 +35,13 @@ async def chat_stream(request: ChatRequest, db: Session = Depends(get_db)):
 
         logger.info(f"[/api/development/chat] 메시지 수: {len(messages)}")
 
-        # DB에서 원료 개수 조회 (시스템 프롬프트용)
-        ingredient_count = db.query(func.count(Ingredient.id)).scalar() or 0
-        logger.info(f"[/api/development/chat] DB 원료 개수: {ingredient_count}")
-
         # Stream chat
         async def generate() -> AsyncGenerator[str, None]:
             try:
                 # Development service로 스트리밍
                 async for chunk in development_service.stream_chat(
                     messages=messages,
-                    db=db,
-                    ingredient_count=ingredient_count
+                    db=db
                 ):
                     # SSE 형식으로 전송
                     yield f"data: {json.dumps({'content': chunk})}\n\n"

@@ -53,14 +53,19 @@ async def list_ingredients(db: Session = Depends(get_db)):
 async def create_ingredient(data: dict, db: Session = Depends(get_db)):
     """새 재료 추가"""
     try:
+        # ingredient_name 필수 검증
+        ingredient_name = data.get("ingredient_name", "").strip()
+        if not ingredient_name:
+            raise HTTPException(status_code=400, detail="ingredient_name is required")
+
         # 모든 빈 문자열을 None으로 변환
         def to_null_if_empty(val):
             return None if val == '' or val is None else val
 
         new_ingredient = Ingredient(
-            ingredient_name=data.get("ingredient_name"),
+            ingredient_name=ingredient_name,
             inci_name=to_null_if_empty(data.get("inci_name")),
-            cas_number=to_null_if_empty(data.get("cas_number")),  
+            cas_number=to_null_if_empty(data.get("cas_number")),
             synonyms=data.get("synonyms", []),
             odor_description=to_null_if_empty(data.get("odor_description")),
             note_family=to_null_if_empty(data.get("note_family")),
@@ -74,9 +79,11 @@ async def create_ingredient(data: dict, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(new_ingredient)
         return {"id": new_ingredient.id, "message": "Ingredient created successfully"}
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
-        logger.error(f"Error creating ingredient: {e}")
+        logger.error(f"Error creating ingredient: {e}", exc_info=True)
         raise HTTPException(status_code=400, detail=str(e))
     
 @router.delete("/{id}")

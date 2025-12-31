@@ -4,6 +4,8 @@ import FormulationMode from './components/FormulationMode';
 import LibraryView from './components/LibraryView';
 import IngredientManager from './components/IngredientManager';
 import { formulationApi } from './services/formulation-api';
+import { Navigation } from './components/organisms/Navigation/Navigation';
+import { Button } from './components/atoms/Button/Button';
 
 interface FormulaData {
   name: string;
@@ -140,32 +142,17 @@ function App() {
       </header>
 
       <div className="main-wrapper">
-        <nav className="app-nav">
-          <button
-            className={`nav-button ${currentTab === 'generate' ? 'active' : ''}`}
-            onClick={() => handleTabChange('generate')}
-          >
-             Generate 
-          </button>
-          <button
-            className={`nav-button ${currentTab === 'ingredients' ? 'active' : ''}`}
-            onClick={() => handleTabChange('ingredients')}
-          >
-             Ingredients
-          </button>
-          <button
-            className={`nav-button ${currentTab === 'accords' ? 'active' : ''}`}
-            onClick={() => handleTabChange('accords')}
-          >
-             Accords 
-          </button>
-          <button
-            className={`nav-button ${currentTab === 'formulas' ? 'active' : ''}`}
-            onClick={() => handleTabChange('formulas')}
-          >
-             Formulas 
-          </button>
-        </nav>
+        <Navigation
+          items={[
+            { id: 'generate', label: 'Generate' },
+            { id: 'ingredients', label: 'Ingredients' },
+            { id: 'accords', label: 'Accords' },
+            { id: 'formulas', label: 'Formulas' },
+          ]}
+          activeId={currentTab}
+          onItemClick={(id) => handleTabChange(id as 'generate' | 'ingredients' | 'accords' | 'formulas')}
+          orientation="vertical"
+        />
 
         <main className="App-main">
           {currentTab === 'generate' && (
@@ -240,13 +227,14 @@ function App() {
                     </p>
                   </div>
 
-                  <button 
-                    onClick={handleSave} 
-                    disabled={loading} 
-                    className="save-button"
+                  <Button
+                    onClick={handleSave}
+                    disabled={loading}
+                    variant="secondary"
+                    size="lg"
                   >
                     {loading ? 'Saving...' : '💾 Save'}
-                  </button>
+                  </Button>
                 </div>
               )}
             </>

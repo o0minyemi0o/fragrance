@@ -1,0 +1,60 @@
+/**
+ * Design Tokens - Borders, Radius, Shadows
+ *
+ * 테두리, 모서리, 그림자 스타일을 정의합니다.
+ */
+
+:root {
+  /* ===== Border Width ===== */
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 4px;
+
+  /* ===== Border Radius ===== */
+  --border-radius-none: 0;
+  --border-radius-sm: 5px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 10px;
+  --border-radius-xl: 12px;
+  --border-radius-2xl: 20px;
+  --border-radius-full: 9999px;  /* 완전히 둥근 형태 */
+
+  /* ===== Border Styles ===== */
+  /* 자주 사용하는 border 조합 */
+  --border-light: var(--border-width-thin) solid var(--color-border-light);
+  --border-medium: var(--border-width-thin) solid var(--color-border-medium);
+  --border-dark: var(--border-width-thin) solid var(--color-border-dark);
+  --border-primary: var(--border-width-medium) solid var(--color-primary);
+  --border-focus: var(--border-width-medium) solid var(--color-border-focus);
+
+  /* ===== Box Shadows ===== */
+  /* Elevation levels - Material Design inspired */
+  --shadow-none: none;
+
+  /* Level 1 - 약한 그림자 (카드) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  /* Level 2 - 보통 그림자 (버튼 호버, 드롭다운) */
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  /* Level 3 - 강한 그림자 (메인 카드, 팝오버) */
+  --shadow-lg: 0 10px 30px rgba(139, 115, 85, 0.3);
+
+  /* Level 4 - 매우 강한 그림자 (모달) */
+  --shadow-xl: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+  /* Level 5 - 극강 그림자 (최상위 모달) */
+  --shadow-2xl: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+  /* 특수 그림자 */
+  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-outline: 0 0 0 3px rgba(133, 147, 62, 0.3);  /* 포커스 아웃라인 */
+
+  /* 인셋 그림자 (특별 효과) */
+  --shadow-inset-primary: inset -3px 0 0 var(--color-secondary);
+  --shadow-inset-bottom: inset 0 -3px 0 var(--color-secondary);
+
+  /* ===== Focus Outline ===== */
+  --outline-focus: 2px solid var(--color-primary);
+  --outline-offset: 2px;
+}

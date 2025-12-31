@@ -1,0 +1,72 @@
+/**
+ * Textarea Component Styles
+ */
+
+.textarea {
+  /* 타이포그래피 */
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-primary);
+
+  /* 레이아웃 */
+  padding: var(--spacing-input-padding-y) var(--spacing-input-padding-x);
+  min-height: 100px;
+
+  /* 테두리 */
+  border: var(--border-medium);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-bg-surface);
+
+  /* 인터랙션 */
+  transition: var(--transition-default);
+  outline: none;
+  resize: vertical;
+}
+
+/* Placeholder */
+.textarea::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+/* Hover */
+.textarea:hover:not(:disabled) {
+  border-color: var(--color-border-dark);
+}
+
+/* Focus */
+.textarea:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-outline);
+}
+
+/* Disabled */
+.textarea:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+  resize: none;
+}
+
+/* Error state */
+.error {
+  border-color: var(--color-error);
+}
+
+.error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.3);
+}
+
+/* Full Width */
+.fullWidth {
+  width: 100%;
+}
+
+/* Auto Resize */
+.autoResize {
+  resize: none;
+  overflow: hidden;
+}

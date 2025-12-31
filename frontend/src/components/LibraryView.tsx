@@ -390,7 +390,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
               {details?.ingredients_composition?.map((ing: any, idx: number) => (
                 <tr key={idx}>
                   <td style={{ width : '40px'}}>{idx + 1}</td>
-                  <td style={{ width : '220px'}}>{ing.name}</td>
+                  <td>{ing.name}</td>
                   <td style={{ width : '80px'}}>{ing.percentage}%</td>
                   <td style={{ width : '100px'}}>{ing.note || '-'}</td>
                   <td>{ing.role || '-'}</td>

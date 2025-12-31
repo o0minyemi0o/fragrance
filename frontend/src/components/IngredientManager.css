@@ -7,6 +7,7 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 600;
   white-space: nowrap;
   transition: all 0.2s;
@@ -43,6 +44,7 @@
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 600;
   font-size: 0.85rem;
   transition: all 0.2s;
@@ -86,6 +88,7 @@
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 500;
   transition: opacity 0.2s;
 }
@@ -132,6 +135,7 @@
 .ingredient-manager h2 {
   font-size: 1.5rem;
   margin-bottom: 10px;
+  color: #333;
 }
 
 .ingredient-header {
@@ -146,7 +150,7 @@
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 1rem;
-  font-family: inherit;
+  font-family: var(--font-family-primary);
   transition: all 0.3s;
 }
 
@@ -172,6 +176,7 @@
   gap: 8px;
   cursor: pointer;
   font-weight: 500;
+  color: #333;
   white-space: nowrap;
 }
 
@@ -241,6 +246,7 @@
 .ingredient-name {
   font-weight: 600;
   font-size: 0.95rem;
+  color: #333;
 }
 
 .ingredient-note-family {
@@ -318,6 +324,7 @@
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 600;
   font-size: 0.9rem;
   transition: all 0.2s;

@@ -41,6 +41,7 @@
   margin: 0;
   font-size: 16px;
   font-weight: 600;
+  color: #333;
   word-break: break-word;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -109,6 +110,7 @@
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 600;
   font-size: 0.9rem;
   transition: all 0.2s;
@@ -128,6 +130,7 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 600;
   transition: all 0.2s;
   flex: 1;
@@ -145,6 +148,7 @@
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 600;
   transition: all 0.2s;
   flex: 1;
@@ -162,6 +166,7 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: 600;
   transition: all 0.2s;
 }
@@ -177,6 +182,7 @@
   padding: 12px 30px;
   border: none;
   border-radius: 5px;
+  font-family: var(--font-family-primary);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -195,6 +201,7 @@
 
 .library-view h2 {
   font-size: 1.5rem;
+  color: #333;
 }
 
 
@@ -231,7 +238,7 @@
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-family: inherit;
+  font-family: var(--font-family-primary);
   font-size: 1rem;
   transition: all 0.3s;
 }
@@ -253,6 +260,7 @@
   padding: 6px;
   border: 1px solid #ddd;
   border-radius: 3px;
+  font-family: var(--font-family-primary);
   font-size: 0.9rem;
   transition: all 0.3s;
 }
@@ -282,6 +290,7 @@
   background: white;
   border-radius: 3px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-weight: bold;
   font-size: 0.9rem;
   transition: all 0.2s;

@@ -127,7 +127,7 @@
   border: 1px solid #d1d5db;
   border-radius: 20px;
   font-size: 14px;
-  font-family: inherit;
+  font-family: var(--font-family-primary);
   resize: none;
   max-height: 120px;
   overflow-y: auto;
@@ -149,6 +149,7 @@
   color: #ffffff;
   border: none;
   border-radius: 20px;
+  font-family: var(--font-family-primary);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -224,6 +225,7 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  font-family: var(--font-family-primary);
   font-size: 14px;
   transition: background-color 0.3s;
 }
@@ -292,6 +294,7 @@
   color: white;
   border: none;
   border-radius: 5px;
+  font-family: var(--font-family-primary);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;

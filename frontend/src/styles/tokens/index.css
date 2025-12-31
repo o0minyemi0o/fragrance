@@ -1,0 +1,123 @@
+/**
+ * Design Tokens - Main Index
+ *
+ * 모든 디자인 토큰을 통합하는 진입점입니다.
+ * 이 파일만 import하면 모든 토큰을 사용할 수 있습니다.
+ */
+
+/* 토큰 파일 순서대로 import */
+@import './colors.css';
+@import './typography.css';
+@import './spacing.css';
+@import './borders.css';
+@import './animations.css';
+
+/**
+ * 사용법:
+ *
+ * main.tsx 또는 App.tsx에서:
+ * import '../styles/tokens/index.css';
+ *
+ * 컴포넌트에서:
+ * .my-component {
+ *   color: var(--color-primary);
+ *   font-size: var(--font-size-lg);
+ *   padding: var(--spacing-md);
+ *   border-radius: var(--border-radius-md);
+ *   transition: var(--transition-default);
+ * }
+ */
+
+/* ===== Global Resets (토큰 기반) ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-primary), var(--font-family-fallback);
+  font-size: var(--text-body-size);
+  font-weight: var(--text-body-weight);
+  line-height: var(--text-body-line-height);
+  color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  min-width: 320px;
+  /* background는 App.css에서 설정 (#e4e4e1) */
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== Typography Helpers (토큰 기반) ===== */
+/* 주의: color는 의도적으로 설정하지 않음 - 각 컴포넌트가 자체 색상을 지정할 수 있도록 */
+h1, .h1 {
+  font-size: var(--text-h1-size);
+  font-weight: var(--text-h1-weight);
+  line-height: var(--text-h1-line-height);
+  letter-spacing: var(--text-h1-letter-spacing);
+}
+
+h2, .h2 {
+  font-size: var(--text-h2-size);
+  font-weight: var(--text-h2-weight);
+  line-height: var(--text-h2-line-height);
+}
+
+h3, .h3 {
+  font-size: var(--text-h3-size);
+  font-weight: var(--text-h3-weight);
+  line-height: var(--text-h3-line-height);
+}
+
+h4, .h4 {
+  font-size: var(--text-h4-size);
+  font-weight: var(--text-h4-weight);
+  line-height: var(--text-h4-line-height);
+}
+
+p {
+  font-size: var(--text-body-size);
+  font-weight: var(--text-body-weight);
+  line-height: var(--text-body-line-height);
+}
+
+small, .text-small {
+  font-size: var(--text-body-small-size);
+  font-weight: var(--text-body-small-weight);
+  line-height: var(--text-body-small-line-height);
+}
+
+/* ===== Utility Classes ===== */
+/* 자주 사용하는 토큰 기반 유틸리티 */
+
+/* Text Colors */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-tertiary { color: var(--color-text-tertiary); }
+
+/* Background Colors */
+.bg-surface { background-color: var(--color-bg-surface); }
+.bg-elevated { background-color: var(--color-bg-elevated); }
+
+/* Spacing */
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.m-sm { margin: var(--spacing-sm); }
+.m-md { margin: var(--spacing-md); }
+.m-lg { margin: var(--spacing-lg); }
+
+/* Borders */
+.rounded-sm { border-radius: var(--border-radius-sm); }
+.rounded-md { border-radius: var(--border-radius-md); }
+.rounded-lg { border-radius: var(--border-radius-lg); }
+
+/* Shadows */
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }

@@ -1,0 +1,99 @@
+/**
+ * Design Tokens - Colors
+ *
+ * 모든 색상 값을 중앙 집중식으로 관리합니다.
+ * 이 파일만 수정하면 전체 앱의 색상 테마가 변경됩니다.
+ */
+
+:root {
+  /* ===== Brand Colors ===== */
+  /* Primary - 메인 브랜드 컬러 (올리브 초록) */
+  --color-primary: #85933e;
+  --color-primary-hover: #9b9d5a;
+  --color-primary-active: #5D6B47;
+  --color-primary-light: #D4AF85;
+
+  /* Secondary - 보조 컬러 */
+  --color-secondary: #9b9d5a;
+  --color-secondary-hover: #b0b36e;
+  --color-secondary-active: #85933e;
+
+  /* Accent - 강조 컬러 */
+  --color-accent: #A0826D;
+  --color-accent-light: #D4AF85;
+  --color-accent-dark: #8B7355;
+
+  /* ===== Neutral Colors ===== */
+  /* 회색 스케일 - 배경, 테두리, 비활성 요소 등에 사용 */
+  --color-gray-50: #f8f9fa;
+  --color-gray-100: #f1f1f1;
+  --color-gray-200: #e9ecef;
+  --color-gray-300: #dee2e6;
+  --color-gray-400: #ddd;
+  --color-gray-500: #c0c0c0;
+  --color-gray-600: #999;
+  --color-gray-700: #666;
+  --color-gray-800: #495057;
+  --color-gray-900: #212529;
+
+  /* 베이지/크림 톤 - 따뜻한 배경 */
+  --color-beige-light: #f9faf8;
+  --color-beige: #e4e4e1;
+
+  /* ===== Semantic Colors ===== */
+  /* 성공 */
+  --color-success: #4CAF50;
+  --color-success-light: #d4edda;
+  --color-success-dark: #388E3C;
+
+  /* 경고 */
+  --color-warning: #FFC107;
+  --color-warning-light: #fff3cd;
+  --color-warning-dark: #FFA000;
+
+  /* 에러/위험 */
+  --color-error: #F44336;
+  --color-error-light: #f8d7da;
+  --color-error-dark: #721c24;
+  --color-error-border: #f5c6cb;
+
+  /* 정보 */
+  --color-info: #2196F3;
+  --color-info-light: #d1ecf1;
+  --color-info-dark: #1976D2;
+
+  /* ===== Text Colors ===== */
+  /* 텍스트 컬러 - 가독성을 위한 컬러 */
+  --color-text-primary: #666;         /* 주요 텍스트 */
+  --color-text-secondary: #999;       /* 보조 텍스트 */
+  --color-text-tertiary: #c0c0c0;     /* 비활성/힌트 텍스트 */
+  --color-text-on-primary: #ffffff;   /* Primary 색상 위의 텍스트 */
+  --color-text-on-dark: #ffffff;      /* 어두운 배경 위의 텍스트 */
+  --color-text-heading: #666;         /* 제목 */
+
+  /* ===== Background Colors ===== */
+  /* 배경 컬러 */
+  --color-bg-body: #e4e4e1;           /* 전체 배경 */
+  --color-bg-surface: #ffffff;        /* 카드/패널 배경 */
+  --color-bg-elevated: #f8f9fa;       /* 높이 있는 요소 (네비게이션 등) */
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);  /* 모달 오버레이 */
+  --color-bg-hover: rgba(139, 115, 85, 0.08);  /* 호버 상태 */
+
+  /* ===== Border Colors ===== */
+  /* 테두리 컬러 */
+  --color-border-light: #e0e0e0;
+  --color-border-medium: #ddd;
+  --color-border-dark: #c0c0c0;
+  --color-border-focus: var(--color-primary);
+
+  /* ===== Interactive States ===== */
+  /* 인터랙티브 요소의 상태별 컬러 */
+  --color-link: var(--color-primary);
+  --color-link-hover: var(--color-primary-hover);
+  --color-link-visited: #8B7355;
+
+  /* Disabled state */
+  --color-disabled: #c0c0c0;
+  --color-disabled-bg: #f1f1f1;
+  --color-disabled-text: #999;
+}

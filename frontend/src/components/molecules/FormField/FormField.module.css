@@ -1,0 +1,27 @@
+/**
+ * FormField Component Styles
+ */
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+
+/* Help text */
+.helpText {
+  font-size: var(--text-caption-size);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+  margin-bottom: 0;
+}
+
+/* Error message */
+.errorMessage {
+  font-size: var(--text-caption-size);
+  color: var(--color-error);
+  margin-top: var(--spacing-xs);
+  margin-bottom: 0;
+  font-weight: var(--font-weight-medium);
+}

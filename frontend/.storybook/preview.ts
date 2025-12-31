@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react-vite'
 import '../src/styles/tokens/index.css'  // 디자인 토큰 전역 로드
+import '../src/App.css'  // App.css 로드 (--primary-color, --secondary-color 등)
 
 const preview: Preview = {
   parameters: {

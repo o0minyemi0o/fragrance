@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { formulationApi } from '../services/formulation-api';
-import { LibraryCard } from './molecules/LibraryCard/LibraryCard';
-import { DetailHeader } from './molecules/DetailHeader/DetailHeader';
-import { IngredientRow } from './molecules/IngredientRow/IngredientRow';
+import { formulationApi } from '../../../services/formulation-api';
+import { LibraryCard } from '../../molecules/LibraryCard/LibraryCard';
+import { DetailHeader } from '../../molecules/DetailHeader/DetailHeader';
+import { IngredientRow } from '../../molecules/IngredientRow/IngredientRow';
+import { Button } from '../../atoms/Button/Button';
+import { Input } from '../../atoms/Input/Input';
+import { Textarea } from '../../atoms/Textarea/Textarea';
 import './LibraryView.css';
 
 interface Accord {
@@ -210,7 +213,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
       {editMode ? (
         <div className="detail-content edit-form">
           <h3>
-            <input
+            <Input
               type="text"
               value={editData.name}
               onChange={(e) => setEditData({ ...editData, name: e.target.value })}
@@ -220,7 +223,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
 
           <div className="form-group">
             <label>Description</label>
-            <textarea
+            <Textarea
               value={editData.description || ''}
               onChange={(e) => setEditData({ ...editData, description: e.target.value })}
               className="edit-textarea"
@@ -229,7 +232,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
 
           <div className="form-group">
             <label>Longevity</label>
-            <input
+            <Input
               type="text"
               value={editData.longevity || ''}
               onChange={(e) => setEditData({ ...editData, longevity: e.target.value })}
@@ -239,7 +242,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
 
           <div className="form-group">
             <label>Sillage</label>
-            <input
+            <Input
               type="text"
               value={editData.sillage || ''}
               onChange={(e) => setEditData({ ...editData, sillage: e.target.value })}
@@ -249,7 +252,7 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
 
           <div className="form-group">
             <label>Recommendation</label>
-            <textarea
+            <Textarea
               value={editData.llm_recommendation || ''}
               onChange={(e) => setEditData({ ...editData, llm_recommendation: e.target.value })}
               className="edit-textarea"
@@ -346,18 +349,21 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
               </tbody>
             </table>
 
-            <button onClick={handleAddIngredient} className="add-ingredient-btn">
+            <Button
+              onClick={handleAddIngredient}
+              className="add-ingredient-btn"
+            >
               + Add Ingredient
-            </button>
+            </Button>
           </div>
 
           <div className="edit-buttons">
-            <button onClick={handleSaveEdit} className="save-btn">
+            <Button onClick={handleSaveEdit} className="save-btn">
               ✓ Save
-            </button>
-            <button onClick={() => setEditMode(false)} className="cancel-btn">
+            </Button>
+            <Button onClick={() => setEditMode(false)} className="cancel-btn">
               ✕ Cancel
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -398,12 +404,12 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
           </div>
 
           <div className="action-buttons">
-            <button onClick={() => setEditMode(true)} className="edit-btn">
+            <Button onClick={() => setEditMode(true)} className="edit-btn">
               ✏️ Edit
-            </button>
-            <button onClick={handleDelete} className="delete-btn">
+            </Button>
+            <Button onClick={handleDelete} className="delete-btn">
               🗑 Delete
-            </button>
+            </Button>
           </div>
         </div>
       )}

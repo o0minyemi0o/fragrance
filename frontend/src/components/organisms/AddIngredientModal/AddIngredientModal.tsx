@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Input } from '../../atoms/Input/Input';
+import { Textarea } from '../../atoms/Textarea/Textarea';
+import { Button } from '../../atoms/Button/Button';
 import './AddIngredientModal.css';
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -137,13 +140,13 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
       <div className="modal-content">
         <div className="modal-header">
           <h2>Add New Ingredient</h2>
-          <button
+          <Button
             onClick={onClose}
             className="close-modal-btn"
             disabled={loading || isAutoFilling}
           >
             ✕
-          </button>
+          </Button>
         </div>
 
         <form onSubmit={handleSubmit} className="add-ingredient-form">
@@ -155,17 +158,17 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
               <div className="form-group-header">
                 <label>Ingredient Name *</label>
                 {formData.ingredient_name.trim() && (
-                  <button
+                  <Button
                     type="button"
                     onClick={handleAutoFill}
                     disabled={isAutoFilling || loading}
                     className="auto-fill-btn"
                   >
                     {isAutoFilling ? 'Auto-filling...' : 'Auto Fill Below Info'}
-                  </button>
+                  </Button>
                 )}
               </div>
-              <input
+              <Input
                 type="text"
                 name="ingredient_name"
                 value={formData.ingredient_name}
@@ -183,7 +186,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>INCI Name</label>
-              <input
+              <Input
                 type="text"
                 name="inci_name"
                 value={formData.inci_name}
@@ -195,7 +198,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>CAS Number</label>
-              <input
+              <Input
                 type="text"
                 name="cas_number"
                 value={formData.cas_number}
@@ -207,7 +210,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Synonyms (comma-separated)</label>
-              <input
+              <Input
                 type="text"
                 value={synonyms}
                 onChange={(e) => setSynonyms(e.target.value)}
@@ -223,7 +226,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Odor Description</label>
-              <textarea
+              <Textarea
                 name="odor_description"
                 value={formData.odor_description}
                 onChange={handleChange}
@@ -235,7 +238,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Note Family</label>
-              <input
+              <Input
                 name="note_family"
                 value={formData.note_family}
                 onChange={handleChange}
@@ -251,7 +254,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Suggested Usage Level</label>
-              <input
+              <Input
                 type="text"
                 name="suggested_usage_level"
                 value={formData.suggested_usage_level}
@@ -263,7 +266,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Max Usage Percentage (%)</label>
-              <input
+              <Input
                 type="text"
                 name="max_usage_percentage"
                 value={formData.max_usage_percentage}
@@ -280,7 +283,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Stability</label>
-              <input
+              <Input
                 type="text"
                 name="stability"
                 value={formData.stability}
@@ -292,7 +295,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Tenacity</label>
-              <input
+              <Input
                 name="tenacity"
                 value={formData.tenacity}
                 onChange={handleChange}
@@ -303,7 +306,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
             <div className="form-group">
               <label>Volatility</label>
-              <input
+              <Input
                 name="volatility"
                 value={formData.volatility}
                 onChange={handleChange}
@@ -314,21 +317,21 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           </div>
 
           <div className="modal-actions">
-            <button
+            <Button
               type="button"
               onClick={onClose}
               className="btn-cancel"
               disabled={loading || isAutoFilling}
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               className="btn-submit"
               disabled={loading || isAutoFilling}
             >
               {loading ? 'Adding...' : 'Add Ingredient'}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

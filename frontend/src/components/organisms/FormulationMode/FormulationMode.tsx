@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { DevelopMode } from './organisms/DevelopMode';
-import { Input } from './atoms/Input/Input';
-import { Button } from './atoms/Button/Button';
-import { Radio } from './atoms/Radio/Radio';
+import DevelopMode from '../DevelopMode/DevelopMode';
+import { Input } from '../../atoms/Input/Input';
+import { Button } from '../../atoms/Button/Button';
+import { Radio } from '../../atoms/Radio/Radio';
 import './FormulationMode.css';
 
 interface FormulaData {

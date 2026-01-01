@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import FormulationMode from '../../FormulationMode';
+import FormulationMode from '../../organisms/FormulationMode/FormulationMode';
 import { Button } from '../../atoms/Button/Button';
 import { IngredientRow } from '../../molecules/IngredientRow/IngredientRow';
 import { formulationApi } from '../../../services/formulation-api';

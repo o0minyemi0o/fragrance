@@ -1,5 +1,5 @@
 import React from 'react';
-import LibraryView from '../../LibraryView';
+import LibraryView from '../../organisms/LibraryView/LibraryView';
 import styles from './FormulasPage.module.css';
 
 export interface FormulasPageProps {

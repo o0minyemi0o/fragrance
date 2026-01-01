@@ -1,5 +1,5 @@
 import React from 'react';
-import LibraryView from '../../LibraryView';
+import LibraryView from '../../organisms/LibraryView/LibraryView';
 import styles from './AccordsPage.module.css';
 
 export interface AccordsPageProps {

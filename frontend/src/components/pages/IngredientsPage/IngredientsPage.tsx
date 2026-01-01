@@ -1,5 +1,5 @@
 import React from 'react';
-import IngredientManager from '../../IngredientManager';
+import IngredientManager from '../../organisms/IngredientManager/IngredientManager';
 import styles from './IngredientsPage.module.css';
 
 export interface IngredientsPageProps {}

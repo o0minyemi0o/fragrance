@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { formulationApi } from '../services/formulation-api';
-import AddIngredientModal from './AddIngredientModal';
+import { formulationApi } from '../../../services/formulation-api';
+import { Button } from '../../atoms/Button/Button';
+import { Input } from '../../atoms/Input/Input';
+import { Textarea } from '../../atoms/Textarea/Textarea';
+import AddIngredientModal from '../AddIngredientModal/AddIngredientModal';
 import './IngredientManager.css';
 
 interface Ingredient {
@@ -189,7 +192,7 @@ const IngredientManager: React.FC = () => {
         /* Detail View */
         <div className="ingredient-detail-fullscreen">
           <div className="detail-header">
-            <button
+            <Button
               onClick={() => {
                 setSelectedId(null);
                 setEditMode(false);
@@ -197,7 +200,7 @@ const IngredientManager: React.FC = () => {
               className="back-btn"
             >
               ← Back
-            </button>
+            </Button>
             <h2>{selectedIngredient.ingredient_name}</h2>
             <div style={{ width: '50px' }}></div>
           </div>
@@ -207,7 +210,7 @@ const IngredientManager: React.FC = () => {
             <div className="detail-fullscreen-content edit-form">
               <div className="form-group">
                 <label>Ingredient Name *</label>
-                <input
+                <Input
                   type="text"
                   value={editData.ingredient_name}
                   onChange={(e) => setEditData({ ...editData, ingredient_name: e.target.value })}
@@ -217,7 +220,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>INCI Name</label>
-                <input
+                <Input
                   type="text"
                   value={editData.inci_name || ''}
                   onChange={(e) => setEditData({ ...editData, inci_name: e.target.value })}
@@ -227,7 +230,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>CAS Number</label>
-                <input
+                <Input
                   type="text"
                   value={editData.cas_number || ''}
                   onChange={(e) => setEditData({ ...editData, cas_number: e.target.value })}
@@ -237,7 +240,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>Synonyms (comma-separated)</label>
-                <input
+                <Input
                   type="text"
                   value={editData.synonyms ? editData.synonyms.join(', ') : ''}
                   onChange={(e) => setEditData({
@@ -251,17 +254,17 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>Odor Description</label>
-                <textarea
+                <Textarea
                   value={editData.odor_description || ''}
                   onChange={(e) => setEditData({ ...editData, odor_description: e.target.value })}
                   className="edit-textarea"
                   rows={3}
                 />
               </div>
-              
+
               <div className="form-group">
                 <label>Note Family</label>
-                <input
+                <Input
                   type="text"
                   value={editData.note_family || ''}
                   onChange={(e) => setEditData({ ...editData, note_family: e.target.value })}
@@ -272,7 +275,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>Suggested Usage Level</label>
-                <input
+                <Input
                   type="text"
                   value={editData.suggested_usage_level || ''}
                   onChange={(e) => setEditData({ ...editData, suggested_usage_level: e.target.value })}
@@ -282,7 +285,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>Max Usage Percentage</label>
-                <input
+                <Input
                   type="text"
                   value={editData.max_usage_percentage || ''}
                   onChange={(e) => setEditData({ ...editData, max_usage_percentage: e.target.value})}
@@ -292,7 +295,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>Stability</label>
-                <input
+                <Input
                   type="text"
                   value={editData.stability || ''}
                   onChange={(e) => setEditData({ ...editData, stability: e.target.value })}
@@ -302,7 +305,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>Tenacity</label>
-                <input
+                <Input
                   type="text"
                   value={editData.tenacity || ''}
                   onChange={(e) => setEditData({ ...editData, tenacity: e.target.value })}
@@ -312,7 +315,7 @@ const IngredientManager: React.FC = () => {
 
               <div className="form-group">
                 <label>Volatility</label>
-                <input
+                <Input
                   type="text"
                   value={editData.volatility || ''}
                   onChange={(e) => setEditData({ ...editData, volatility: e.target.value })}
@@ -321,15 +324,15 @@ const IngredientManager: React.FC = () => {
               </div>
 
               <div className="edit-buttons">
-                <button onClick={handleSaveEdit} className="save-btn" disabled={loading}>
+                <Button onClick={handleSaveEdit} className="save-btn" disabled={loading}>
                   ✓ Save
-                </button>
-                <button onClick={() => {
+                </Button>
+                <Button onClick={() => {
                   setEditMode(false);
                   setEditData({ ...selectedIngredient });
                 }} className="cancel-btn" disabled={loading}>
                   ✕ Cancel
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -447,12 +450,12 @@ const IngredientManager: React.FC = () => {
               </div>
 
               <div className="action-buttons">
-                <button onClick={() => setEditMode(true)} className="edit-btn">
+                <Button onClick={() => setEditMode(true)} className="edit-btn">
                   ✏️ Edit
-                </button>
-                <button onClick={handleDeleteSingle} className="delete-btn">
+                </Button>
+                <Button onClick={handleDeleteSingle} className="delete-btn">
                   🗑 Delete
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -464,7 +467,7 @@ const IngredientManager: React.FC = () => {
 
           <div className="ingredient-header">
             <div className="ingredient-controls">
-              <input
+              <Input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -479,13 +482,13 @@ const IngredientManager: React.FC = () => {
                 />
                 Only owned ingredients
               </label>
-              <button 
+              <Button
                 onClick={() => setShowAddModal(true)}
                 className="add-ingredient-open-btn"
                 disabled={loading}
               >
                 + Add Ingredient
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -493,13 +496,13 @@ const IngredientManager: React.FC = () => {
           {selectedForDelete.size > 0 && (
             <div className="ingredient-delete-bar">
               <span className="selected-info">{selectedForDelete.size} selected</span>
-              <button
+              <Button
                 onClick={handleDeleteSelected}
                 className="delete-action-btn"
                 disabled={loading}
               >
                 🗑 Delete
-              </button>
+              </Button>
             </div>
           )}
 
@@ -523,7 +526,7 @@ const IngredientManager: React.FC = () => {
                       <div className="ingredient-note-family">{ing.note_family}</div>
                     )}
                   </div>
-                  
+
                   {/* ✅ 체크박스만 */}
                   <input
                     type="checkbox"

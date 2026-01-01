@@ -10,3 +10,4 @@ export { Input, type InputProps } from './Input/Input';
 export { Label, type LabelProps } from './Label/Label';
 export { Textarea, type TextareaProps } from './Textarea/Textarea';
 export { Select, type SelectProps } from './Select/Select';
+export { Radio, type RadioProps } from './Radio/Radio';

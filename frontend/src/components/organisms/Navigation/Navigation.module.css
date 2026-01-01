@@ -1,5 +1,6 @@
 /**
- * Navigation Component Styles
+ * Navigation Component Styles (Container Only)
+ * Individual items are styled in NavigationItem molecule
  */
 
 .navigation {
@@ -25,77 +26,6 @@
   width: 100%;
 }
 
-/* ===== Nav Item (기본) ===== */
-
-.navItem {
-  /* 레이아웃 */
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-4) var(--spacing-5);
-
-  /* 타이포그래피 */
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text-primary);
-  text-align: left;
-
-  /* 스타일 */
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition-default);
-  white-space: nowrap;
-  user-select: none;
-}
-
-.icon {
-  display: flex;
-  align-items: center;
-  font-size: 1.2em;
-}
-
-.label {
-  flex: 1;
-}
-
-/* ===== Variant: Default (세로 탭 스타일) ===== */
-
-.default.vertical .navItem {
-  border-left: 4px solid transparent;
-}
-
-.default.vertical .navItem:hover:not(:disabled):not(.active) {
-  background: var(--color-bg-hover);
-  color: var(--color-secondary);
-  transform: translateX(2px);
-}
-
-.default.vertical .navItem.active {
-  color: var(--color-text-on-primary);
-  background: var(--color-secondary);
-  border-left-color: var(--color-secondary);
-  box-shadow: var(--shadow-inset-primary);
-}
-
-.default.horizontal .navItem {
-  border-bottom: 4px solid transparent;
-  justify-content: center;
-}
-
-.default.horizontal .navItem:hover:not(:disabled):not(.active) {
-  background: var(--color-bg-hover);
-  color: var(--color-secondary);
-}
-
-.default.horizontal .navItem.active {
-  color: var(--color-text-on-primary);
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  border-bottom-color: var(--color-secondary);
-  box-shadow: var(--shadow-inset-bottom);
-}
-
 /* ===== Variant: Pills ===== */
 
 .pills {
@@ -103,21 +33,6 @@
   padding: var(--spacing-2);
   background: transparent;
   box-shadow: none;
-}
-
-.pills .navItem {
-  border-radius: var(--border-radius-md);
-  padding: var(--spacing-3) var(--spacing-4);
-}
-
-.pills .navItem:hover:not(:disabled):not(.active) {
-  background: var(--color-bg-hover);
-  color: var(--color-primary);
-}
-
-.pills .navItem.active {
-  background: var(--color-primary);
-  color: var(--color-text-on-primary);
 }
 
 /* ===== Variant: Underline ===== */
@@ -129,36 +44,6 @@
   border-bottom: 2px solid var(--color-border-light);
 }
 
-.underline .navItem {
-  border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
-  padding-bottom: calc(var(--spacing-3) - 2px);
-}
-
-.underline .navItem:hover:not(:disabled):not(.active) {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-border-medium);
-}
-
-.underline .navItem.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-  font-weight: var(--font-weight-bold);
-}
-
-/* ===== Disabled State ===== */
-
-.navItem.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  color: var(--color-disabled-text);
-}
-
-.navItem:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* ===== Responsive ===== */
 
 @media (max-width: 768px) {
@@ -166,36 +51,5 @@
     flex-direction: row;
     width: 100%;
     min-width: unset;
-  }
-
-  .vertical .navItem {
-    flex: 1;
-    justify-content: center;
-    text-align: center;
-    border-left: none;
-    border-bottom: 4px solid transparent;
-  }
-
-  .default.vertical .navItem:hover:not(:disabled):not(.active) {
-    transform: none;
-    border-bottom-color: var(--color-primary);
-  }
-
-  .default.vertical .navItem.active {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    border-left-color: transparent;
-    border-bottom-color: var(--color-secondary);
-    box-shadow: var(--shadow-inset-bottom);
-  }
-}
-
-@media (max-width: 480px) {
-  .navItem {
-    padding: var(--spacing-3) var(--spacing-2);
-    font-size: var(--font-size-sm);
-  }
-
-  .icon {
-    font-size: 1em;
   }
 }

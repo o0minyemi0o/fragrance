@@ -8,7 +8,13 @@ const meta = {
   title: 'Organisms/Modal',
   component: Modal,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
+    docs: {
+      story: {
+        inline: false,
+        iframeHeight: 500,
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -36,9 +42,26 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * 기본 Modal
+ * 기본 Modal (항상 열린 상태)
  */
 export const Default: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log('Modal closed'),
+    title: 'Modal Title',
+    children: <p>This is a basic modal with default settings.</p>,
+  },
+  parameters: {
+    controls: {
+      exclude: ['isOpen'],
+    },
+  },
+};
+
+/**
+ * Interactive Modal (버튼으로 열기)
+ */
+export const Interactive: Story = {
   render: () => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -50,6 +73,9 @@ export const Default: Story = {
         </Modal>
       </>
     );
+  },
+  parameters: {
+    controls: { disable: true },
   },
 };
 
@@ -83,6 +109,9 @@ export const WithFooter: Story = {
       </>
     );
   },
+  parameters: {
+    controls: { disable: true },
+  },
 };
 
 /**
@@ -100,6 +129,9 @@ export const SmallSize: Story = {
         </Modal>
       </>
     );
+  },
+  parameters: {
+    controls: { disable: true },
   },
 };
 
@@ -119,6 +151,9 @@ export const LargeSize: Story = {
         </Modal>
       </>
     );
+  },
+  parameters: {
+    controls: { disable: true },
   },
 };
 
@@ -173,6 +208,9 @@ export const FormModal: Story = {
       </>
     );
   },
+  parameters: {
+    controls: { disable: true },
+  },
 };
 
 /**
@@ -196,6 +234,9 @@ export const ScrollableContent: Story = {
         </Modal>
       </>
     );
+  },
+  parameters: {
+    controls: { disable: true },
   },
 };
 
@@ -225,6 +266,9 @@ export const NoCloseButton: Story = {
         </Modal>
       </>
     );
+  },
+  parameters: {
+    controls: { disable: true },
   },
 };
 
@@ -268,6 +312,36 @@ export const DeleteConfirmation: Story = {
       </>
     );
   },
+  parameters: {
+    controls: { disable: true },
+  },
+};
+
+/**
+ * With Footer (Always Open for Docs)
+ */
+export const WithFooterAlwaysOpen: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log('Modal closed'),
+    title: 'Confirm Action',
+    footer: (
+      <>
+        <Button variant="outline" onClick={() => console.log('Cancel')}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={() => console.log('Confirm')}>
+          Confirm
+        </Button>
+      </>
+    ),
+    children: <p>Are you sure you want to proceed with this action?</p>,
+  },
+  parameters: {
+    controls: {
+      exclude: ['isOpen'],
+    },
+  },
 };
 
 /**
@@ -296,5 +370,9 @@ export const CustomContent: Story = {
         </Modal>
       </>
     );
+  },
+  parameters: {
+    controls: { disable: true },
+    docs: { disable: true },
   },
 };

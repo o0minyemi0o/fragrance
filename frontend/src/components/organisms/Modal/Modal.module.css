@@ -69,32 +69,14 @@
   flex: 1;
 }
 
-/* Close Button */
+/* Close Button (uses Button atom) */
 .closeButton {
-  background: none;
-  border: none;
   font-size: 2rem;
   line-height: 1;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  padding: 0;
   width: 32px;
   height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--border-radius-sm);
-  transition: var(--transition-default);
+  padding: 0 !important;
   flex-shrink: 0;
-}
-
-.closeButton:hover {
-  background-color: var(--color-bg-hover);
-  color: var(--color-text-primary);
-}
-
-.closeButton:active {
-  background-color: var(--color-gray-200);
 }
 
 /* Body */

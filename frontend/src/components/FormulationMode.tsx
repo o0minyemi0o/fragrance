@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import DevelopMode from './DevelopMode';
+import { DevelopMode } from './organisms/DevelopMode';
+import { Input } from './atoms/Input/Input';
+import { Button } from './atoms/Button/Button';
+import { Radio } from './atoms/Radio/Radio';
 import './FormulationMode.css';
 
 interface FormulaData {
@@ -18,10 +21,17 @@ interface Props {
   loading: boolean;
   onExportFormula?: (formula: FormulaData) => void;
   onModeChange?: () => void;
+  initialMode?: 'accord' | 'formula' | 'develop';
 }
 
-const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula, onModeChange }) => {
-  const [mode, setMode] = useState<'accord' | 'formula' | 'develop'>('accord');
+const FormulationMode: React.FC<Props> = ({
+  onGenerate,
+  loading,
+  onExportFormula,
+  onModeChange,
+  initialMode = 'accord'
+}) => {
+  const [mode, setMode] = useState<'accord' | 'formula' | 'develop'>(initialMode);
   const [input, setInput] = useState('');
 
   useEffect(() => {
@@ -40,36 +50,30 @@ const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula
   return (
     <div>
       <div className="mode-selector">
-        <label>
-          <input
-            type="radio"
-            value="accord"
-            checked={mode === 'accord'}
-            onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
-            disabled={loading}
-          />
-          Accord Mode (Simple & Clear)
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="formula"
-            checked={mode === 'formula'}
-            onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
-            disabled={loading}
-          />
-          Formula Mode (Complete Product)
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="develop"
-            checked={mode === 'develop'}
-            onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
-            disabled={loading}
-          />
-          Develop Mode (Conversation)
-        </label>
+        <Radio
+          label="Accord Mode (Simple & Clear)"
+          value="accord"
+          checked={mode === 'accord'}
+          onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
+          disabled={loading}
+          name="formulation-mode"
+        />
+        <Radio
+          label="Formula Mode (Complete Product)"
+          value="formula"
+          checked={mode === 'formula'}
+          onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
+          disabled={loading}
+          name="formulation-mode"
+        />
+        <Radio
+          label="Develop Mode (Conversation)"
+          value="develop"
+          checked={mode === 'develop'}
+          onChange={(e) => setMode(e.target.value as 'accord' | 'formula' | 'develop')}
+          disabled={loading}
+          name="formulation-mode"
+        />
       </div>
 
       {mode === 'develop' ? (
@@ -80,7 +84,7 @@ const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula
             <label>
               {mode === 'accord' ? 'Accord Type' : 'Formula Type'}:
             </label>
-            <input
+            <Input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -93,9 +97,20 @@ const FormulationMode: React.FC<Props> = ({ onGenerate, loading, onExportFormula
             />
           </div>
 
-          <button type="submit" disabled={loading} className="submit-button">
+          <Button
+            type="submit"
+            disabled={loading}
+            variant="secondary"
+            fullWidth
+            style={{
+              padding: '12px 30px',
+              fontSize: '1rem',
+              borderRadius: '5px',
+              fontWeight: 600
+            }}
+          >
             {loading ? 'Generating...' : 'Generate'}
-          </button>
+          </Button>
         </form>
       )}
     </div>

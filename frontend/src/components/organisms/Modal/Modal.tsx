@@ -95,13 +95,14 @@ export const Modal: React.FC<ModalProps> = ({
           <div className={styles.header}>
             {title && <h2 className={styles.title}>{title}</h2>}
             {!hideCloseButton && (
-              <button
-                className={styles.closeButton}
+              <Button
                 onClick={onClose}
+                variant="outline"
                 aria-label="Close modal"
+                className={styles.closeButton}
               >
                 ×
-              </button>
+              </Button>
             )}
           </div>
         )}

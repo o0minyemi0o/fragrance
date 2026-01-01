@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { formulationApi } from '../services/formulation-api';
+import { LibraryCard } from './molecules/LibraryCard/LibraryCard';
+import { DetailHeader } from './molecules/DetailHeader/DetailHeader';
+import { IngredientRow } from './molecules/IngredientRow/IngredientRow';
 import './LibraryView.css';
 
 interface Accord {
@@ -179,20 +182,13 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
           <div className="library-gallery">
             <div className="gallery-grid">
               {items.map((item) => (
-                <div
+                <LibraryCard
                   key={item.id}
-                  className="gallery-card"
+                  name={item.name}
+                  type={item.type}
+                  ingredientsCount={item.ingredients_count}
                   onClick={() => loadDetails(item.id)}
-                >
-                  <div className="card-header">
-                    <h4>{item.name}</h4>
-                  </div>
-                  <div className="card-body">
-                    <p className="card-type">{item.type}</p>
-                    <p className="card-count">{item.ingredients_count} ingredients</p>
-                  </div>
-
-                </div>
+                />
               ))}
             </div>
           </div>
@@ -204,16 +200,10 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
   // 디테일 뷰
   return (
     <div className="library-view">
-      <div className="detail-header">
-        <button
-          onClick={backToGallery}
-          className="back-btn"
-        >
-          ← Back
-        </button>
-        <h2>{details?.name}</h2>
-        <div style={{ width: '50px' }}></div>
-      </div>
+      <DetailHeader
+        title={details?.name || ''}
+        onBack={backToGallery}
+      />
 
       {error && <div className="error-message">❌ {error}</div>}
 
@@ -379,22 +369,20 @@ const LibraryView: React.FC<Props> = ({ mode, onRefresh }) => {
           <table className="ingredients-table">
             <thead>
               <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>%</th>
-                <th>Note</th>
+                <th style={{ width: '40px', textAlign: 'center' }}>#</th>
+                <th style={{ width: '300px' }}>Name</th>
+                <th style={{ width: '80px', textAlign: 'center' }}>%</th>
+                <th style={{ width: '100px' }}>Note</th>
                 <th>Role</th>
               </tr>
             </thead>
             <tbody>
               {details?.ingredients_composition?.map((ing: any, idx: number) => (
-                <tr key={idx}>
-                  <td style={{ width : '40px'}}>{idx + 1}</td>
-                  <td>{ing.name}</td>
-                  <td style={{ width : '80px'}}>{ing.percentage}%</td>
-                  <td style={{ width : '100px'}}>{ing.note || '-'}</td>
-                  <td>{ing.role || '-'}</td>
-                </tr>
+                <IngredientRow
+                  key={idx}
+                  index={idx}
+                  ingredient={ing}
+                />
               ))}
             </tbody>
           </table>

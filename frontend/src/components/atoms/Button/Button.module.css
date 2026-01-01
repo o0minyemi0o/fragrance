@@ -79,15 +79,11 @@
 }
 
 .secondary:hover:not(:disabled) {
-  background-color: var(--color-secondary-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  background-color: #5a7a1f;
 }
 
 .secondary:active:not(:disabled) {
   background-color: var(--color-secondary-active);
-  transform: translateY(0);
-  box-shadow: var(--shadow-sm);
 }
 
 .secondary:focus-visible {
@@ -123,17 +119,27 @@
 
 /* Disabled */
 .button:disabled {
-  background-color: var(--color-disabled-bg);
-  color: var(--color-disabled-text);
   cursor: not-allowed;
-  opacity: 0.6;
   transform: none !important;
   box-shadow: none !important;
+}
+
+.primary:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  opacity: 0.6;
+}
+
+.secondary:disabled {
+  /* secondary는 disabled 상태에서도 색상 유지 (기존 submit-button 동작과 동일) */
+  opacity: 1;
 }
 
 .outline:disabled {
   border-color: var(--color-disabled);
   background-color: transparent;
+  color: var(--color-disabled-text);
+  opacity: 0.6;
 }
 
 /* Full Width */

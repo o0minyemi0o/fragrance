@@ -1,23 +1,38 @@
 import React, { useState, useCallback } from 'react';
 import FormulationMode from '../../FormulationMode';
 import { Button } from '../../atoms/Button/Button';
+import { IngredientRow } from '../../molecules/IngredientRow/IngredientRow';
 import { formulationApi } from '../../../services/formulation-api';
 import styles from './GeneratePage.module.css';
 
 export interface GeneratePageProps {
   onExportFormula?: (formula: any) => void;
+  // Storybook용 optional props
+  initialResult?: any;
+  initialLoading?: boolean;
+  initialError?: string | null;
+  initialMode?: 'accord' | 'formula' | 'develop';
 }
 
-export const GeneratePage: React.FC<GeneratePageProps> = ({ onExportFormula }) => {
-  const [result, setResult] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'accord' | 'formula'>('accord');
-  const [error, setError] = useState<string | null>(null);
+export const GeneratePage: React.FC<GeneratePageProps> = ({
+  onExportFormula,
+  initialResult = null,
+  initialLoading = false,
+  initialError = null,
+  initialMode = 'accord'
+}) => {
+  const [result, setResult] = useState<any>(initialResult);
+  const [loading, setLoading] = useState(initialLoading);
+  const [mode, setMode] = useState<'accord' | 'formula' | 'develop'>(initialMode as 'accord' | 'formula');
+  const [error, setError] = useState<string | null>(initialError);
 
   const handleModeChange = useCallback(() => {
-    setResult(null);
-    setError(null);
-  }, []);
+    // Storybook에서 initialResult가 있으면 result를 지우지 않음
+    if (!initialResult) {
+      setResult(null);
+      setError(null);
+    }
+  }, [initialResult]);
 
   const handleGenerate = async (selectedMode: 'accord' | 'formula', type: string) => {
     setMode(selectedMode);
@@ -89,6 +104,7 @@ export const GeneratePage: React.FC<GeneratePageProps> = ({ onExportFormula }) =
         loading={loading}
         onExportFormula={onExportFormula}
         onModeChange={handleModeChange}
+        initialMode={initialMode}
       />
 
       {error && (
@@ -115,23 +131,20 @@ export const GeneratePage: React.FC<GeneratePageProps> = ({ onExportFormula }) =
             <thead>
               <tr>
                 <th style={{ width: '30px' }}>#</th>
-                <th style={{ width: '180px'}}>Name</th>
-                <th style={{ width: '130px', textAlign: "center" }}>%</th>
-                <th style={{ width: '100px' }}>Note</th>
+                <th style={{ width: '250px'}}>Name</th>
+                <th style={{ width: '100px', textAlign: "center" }}>%</th>
+                <th style={{ width: '120px' }}>Note</th>
                 <th>Role</th>
               </tr>
             </thead>
             <tbody>
               {result.ingredients?.map((ing: any, idx: number) => (
-                <tr key={idx}>
-                  <td className="index-cell">{idx + 1}</td>
-                  <td><strong>{ing.name}</strong></td>
-                  <td style={{ textAlign: 'center', fontWeight: '600', color: '#666' }}>
-                    {ing.percentage}%
-                  </td>
-                  <td>{ing.note || '-'}</td>
-                  <td>{ing.role || '-'}</td>
-                </tr>
+                <IngredientRow
+                  key={idx}
+                  index={idx}
+                  ingredient={ing}
+                  variant="compact"
+                />
               ))}
             </tbody>
           </table>
@@ -158,7 +171,13 @@ export const GeneratePage: React.FC<GeneratePageProps> = ({ onExportFormula }) =
             onClick={handleSave}
             disabled={loading}
             variant="secondary"
-            size="lg"
+            style={{
+              padding: '12px 30px',
+              fontSize: '1rem',
+              borderRadius: '5px',
+              fontWeight: 600,
+              marginTop: '20px'
+            }}
           >
             {loading ? 'Saving...' : '💾 Save'}
           </Button>

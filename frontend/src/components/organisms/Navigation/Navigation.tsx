@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavigationItem } from '../../molecules/NavigationItem';
 import styles from './Navigation.module.css';
 
 export interface NavItem {
@@ -68,18 +69,15 @@ export const Navigation: React.FC<NavigationProps> = ({
         const isActive = item.id === activeId;
 
         return (
-          <button
+          <NavigationItem
             key={item.id}
-            className={`${styles.navItem} ${isActive ? styles.active : ''} ${
-              item.disabled ? styles.disabled : ''
-            }`}
-            onClick={() => !item.disabled && onItemClick(item.id)}
+            label={item.label}
+            icon={item.icon}
+            active={isActive}
             disabled={item.disabled}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            {item.icon && <span className={styles.icon}>{item.icon}</span>}
-            <span className={styles.label}>{item.label}</span>
-          </button>
+            onClick={() => onItemClick(item.id)}
+            variant={variant}
+          />
         );
       })}
     </nav>

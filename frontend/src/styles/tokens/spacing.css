@@ -1,0 +1,83 @@
+/**
+ * Design Tokens - Spacing
+ *
+ * 일관된 간격 시스템을 제공합니다.
+ * 4px 기준 스케일을 사용합니다.
+ */
+
+:root {
+  /* ===== Base Unit ===== */
+  --spacing-base: 4px;
+
+  /* ===== Spacing Scale ===== */
+  /* 4px 배수 시스템 */
+  --spacing-0: 0;
+  --spacing-1: 4px;       /* 0.25rem */
+  --spacing-2: 8px;       /* 0.5rem */
+  --spacing-3: 12px;      /* 0.75rem */
+  --spacing-4: 16px;      /* 1rem */
+  --spacing-5: 20px;      /* 1.25rem */
+  --spacing-6: 24px;      /* 1.5rem */
+  --spacing-7: 28px;      /* 1.75rem */
+  --spacing-8: 32px;      /* 2rem */
+  --spacing-10: 40px;     /* 2.5rem */
+  --spacing-12: 48px;     /* 3rem */
+  --spacing-16: 64px;     /* 4rem */
+
+  /* ===== Semantic Spacing ===== */
+  /* 의미론적 이름으로 쉽게 사용 */
+  --spacing-xs: var(--spacing-1);    /* 4px */
+  --spacing-sm: var(--spacing-2);    /* 8px */
+  --spacing-md: var(--spacing-3);    /* 12px */
+  --spacing-lg: var(--spacing-4);    /* 16px */
+  --spacing-xl: var(--spacing-5);    /* 20px */
+  --spacing-2xl: var(--spacing-6);   /* 24px */
+  --spacing-3xl: var(--spacing-8);   /* 32px */
+  --spacing-4xl: var(--spacing-10);  /* 40px */
+  --spacing-5xl: var(--spacing-12);  /* 48px */
+  --spacing-6xl: var(--spacing-16);  /* 64px */
+
+  /* ===== Component-Specific Spacing ===== */
+  /* 버튼 패딩 */
+  --spacing-button-padding-x-sm: var(--spacing-4);
+  --spacing-button-padding-y-sm: var(--spacing-2);
+  --spacing-button-padding-x-md: var(--spacing-6);
+  --spacing-button-padding-y-md: var(--spacing-3);
+  --spacing-button-padding-x-lg: var(--spacing-8);
+  --spacing-button-padding-y-lg: var(--spacing-4);
+
+  /* 인풋 패딩 */
+  --spacing-input-padding-x: var(--spacing-3);
+  --spacing-input-padding-y: var(--spacing-3);
+
+  /* 카드 패딩 */
+  --spacing-card-padding-sm: var(--spacing-4);
+  --spacing-card-padding-md: var(--spacing-6);
+  --spacing-card-padding-lg: var(--spacing-8);
+
+  /* 섹션 간격 */
+  --spacing-section-gap-sm: var(--spacing-4);
+  --spacing-section-gap-md: var(--spacing-6);
+  --spacing-section-gap-lg: var(--spacing-8);
+
+  /* 컨테이너 패딩 */
+  --spacing-container-padding-mobile: var(--spacing-4);
+  --spacing-container-padding-tablet: var(--spacing-5);
+  --spacing-container-padding-desktop: var(--spacing-6);
+
+  /* Gap (Grid/Flex) */
+  --gap-xs: var(--spacing-2);
+  --gap-sm: var(--spacing-3);
+  --gap-md: var(--spacing-4);
+  --gap-lg: var(--spacing-6);
+  --gap-xl: var(--spacing-8);
+}
+
+/* ===== Responsive Spacing ===== */
+@media (max-width: 768px) {
+  :root {
+    /* 모바일에서 간격 축소 */
+    --spacing-section-gap-lg: var(--spacing-6);
+    --spacing-card-padding-lg: var(--spacing-6);
+  }
+}

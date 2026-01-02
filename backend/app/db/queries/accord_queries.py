@@ -1,0 +1,56 @@
+"""
+Accord DB query functions
+"""
+
+from sqlalchemy.orm import Session
+from app.db.schema import Accord
+from typing import List, Optional
+
+
+def get_all_accords(db: Session) -> List[Accord]:
+    """Get all Accords"""
+    return db.query(Accord).all()
+
+
+def get_accord_by_id(db: Session, accord_id: int) -> Optional[Accord]:
+    """Get Accord by ID"""
+    return db.query(Accord).filter(Accord.id == accord_id).first()
+
+
+def get_accord_by_name(db: Session, name: str) -> Optional[Accord]:
+    """Get Accord by name"""
+    return db.query(Accord).filter(Accord.name == name).first()
+
+
+def create_accord(db: Session, accord_data: dict) -> Accord:
+    """Create new Accord"""
+    new_accord = Accord(**accord_data)
+    db.add(new_accord)
+    db.commit()
+    db.refresh(new_accord)
+    return new_accord
+
+
+def update_accord(db: Session, accord_id: int, update_data: dict) -> Optional[Accord]:
+    """Update Accord"""
+    accord = get_accord_by_id(db, accord_id)
+    if not accord:
+        return None
+
+    for key, value in update_data.items():
+        setattr(accord, key, value)
+
+    db.commit()
+    db.refresh(accord)
+    return accord
+
+
+def delete_accord(db: Session, accord_id: int) -> bool:
+    """Delete Accord"""
+    accord = get_accord_by_id(db, accord_id)
+    if not accord:
+        return False
+
+    db.delete(accord)
+    db.commit()
+    return True

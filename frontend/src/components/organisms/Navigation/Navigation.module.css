@@ -1,0 +1,55 @@
+/**
+ * Navigation Component Styles (Container Only)
+ * Individual items are styled in NavigationItem molecule
+ */
+
+.navigation {
+  display: flex;
+  background: var(--color-bg-elevated);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== Orientation ===== */
+
+.vertical {
+  flex-direction: column;
+  gap: 0;
+  min-width: 150px;
+  width: fit-content;
+}
+
+.horizontal {
+  flex-direction: row;
+  gap: 0;
+  width: 100%;
+}
+
+/* ===== Variant: Pills ===== */
+
+.pills {
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  background: transparent;
+  box-shadow: none;
+}
+
+/* ===== Variant: Underline ===== */
+
+.underline {
+  gap: 0;
+  background: transparent;
+  box-shadow: none;
+  border-bottom: 2px solid var(--color-border-light);
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 768px) {
+  .vertical {
+    flex-direction: row;
+    width: 100%;
+    min-width: unset;
+  }
+}

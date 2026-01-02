@@ -1,0 +1,92 @@
+/**
+ * Card Component Styles
+ */
+
+.card {
+  /* 레이아웃 */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-surface);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+
+  /* 트랜지션 */
+  transition: var(--transition-default);
+}
+
+/* ===== Variants ===== */
+
+/* Default */
+.default {
+  border: var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Outlined */
+.outlined {
+  border: var(--border-medium);
+  box-shadow: none;
+}
+
+/* Elevated */
+.elevated {
+  border: none;
+  box-shadow: var(--shadow-md);
+}
+
+/* ===== States ===== */
+
+/* Hoverable */
+.hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Clickable */
+.clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.clickable:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== Card Sections ===== */
+
+.cardHeader {
+  padding: var(--spacing-card-padding-md);
+  border-bottom: var(--border-light);
+  background-color: var(--color-bg-surface);
+}
+
+.cardBody {
+  padding: var(--spacing-card-padding-md);
+  flex: 1;
+}
+
+.cardFooter {
+  padding: var(--spacing-card-padding-md);
+  border-top: var(--border-light);
+  background-color: var(--color-gray-50);
+}
+
+/* ===== Typography in Card ===== */
+
+.cardHeader h3,
+.cardHeader h4 {
+  margin: 0;
+  color: var(--color-text-heading);
+}
+
+.cardHeader p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.cardBody p {
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}

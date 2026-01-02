@@ -1,0 +1,56 @@
+"""
+Formula DB query functions
+"""
+
+from sqlalchemy.orm import Session
+from app.db.schema import Formula
+from typing import List, Optional
+
+
+def get_all_formulas(db: Session) -> List[Formula]:
+    """Get all Formulas"""
+    return db.query(Formula).all()
+
+
+def get_formula_by_id(db: Session, formula_id: int) -> Optional[Formula]:
+    """Get Formula by ID"""
+    return db.query(Formula).filter(Formula.id == formula_id).first()
+
+
+def get_formula_by_name(db: Session, name: str) -> Optional[Formula]:
+    """Get Formula by name"""
+    return db.query(Formula).filter(Formula.name == name).first()
+
+
+def create_formula(db: Session, formula_data: dict) -> Formula:
+    """Create new Formula"""
+    new_formula = Formula(**formula_data)
+    db.add(new_formula)
+    db.commit()
+    db.refresh(new_formula)
+    return new_formula
+
+
+def update_formula(db: Session, formula_id: int, update_data: dict) -> Optional[Formula]:
+    """Update Formula"""
+    formula = get_formula_by_id(db, formula_id)
+    if not formula:
+        return None
+
+    for key, value in update_data.items():
+        setattr(formula, key, value)
+
+    db.commit()
+    db.refresh(formula)
+    return formula
+
+
+def delete_formula(db: Session, formula_id: int) -> bool:
+    """Delete Formula"""
+    formula = get_formula_by_id(db, formula_id)
+    if not formula:
+        return False
+
+    db.delete(formula)
+    db.commit()
+    return True

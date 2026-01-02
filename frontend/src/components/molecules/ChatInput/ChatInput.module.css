@@ -1,0 +1,31 @@
+.inputContainer {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.messageInput {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: var(--font-family-primary);
+  resize: none;
+  min-height: auto;
+  max-height: 120px;
+  overflow-y: auto;
+  transition: border-color 0.2s;
+  line-height: 1.5;
+}
+
+.messageInput:focus {
+  outline: none;
+  border-color: #9ca362;
+}
+
+.messageInput::placeholder {
+  color: #9ca3af;
+}

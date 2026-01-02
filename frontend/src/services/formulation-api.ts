@@ -3,7 +3,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export const formulationApi = {
   async generateAccord(request: any) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/accord/generate`, {
+    const response = await fetch(`${API_BASE_URL}/api/accords/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
@@ -13,7 +13,7 @@ export const formulationApi = {
   },
 
   async saveAccord(request: any) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/accord/save`, {
+    const response = await fetch(`${API_BASE_URL}/api/accords/save`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
@@ -23,7 +23,7 @@ export const formulationApi = {
   },
 
   async generateFormula(request: any) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/formula/generate`, {
+    const response = await fetch(`${API_BASE_URL}/api/formulas/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
@@ -33,7 +33,7 @@ export const formulationApi = {
   },
 
   async saveFormula(request: any) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/formula/save`, {
+    const response = await fetch(`${API_BASE_URL}/api/formulas/save`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request)
@@ -43,31 +43,31 @@ export const formulationApi = {
   },
 
   async listAccords() {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/accords`);
+    const response = await fetch(`${API_BASE_URL}/api/accords`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   },
 
   async listFormulas() {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/formulas`);
+    const response = await fetch(`${API_BASE_URL}/api/formulas`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   },
 
   async getAccord(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/accords/${id}`);
+    const response = await fetch(`${API_BASE_URL}/api/accords/${id}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   },
 
   async getFormula(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/formulas/${id}`);
+    const response = await fetch(`${API_BASE_URL}/api/formulas/${id}`);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   },
 
   async updateAccord(id: number, data: any) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/accords/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/accords/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -77,7 +77,7 @@ export const formulationApi = {
   },
 
   async updateFormula(id: number, data: any) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/formulas/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/formulas/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
@@ -87,7 +87,7 @@ export const formulationApi = {
   },
 
   async deleteAccord(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/accords/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/accords/${id}`, {
       method: 'DELETE'
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -95,7 +95,7 @@ export const formulationApi = {
   },
 
   async deleteFormula(id: number) {
-    const response = await fetch(`${API_BASE_URL}/api/formulations/formulas/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/formulas/${id}`, {
       method: 'DELETE'
     });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);

@@ -1,0 +1,173 @@
+/**
+ * Design Tokens - Animations & Transitions
+ *
+ * 애니메이션, 트랜지션, 타이밍 함수를 정의합니다.
+ */
+
+:root {
+  /* ===== Transition Durations ===== */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-slower: 800ms;
+
+  /* ===== Easing Functions ===== */
+  --ease-linear: linear;
+  --ease-in: ease-in;
+  --ease-out: ease-out;
+  --ease-in-out: ease-in-out;
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);  /* Material Design */
+  --ease-smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  /* ===== Common Transitions ===== */
+  /* 자주 사용하는 transition 조합 */
+  --transition-fast: all var(--duration-fast) var(--ease-default);
+  --transition-default: all var(--duration-normal) var(--ease-default);
+  --transition-slow: all var(--duration-slow) var(--ease-default);
+
+  /* 속성별 transition */
+  --transition-color: color var(--duration-normal) var(--ease-default);
+  --transition-bg: background-color var(--duration-normal) var(--ease-default);
+  --transition-border: border-color var(--duration-normal) var(--ease-default);
+  --transition-transform: transform var(--duration-normal) var(--ease-default);
+  --transition-opacity: opacity var(--duration-normal) var(--ease-default);
+  --transition-shadow: box-shadow var(--duration-normal) var(--ease-default);
+}
+
+/* ===== Keyframe Animations ===== */
+
+/* Fade In */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide In (from bottom) */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In (from top) */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In (from left) */
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In (from right) */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulse */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Spin (로딩 인디케이터) */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Shake (에러 표시) */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* ===== Animation Classes (optional) ===== */
+/* 필요시 클래스로 직접 사용 가능 */
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--ease-default);
+}
+
+.animate-slide-in {
+  animation: slideIn var(--duration-normal) var(--ease-default);
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-normal) var(--ease-default);
+}
+
+.animate-pulse {
+  animation: pulse var(--duration-slow) var(--ease-default) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

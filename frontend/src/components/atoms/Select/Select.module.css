@@ -1,0 +1,74 @@
+/**
+ * Select Component Styles
+ */
+
+.select {
+  /* 타이포그래피 */
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+
+  /* 레이아웃 */
+  padding: var(--spacing-input-padding-y) var(--spacing-input-padding-x);
+  padding-right: var(--spacing-8);  /* 드롭다운 아이콘을 위한 공간 */
+
+  /* 테두리 */
+  border: var(--border-medium);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-bg-surface);
+
+  /* 인터랙션 */
+  transition: var(--transition-default);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+
+  /* 드롭다운 아이콘 */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-3) center;
+  background-size: 12px;
+}
+
+/* Hover */
+.select:hover:not(:disabled) {
+  border-color: var(--color-border-dark);
+}
+
+/* Focus */
+.select:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-outline);
+}
+
+/* Disabled */
+.select:disabled {
+  background-color: var(--color-disabled-bg);
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Error state */
+.error {
+  border-color: var(--color-error);
+}
+
+.error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.3);
+}
+
+/* Full Width */
+.fullWidth {
+  width: 100%;
+}
+
+/* Option styles */
+.select option {
+  padding: var(--spacing-2);
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}

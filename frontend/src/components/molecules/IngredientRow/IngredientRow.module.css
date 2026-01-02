@@ -1,0 +1,85 @@
+/* Default variant - LibraryView style */
+.indexCell {
+  width: 40px;
+  text-align: center !important;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+}
+
+.nameCell {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+  max-width: 300px;
+}
+
+.percentageCell {
+  width: 80px;
+  text-align: center !important;
+  font-weight: 600;
+  color: #666;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+}
+
+.noteCell {
+  width: 100px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+}
+
+.roleCell {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+}
+
+/* Compact variant - GeneratePage style */
+.indexCellCompact {
+  width: 30px;
+  text-align: center !important;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+}
+
+.nameCellCompact {
+  width: 250px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+}
+
+.percentageCellCompact {
+  width: 100px;
+  text-align: center !important;
+  font-weight: 600;
+  color: #666;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+}
+
+.noteCellCompact {
+  width: 120px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+}
+
+.roleCellCompact {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background: #f5f6f3;
+  color: #666;
+}

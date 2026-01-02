@@ -1,28 +1,20 @@
-/* ✓ Fraunces 폰트 */
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap');
+/* 폰트는 tokens/typography.css에서 import됨 */
 
-/* ✓ 색상 변수 정의 */
+/* ✓ 색상 변수 정의 - 디자인 토큰 참조 */
 :root {
-  --primary-color: #85933e;
-  --secondary-color: #9b9d5a;
-  --accent-color: #A0826D;
-  --light-accent: #D4AF85;
-  --dark-gray-olive: #5D6B47;    /* ✓ 진한 회색+올리브 혼합 */
+  --primary-color: var(--color-primary);
+  --secondary-color: var(--color-secondary);
+  --accent-color: var(--color-accent);
+  --light-accent: var(--color-accent-light);
+  --dark-gray-olive: var(--color-primary-active);
 }
 
 /* ===== 기본 설정 ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* margin, padding, box-sizing은 tokens/index.css에서 설정됨 */
 
 body {
-  font-family: 'Fraunces', serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* font-family는 tokens/index.css에서 설정됨 */
   background: #e4e4e1;
-  min-height: 100vh;
 }
 
 /* ===== App 레이아웃 ===== */
@@ -51,12 +43,14 @@ body {
   margin-bottom: 10px;
   font-weight: 700;
   letter-spacing: -0.5px;
+  color: white;
 }
 
 .App-header p {
   font-size: 1.1rem;
   opacity: 0.9;
   font-weight: 500;
+  color: white;
 }
 
 /* ===== 메인 래퍼 ===== */
@@ -175,10 +169,14 @@ body {
 .edit-ingredients-table th,
 .edit-ingredients-table td {
   padding: 10px;
-  text-align: left;
   border-bottom: 1px solid #ddd;
   background: #f5f6f3;
   color:#666;
+}
+
+.ingredients-table td,
+.edit-ingredients-table td {
+  text-align: left;
 }
 
 .ingredients-table th,
@@ -186,6 +184,7 @@ body {
   background: #f5f6f3;
   font-weight: 600;
   color: #666;
+  text-align: left;
 }
 
 .edit-ingredients-table tbody tr:hover {

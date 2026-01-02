@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import formulations, ingredients, development
-from app.config import settings
+from app.routes import accords, formulas, ingredients, development
+from app.schema.config import settings
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -20,8 +20,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(formulations.router)
-app.include_router(ingredients.router) 
+app.include_router(accords.router)
+app.include_router(formulas.router)
+app.include_router(ingredients.router)
 app.include_router(development.router)
 
 @app.get("/health")
@@ -32,14 +33,5 @@ async def health_check():
 async def root():
     return {
         "message": "Fragrance Formulation API",
-        "version": "0.2.0",
-        "endpoints": {
-            "accord_generate": "POST /api/formulations/accord/generate",
-            "accord_save": "POST /api/formulations/accord/save",
-            "formula_generate": "POST /api/formulations/formula/generate",
-            "formula_save": "POST /api/formulations/formula/save",
-            "accords_list": "GET /api/formulations/accords",
-            "formulas_list": "GET /api/formulations/formulas",
-            "development_chat": "POST /api/development/chat"
-        }
+        "version": "0.2.0"
     }

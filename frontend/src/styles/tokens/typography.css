@@ -1,0 +1,99 @@
+/**
+ * Design Tokens - Typography
+ *
+ * 폰트 패밀리, 크기, 굵기, 행간 등을 정의합니다.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap');
+
+:root {
+  /* ===== Font Families ===== */
+  --font-family-primary: 'Fraunces', serif;
+  --font-family-fallback: serif;
+
+  /* ===== Font Sizes ===== */
+  /* rem 기반 - 16px = 1rem */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-md: 1rem;         /* 16px - 기본 */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 2rem;        /* 32px */
+  --font-size-4xl: 2.5rem;      /* 40px */
+
+  /* ===== Font Weights ===== */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ===== Line Heights ===== */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+  --line-height-loose: 1.8;
+
+  /* ===== Letter Spacing ===== */
+  --letter-spacing-tight: -0.5px;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.5px;
+
+  /* ===== Text Styles (Combinations) ===== */
+  /* 헤더 스타일 */
+  --text-h1-size: var(--font-size-4xl);
+  --text-h1-weight: var(--font-weight-bold);
+  --text-h1-line-height: var(--line-height-tight);
+  --text-h1-letter-spacing: var(--letter-spacing-tight);
+
+  --text-h2-size: var(--font-size-3xl);
+  --text-h2-weight: var(--font-weight-bold);
+  --text-h2-line-height: var(--line-height-tight);
+
+  --text-h3-size: var(--font-size-2xl);
+  --text-h3-weight: var(--font-weight-semibold);
+  --text-h3-line-height: var(--line-height-normal);
+
+  --text-h4-size: var(--font-size-xl);
+  --text-h4-weight: var(--font-weight-semibold);
+  --text-h4-line-height: var(--line-height-normal);
+
+  /* 본문 스타일 */
+  --text-body-size: var(--font-size-md);
+  --text-body-weight: var(--font-weight-normal);
+  --text-body-line-height: var(--line-height-relaxed);
+
+  --text-body-small-size: var(--font-size-sm);
+  --text-body-small-weight: var(--font-weight-normal);
+  --text-body-small-line-height: var(--line-height-normal);
+
+  /* 라벨/캡션 */
+  --text-label-size: var(--font-size-sm);
+  --text-label-weight: var(--font-weight-medium);
+  --text-label-line-height: var(--line-height-normal);
+
+  --text-caption-size: var(--font-size-xs);
+  --text-caption-weight: var(--font-weight-normal);
+  --text-caption-line-height: var(--line-height-normal);
+
+  /* 버튼 텍스트 */
+  --text-button-size: var(--font-size-md);
+  --text-button-weight: var(--font-weight-semibold);
+  --text-button-line-height: var(--line-height-normal);
+}
+
+/* ===== Responsive Typography ===== */
+@media (max-width: 768px) {
+  :root {
+    --text-h1-size: 1.8rem;  /* 모바일에서 작게 */
+    --text-h2-size: 1.5rem;
+    --text-h3-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --text-h1-size: 1.5rem;
+    --text-h2-size: 1.3rem;
+  }
+}

@@ -1,0 +1,382 @@
+.develop-mode {
+  display: flex;
+  flex-direction: column;
+
+  max-width: 100%;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chat-window {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  background: #f9fafb;
+}
+
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  display: flex;
+  width: 100%;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-user {
+  justify-content: flex-end;
+}
+
+.message-ai {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  word-wrap: break-word;
+}
+
+.message-user .message-bubble {
+  background: #9ca362;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.message-ai .message-bubble {
+  background: #ffffff;
+  color: #333333;
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 4px;
+}
+
+.message-text {
+  margin: 0;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.message-time {
+  display: block;
+  font-size: 11px;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9ca362;
+  animation: typing 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes typing {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-10px);
+  }
+}
+
+.input-container {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.message-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 20px;
+  font-size: 14px;
+  font-family: var(--font-family-primary);
+  resize: none;
+  max-height: 120px;
+  overflow-y: auto;
+  transition: border-color 0.2s;
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: #9ca362;
+}
+
+.message-input::placeholder {
+  color: #9ca3af;
+}
+
+.send-button {
+  padding: 12px 24px;
+  background: #9ca362;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-family: var(--font-family-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.send-button:hover:not(:disabled) {
+  background: #8a9156;
+}
+
+.send-button:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+/* 스크롤바 스타일링 */
+.chat-window::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-window::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.chat-window::-webkit-scrollbar-thumb {
+  background: #9ca362;
+  border-radius: 3px;
+}
+
+.chat-window::-webkit-scrollbar-thumb:hover {
+  background: #8a9156;
+}
+
+/* 순서 있는 리스트 (ol) 수정 */
+.message-text ol {
+  margin: 0.5em 0;
+  padding-left: 0.5em;  /* 패딩 증가 */
+  list-style-position: inside;  /* 번호를 안쪽으로 */
+}
+
+.message-text ul {
+  margin: 0.5em 0;
+  padding-left: 2em;
+  list-style-position: inside;
+}
+
+.message-text li {
+  margin: 0.3em 0;
+  line-height: 1.6;
+  padding-left: 0.5em;  /* 추가 패딩 */
+}
+
+/* 리스트 아이템 내 강조 텍스트 */
+.message-text li strong {
+  font-weight: 600;
+}
+
+.message-text p strong {
+  margin: 0.5em 0;
+  display: block;
+  font-size: 1.1em;
+  font-weight: 700;
+  padding-left: 0.5em; 
+}
+
+/* 내보내기 버튼 */
+.export-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: var(--font-family-primary);
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.export-button:hover {
+  background-color: #45a049;
+}
+
+.export-button:active {
+  transform: scale(0.98);
+}
+
+/* 포뮬러 카드 스타일 */
+.formula-card {
+  margin-top: 15px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 2px solid #85933e;
+}
+
+.formula-title {
+  color: #85933e;
+  margin: 0 0 15px 0;
+  font-size: 1.3em;
+}
+
+.formula-table {
+  margin-bottom: 15px;
+  overflow-x: auto;
+}
+
+.formula-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.formula-table th {
+  background: #85933e;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.formula-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.formula-table tr:last-child td {
+  border-bottom: none;
+}
+
+.formula-table tr:hover {
+  background: #f5f5f5;
+}
+
+.save-formula-button {
+  width: 100%;
+  padding: 12px;
+  background: #85933e;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-family: var(--font-family-primary);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-formula-button:hover:not(:disabled) {
+  background: #6d7832;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.save-formula-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.save-formula-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 포뮬러 정보 */
+.formula-info {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 0.95em;
+}
+
+.info-label {
+  color: #85933e;
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.info-value {
+  color: #666;
+  flex: 1;
+}
+
+/* 섹션 제목 */
+.section-title {
+  color: #85933e;
+  font-size: 1em;
+  margin: 15px 0 10px 0;
+  font-weight: 600;
+}
+
+/* Longevity & Sillage */
+.formula-properties {
+  display: flex;
+  gap: 20px;
+  margin: 12px 0;
+  padding: 12px;
+  background: white;
+  border-radius: 5px;
+}
+
+.property-item {
+  display: flex;
+  gap: 8px;
+  font-size: 0.9em;
+}
+
+.property-label {
+  color: #85933e;
+  font-weight: 600;
+}
+
+.property-value {
+  color: #666;
+}
+
+/* Recommendation 강조 */
+.formula-info.recommendation {
+  margin-top: 12px;
+  padding: 10px;
+  background: #f0f4e8;
+  border-radius: 5px;
+  border-left: 3px solid #85933e;
+}
+
+.formula-info.recommendation .info-label {
+  min-width: 130px;
+}
